@@ -7,6 +7,14 @@ dotenv.config();
 
 const app: Express = express();
 
+
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
+
+if (process.env.NODE_ENV == "production") {
+    //app.use(cors());
+}
+
 app.use(gigaChad);
 
 app.get("/", WithAuth, (req, res) => {

@@ -1,52 +1,34 @@
-declare namespace express {
-    export interface Request {
-        error?: string | undefined;
-    }
-}
-declare global {
-    interface ExpressApi {
-        (...a: any): void
-    }
-}
+// TypeScript Version: 2.3
 
-/*import type express from 'express';
+import { NextFunction } from 'express';
+import { IncomingMessage } from 'http';
+import User from 'models/User';
 
 declare global {
+    namespace Express {
+        interface Request {
+            user?: User
+            //isAuthenticated(): this is AuthenticatedRequest;
+            //isUnauthenticated(): this is UnauthenticatedRequest;
+        }
 
-    type ParamsDictionary = {
-        [key: string]: string;
-    }
-    type Request<
-        P = core.ParamsDictionary,
-        ResBody = any,
-        ReqBody = any,
-        ReqQuery = core.Query,
-        Locals extends Record<string, any> = Record<string, any>
-    > = express.Request<P, ReqBody, ReqBody, ReqQuery, Locals> & {
+        interface Response {
+            error(status: number, message?: string): void
+            success(object: any, status: 200 | 201 = 200): void
+        }
 
-    }
-    
-    type Response<ResBody = any, Locals extends Record<string, any> = Record<string, any>> = express.Response<ResBody, Locals> & {
-        error: (status: number, message?: string) => void
-    }
-    type NextFunction = express.NextFunction & {
-
-    }
-
-    interface ExpressApi<Body = ParamsDictionary, Params = ParamsDictionary, Query = ParamsDictionary> {
-        (req: Request<Params, any, Body, Query>, res: Response, next: NextFunction): void
+        interface Handler {
+            (req: Request, res: Response, next: NextFunction): void
+        }
     }
 }
-/*
 
-    type FC<P = {}> = FunctionComponent<P>;
-
-    interface FunctionComponent<P = {}> {
-        (props: P, context?: any): ReactElement<any, any> | null;
-        propTypes?: WeakValidationMap<P> | undefined;
-        contextTypes?: ValidationMap<any> | undefined;
-        defaultProps?: Partial<P> | undefined;
-        displayName?: string | undefined;
+declare global {
+    namespace NodeJS {
+      interface ProcessEnv {
+        NODE_ENV: 'development' | 'production' | 'test';
+        PORT?: string;
+      }
     }
-
-    */
+  }
+  
