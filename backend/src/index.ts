@@ -1,11 +1,19 @@
-import express from 'express';
-const port = 3000;
-const app = express();
+import express, { Express, Request, Response } from 'express';
+import dotenv from 'dotenv';
+import gigaChad from './middleware/gigaChad';
+import WithAuth from './middleware/withAuth';
 
-app.get("/",(req,res) => {
+dotenv.config();
+
+const app: Express = express();
+
+app.use(gigaChad);
+
+app.get("/", WithAuth, (req, res) => {
     res.send("Hello World")
 })
 
+const port = process.env.PORT;
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`⚡️[server]: Server is running at https://localhost:${port}`)
 })
