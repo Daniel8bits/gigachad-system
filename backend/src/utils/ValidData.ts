@@ -3,17 +3,17 @@ type Rule = {
     maxLength: number
     required: boolean
     regex: RegExp
-    callback(value: string, option?: any): boolean
+    callback: undefined
     value: string
 }
-type RuleGlobal = {
+type RuleCustom = {
     callback: (value: any, options: any) => boolean
     message: string | ((options: any) => string)
 }
 type Rules = {
-    [key: string]: string | Partial<Rule>
+    [key: string]: string | Partial<Rule> | RuleCustom
 }
-const globalRules: Record<string, RuleGlobal> = {
+const globalRules: Record<string, RuleCustom> = {
     email: {
         callback: (value) => {
             const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -23,7 +23,6 @@ const globalRules: Record<string, RuleGlobal> = {
     },
     required: {
         callback: (value) => {
-            console.log(value);
             return value.length !== 0;
         },
         message: "Campo Obrigatório"
@@ -48,55 +47,59 @@ const globalRules: Record<string, RuleGlobal> = {
     }
 }
 
-const ErrorRule = (rule: RuleGlobal, value: string, options?: any) => {
-    const message = rule.message;
-    if (typeof (message) == "string") return message;
-    return { message: message.apply(null, [options]), value, rule, options }
-}
+class RuleError extends Error {
 
-const globalRule = (rule: RuleGlobal, name: string, value: string, options: any): boolean => {
-    if (rule.callback.apply(null, [value, options])) return true;
-    throw ErrorRule(rule, value, options);
-    /*if (globalRules[rule]) {
-        //@ts-ignore
+    private rule: string;
+    private params!: RuleCustom;
+    private value!: string;
+    private options!: any;
+
+    constructor(message: string);
+    constructor(rule: string, params: RuleCustom, value: string, options?: any);
+    constructor(...args: any[]) {
+        super()
+        if (arguments.length == 1) {
+            this.message = args[0];
+            this.rule = "custom";
+        } else {
+            this.rule = args[0];
+            this.params = args[1];
+            this.value = args[2];
+            this.options = args[3];
+            this.message = this.getMessage();
+        }
     }
-    return false;*/
+
+    public getMessage(): string {
+        const message = this.params.message;
+        if (!message) return "";
+        if (typeof (message) == "string") return message;
+        return message.apply(null, [this.options]);
+    }
 }
 
-const ValidData = <T extends Record<string, any>>(data: T, options: Rules): boolean => {
+const runRule = async (rule: RuleCustom, name: string, value: string, options: any): Promise<void> => {
+    if (await rule.callback.apply(null, [value, options])) return;
+    throw new RuleError(name, rule, value, options);
+}
+
+const ValidData = async<T extends Record<string, any>>(data: T, options: Rules): Promise<void> => {
     for (let option in options) {
         const rules = options[option];
         const value = data[option] ?? "";
         if (typeof (rules) == "string") {
-            if (globalRule(globalRules[rules], rules, value, {})) continue;
-            return false;
+            await runRule(globalRules[rules], rules, value, {})
+            continue;
         }
 
-        const promises = Object.entries(rules).map(async ([name, rule]) => {
-            if (name == "callback" && typeof (rule) == "function") {
-                await rule(value);
-            } else {
-                globalRule(globalRules[name], name, value, rule);
+        if (rules.callback) {
+            await runRule(rules, "callback", value, {})
+        } else {
+            for (let name in rules) {
+                await runRule(globalRules[name], name, value, rules);
             }
-        })
-        Promise.all(promises)
+        }
     }
-    return true;
-    /*
-    return Object.entries(rules).map<boolean>(([key, rule]) => {
-        if (typeof (rule) == "string") return globalRules[key]?.callback(data[rule]) || false;
-
-        let bool = true;
-        const value = data[key] ?? "";
-        if (rule.callback) bool &&= rule.callback(rule.value);
-        if (rule.required) bool &&= value.length !== 0;
-        if (rule.minLength) bool &&= value.length >= rule.minLength;
-        if (rule.maxLength) bool &&= value.length <= rule.maxLength;
-        if (rule.regex) bool &&= rule.regex.test(value);
-
-        console.log(bool, key, rule, value)
-        return bool;
-    });*/
 }
 
 const data = {
@@ -105,21 +108,32 @@ const data = {
     email: "lucasalp1@hotmail.com"
 }
 
-const options = {
+const options: Rules = {
     id: {
-        required: true,
-        minLength: 10
+        required: true
     },
     email: 'email',
     name: {
+        callback: (value) => {
+            console.log("name", value)
+            //throw new RuleError("Outro Error");
+            return true;
+        },
+        message: "Ocorreu um erro aqui, ta bom"
     }
 }
 
-try {
+const test = async () => {
 
-    console.log(ValidData(data, options))
-} catch (e) {
-    console.log(e);
+
+    try {
+
+        await ValidData(data, options)
+    } catch (e: any) {
+        console.log("Error Test", e);
+    }
 }
+
+test();
 
 export default ValidData;

@@ -1,7 +1,9 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import gigaChad from './middleware/gigaChad';
-import WithAuth from './middleware/withAuth';
+import withAuth from './middleware/withAuth';
+import withUser from './middleware/withUser';
+import { UserType } from './models/User';
 
 dotenv.config();
 
@@ -17,7 +19,7 @@ if (process.env.NODE_ENV == "production") {
 
 app.use(gigaChad);
 
-app.get("/", WithAuth, (req, res) => {
+app.get("/", withUser(UserType.trainer), (req, res) => {
     res.send("Hello World")
 })
 
