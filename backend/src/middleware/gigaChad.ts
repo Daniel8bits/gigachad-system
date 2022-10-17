@@ -1,12 +1,16 @@
 import Express from 'express';
+import Database from '../utils/Database/Database';
 
 
 const gigaChad: Express.Handler = (req, res, next) => {
+    req.database = new Database();
     res.error = (status: number, message?: string) => {
-        res.status(status).json({ data: {}, message: message || handleStatus[status],status })
+        res.status(status).json({ data: {}, message: message || handleStatus[status], status })
+        req.database?.end();
     };
-    res.success = (object: any, status = 200) => {
-        res.status(status).json({ data: object })
+    res.success = (object: any = {}, status = 200) => {
+        res.status(status).json({ data: object, status })
+        req.database?.end();
     };
     next();
 }

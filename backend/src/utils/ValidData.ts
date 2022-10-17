@@ -122,7 +122,7 @@ const options: Rules = {
         message: "Ocorreu um erro aqui, ta bom"
     }
 }
-
+/*
 const test = async () => {
 
 
@@ -135,5 +135,5 @@ const test = async () => {
 }
 
 test();
-
+*/
 export default ValidData;
