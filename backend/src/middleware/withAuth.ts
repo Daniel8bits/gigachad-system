@@ -1,11 +1,23 @@
 import Express from "express";
-
-const withAuth: Express.Handler = (req,  res, next) => {
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import User from "../models/User";
+const withAuth: Express.Handler = async (req, res, next) => {
     try {
-        const token = req.headers['x-access-token'] || req.query.token
+        const token = (req.headers['x-access-token'] || req.query.token) as string;
+        const payload = jwt.verify(token, process.env.SECRET_AUTH as string) as JwtPayload
+        const user = await User.findOne({
+            attributes: {
+                exclude: ["password"]
+            },
+            where: {
+                cpf: payload.cpf
+            }
+        })
+        req.user = user;
         next()
-    } catch (e) {
-        res.error(500);
+
+    } catch (e: any) {
+        res.error(401, e.message);
     }
 }
 

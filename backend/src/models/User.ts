@@ -1,8 +1,9 @@
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 import Database from "../utils/Database/Database";
-import Model from "../utils/Database/Model";
+import Model, { ModelStatic, OptionsWhere, Where } from "../utils/Database/Model";
 import { HookSave } from '../utils/Database/Hooks';
-import { Client } from "pg";
 
 export enum UserType {
     user,
@@ -21,7 +22,7 @@ export type IUser = {
     phone: string
 }
 
-class User extends Model<IUser> implements HookSave<IUser> {
+class User extends Model<IUser> {
 
     declare cpf: string;
     declare name: string;
@@ -31,8 +32,20 @@ class User extends Model<IUser> implements HookSave<IUser> {
 
     static readonly tableName = "user";
 
-    beforeSave(values) {
+    async checkPassword(password: string) {
+        return await bcrypt.compare(password, this.password);
+    }
 
+    async generatePassword(password: string) {
+        return this.password = await bcrypt.hash(password, 10);
+    }
+
+    getToken() {
+        return jwt.sign({
+            cpf: this.cpf
+        }, process.env.SECRET_AUTH as string, {
+            expiresIn: 60 * 60 * 24
+        });
     }
 
     validate<T extends any>(field: string, value: T): T {
@@ -44,7 +57,21 @@ class User extends Model<IUser> implements HookSave<IUser> {
         }
         return value;
     }
+
+    static async findEmailorCPF(login: string, where?: Where<User>, options?: Omit<OptionsWhere<User>, 'raw'>) {
+        return await User.findOne({
+            where: {
+                or: {
+                    cpf: login,
+                    email: login
+                },
+                ...where
+            },
+            ...options
+        })
+    }
 }
+
 User.init({
     cpf: "STRING",
     name: "STRING",
@@ -52,7 +79,7 @@ User.init({
     password: "STRING",
     phone: "STRING"
 });
-const pg = new Database("67.23.238.111", "gigachad_user", "x74Gx4a0^", "gigachad_database", { port: 5432 });
+/*const pg = new Database("67.23.238.111", "gigachad_user", "x74Gx4a0^", "gigachad_database", { port: 5432 });
 (async () => {
 
     try {
@@ -74,7 +101,7 @@ const pg = new Database("67.23.238.111", "gigachad_user", "x74Gx4a0^", "gigachad
     } catch (e: any) {
         console.log("Error", e)
     }
-})();
+})();*/
 //Database.select(User).attributes("cpf,email").where("cpf=:cpf", { cpf: "xxx.xxx.xxx-xx" }).limit(1).execute();
 
 //console.log(user);

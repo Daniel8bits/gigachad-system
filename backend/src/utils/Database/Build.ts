@@ -1,4 +1,4 @@
-import Model, { ModelStatic, OptionsWhere } from "./Model";
+import Model, { ModelStatic, OptionsWhere, Where } from "./Model";
 
 export type BuildType = "SELECT" | "UPDATE" | "INSERT" | "DELETE";
 class Build<M extends Model> {
@@ -15,14 +15,21 @@ class Build<M extends Model> {
     }
 
     prepareWhere() {
-        const { where } = this.options;
-        for (let field in where) {
-            const value = where[field];
-            if (value) {
+        this._where = this.buildWhere(this.options.where);
+    }
+
+    buildWhere(wheres: Where<any>, or: boolean = true): string {
+        const where: string[] = [];
+        for (let field in wheres) {
+            const value = wheres[field];
+            if (field == "or" || field == "and") {
+                where.push("(" + this.buildWhere(value, field === "or") + ")");
+            } else if (value) {
                 const index = this._params.push(value);
-                this._where = field + " = $" + index;
+                where.push(field + " = $" + index);
             }
         }
+        return where.join(or ? " OR " : " AND ");
     }
     /*
         set limit(limit: number, offset: number | undefined = undefined) {
@@ -31,8 +38,11 @@ class Build<M extends Model> {
         }*/
 
     get attributes(): string {
-        if (this.options.attributes) {
-            return this.options.attributes.join(",");
+        const { attributes } = this.options;
+        if (attributes) {
+            if (attributes.include) return attributes.include.join(",");
+            if (attributes.exclude) return this.model.attributes.filter((field) => !attributes.exclude.includes(field)).join(",");
+            return attributes.join(",");
         }
         return "*";
     }
@@ -62,7 +72,7 @@ class Build<M extends Model> {
 
     get groupby(): string {
         if (this.options.groupby) {
-            return "GROUP BY "+this.options.groupby;
+            return "GROUP BY " + this.options.groupby;
         }
         return "";
     }

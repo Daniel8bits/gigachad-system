@@ -10,6 +10,6 @@ account.use(function timeLog(req, res, next) {
     next();
 });
 account.get("/auth", withAuth, Auth)
-account.post("/login", withAuth, Login)
+account.post("/login", Login)
 
 export default account;
