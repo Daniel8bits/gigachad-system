@@ -1,5 +1,20 @@
 
 
 .ui-textfield {
-  
+
+  @include flex();
+
+  > * {
+    width: 100%;
+  }
+
+  > label {
+    color: $color-green;
+  }
+
+  > input {
+    @include theme($color-greenish-gray);
+    @include border();
+    @include padding();
+  }
 }

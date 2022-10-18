@@ -47,6 +47,7 @@
 @mixin border($radius: 4px) {
   border: none;
   border-radius: $radius;
+  outline: none;
   @include shadow();
 }
 
