@@ -1,9 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import Model, { OptionsWhere, Where } from "../utils/Database/Model";
 
-import Database from "../utils/Database/Database";
-import Model, { ModelStatic, OptionsWhere, Where } from "../utils/Database/Model";
-import { HookSave } from '../utils/Database/Hooks';
 
 export enum UserType {
     user,
@@ -22,7 +20,7 @@ export type IUser = {
     phone: string
 }
 
-class User extends Model<IUser> {
+class User<A extends IUser = IUser> extends Model<A> {
 
     declare cpf: string;
     declare name: string;

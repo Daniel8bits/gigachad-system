@@ -7,7 +7,9 @@ import { UserType } from './models/User';
 
 import routes from './routes';
 
-dotenv.config();
+dotenv.config({
+    path: ".env.development"
+});
 
 const app: Express = express();
 

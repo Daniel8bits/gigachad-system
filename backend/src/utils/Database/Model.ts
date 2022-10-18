@@ -8,7 +8,7 @@ export type ModelStatic<M extends Model = Model> = OmitConstructors<typeof Model
 
 export type Attributes<M extends Model> = Partial<M['_attributes']>;
 
-export type AttributeType = 'TIMESTAMP' | 'INT' | 'STRING'
+export type AttributeType = 'NUMBER' | 'STRING' | 'JSON' | 'DATE'
 
 
 export type DataAttributes = {
@@ -65,9 +65,13 @@ abstract class Model<A extends {} = any>{
         for (const attribute in attributes) {
             Object.defineProperty(this.prototype, attribute, {
                 get() { return this._values[attribute] },
-                set(value) { this._values[attribute] = value }
+                set(value) { this._values[attribute] = value },
+                enumerable: true,
+                //writable: true,
+                //configurable: true
             })
         }
+        console.log(this, this.prototype)
     }
 
 
@@ -103,7 +107,7 @@ abstract class Model<A extends {} = any>{
 
     }
 
-    abstract validate<T extends any>(field: string, value: T): T;
+    //abstract validate<T extends any>(field: string, value: T): T;
 
     toJSON() {
         return this._values;
