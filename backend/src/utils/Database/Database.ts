@@ -33,7 +33,6 @@ class Database {
     }
 
     end() {
-        console.log("FEchou");
         this.pool.end();
     }
 }

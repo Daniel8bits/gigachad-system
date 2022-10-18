@@ -1,3 +1,4 @@
+import { DataType } from "utils/Database/DataType";
 import User, { IUser } from "./User";
 
 export type IEmployee = IUser & {
@@ -8,27 +9,18 @@ export type IEmployee = IUser & {
 }
 
 class Employee extends User<IEmployee> {
-
+    @DataType("STRING")
     declare administrative: string
+    @DataType("STRING")
     declare ctps: string
+    @DataType("STRING")
     declare admissionDate: string
+    @DataType("STRING")
     declare address: string
 
     validate<T extends any>(field: string, value: T): T {
-        super.validate(field,value);
+        super.validate(field, value);
         return value;
     }
 }
-
-Employee.init({
-    cpf: "STRING",
-    name: "STRING",
-    email: "STRING",
-    password: "STRING",
-    phone: "STRING",
-    administrative: "STRING",
-    ctps: "STRING",
-    address: "STRING",
-    admissionDate: "STRING"
-})
 export default Employee;    

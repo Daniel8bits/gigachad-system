@@ -1,4 +1,4 @@
-import Model from "../utils/Database/Model";
+import Model, { DataType } from "../utils/Database/Model";
 
 export type IInvoice = {
     id: number
@@ -11,13 +11,21 @@ export type IInvoice = {
     payMethod: string
 }
 class Invoice extends Model<IInvoice>{
+    @DataType("NUMBER")
     declare id: number
+    @DataType("STRING")
     declare cpfCustomer: string
+    @DataType("NUMBER")
     declare idPlan: number
+    @DataType("STRING")
     declare cardNumbers: string
+    @DataType("NUMBER")
     declare value: number
+    @DataType("STRING")
     declare status: string
+    @DataType("STRING")
     declare payday: string
+    @DataType("STRING")
     declare payMethod: string
 
     validate<T extends any>(field: string, value: T): T {
@@ -25,14 +33,4 @@ class Invoice extends Model<IInvoice>{
     }
 }
 
-Invoice.init({
-    id: "NUMBER",
-    cpfCustomer: "STRING",
-    idPlan: "NUMBER",
-    cardNumbers: "STRING",
-    value: "NUMBER",
-    status: "STRING",
-    payday: "STRING",
-    payMethod: "STRING"
-})
 export default Invoice;

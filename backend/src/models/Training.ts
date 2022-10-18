@@ -1,4 +1,4 @@
-import Model from "../utils/Database/Model";
+import Model, { DataType } from "../utils/Database/Model";
 
 export type ITraining = {
     id: number
@@ -9,22 +9,19 @@ export type ITraining = {
 }
 
 class Training extends Model<ITraining>{
+    @DataType("NUMBER")
     declare id: number
+    @DataType("STRING")
     declare cpfCustomer: string
+    @DataType("STRING")
     declare cpfTrainer: string
+    @DataType("STRING")
     declare name: string
+    @DataType("DATE")
     declare creationDate: Date
 
     validate<T extends any>(field: string, value: T): T {
         return value;
     }
 }
-
-Training.init({
-    id: "NUMBER",
-    cpfCustomer: "STRING",
-    cpfTrainer: "STRING",
-    name: "STRING",
-    creationDate: "DATE"
-})
 export default Training;

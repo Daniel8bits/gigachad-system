@@ -1,4 +1,4 @@
-import Model from "../utils/Database/Model";
+import Model, { DataType } from "../utils/Database/Model";
 
 export enum TypeExpense {
     equipamentBuy = 'equipamentBuy',
@@ -18,24 +18,22 @@ export type IExpense = {
 }
 
 class Expense extends Model<IExpense>{
+    @DataType("NUMBER")
     declare id: number
+    @DataType("STRING")
     declare qrCodeEquipmen: string
+    @DataType("DATE")
     declare date: Date
+    @DataType("NUMBER")
     declare totalValue: number
+    @DataType("STRING")
     declare description: string
+    @DataType("ENUM", ["equipamentBuy", "equipamentMaintenance", "billPayment", "employeePayment", "others"])
     declare typeExpense: TypeExpense
-    
+
     validate<T extends any>(field: string, value: T): T {
         return value;
     }
 }
 
-Expense.init({
-    id: "NUMBER",
-    qrCodeEquipmen: "STRING",
-    date: "DATE",
-    totalValue: "NUMBER",
-    description: "STRING",
-    typeExpense: "STRING"
-})
 export default Expense;

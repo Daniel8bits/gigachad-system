@@ -1,4 +1,4 @@
-import Model from "../utils/Database/Model";
+import Model, { DataType } from "../utils/Database/Model";
 
 export type IDateTraining = {
     idTraining: number
@@ -7,8 +7,11 @@ export type IDateTraining = {
 }
 
 class DateTraining extends Model<IDateTraining>{
+    @DataType("NUMBER")
     declare idTraining: number
+    @DataType("NUMBER")
     declare cpfCustomer: number
+    @DataType("DATE")
     declare date: Date
 
     validate<T extends any>(field: string, value: T): T {
@@ -16,9 +19,4 @@ class DateTraining extends Model<IDateTraining>{
     }
 }
 
-DateTraining.init({
-    idTraining: "NUMBER",
-    cpfCustomer: "NUMBER",
-    date: "DATE"
-})
 export default DateTraining;

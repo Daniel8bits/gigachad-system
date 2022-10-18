@@ -1,4 +1,4 @@
-import Model from "../utils/Database/Model";
+import Model, { DataType } from "../utils/Database/Model";
 
 export type IExercise = {
     id: number
@@ -6,7 +6,9 @@ export type IExercise = {
 }
 
 class Exercise extends Model<IExercise>{
+    @DataType("NUMBER")
     declare id: number
+    @DataType("STRING")
     declare name: string
 
     validate<T extends any>(field: string, value: T): T {
@@ -14,8 +16,4 @@ class Exercise extends Model<IExercise>{
     }
 }
 
-Exercise.init({
-    id: "NUMBER",
-    name: "STRING"
-})
 export default Exercise;

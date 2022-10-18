@@ -1,8 +1,8 @@
 
-import Model from "../utils/Database/Model";
+import Model, { DataType } from "../utils/Database/Model";
 
 export enum frequencyPlan {
-    montly = 'montly',  
+    montly = 'montly',
     semmiannual = 'semmiannual',
     quarterly = 'quarterly',
     annual = 'annual'
@@ -17,22 +17,19 @@ export type IPlan = {
 }
 
 class Plan extends Model<IPlan> {
+    @DataType("NUMBER")
     declare id: number
+    @DataType("STRING")
     declare name: string
+    @DataType("STRING")
     declare description: string
+    @DataType("NUMBER")
     declare value: number
+    @DataType("ENUM", ["montly", "semmiannual", "quarterly", "annual"])
     declare frequency: frequencyPlan
 
     validate<T extends any>(field: string, value: T): T {
         return value;
     }
 }
-
-Plan.init({
-    id: "NUMBER",
-    name: "STRING",
-    description: "STRING",
-    value: "NUMBER",
-    frequency: "STRING"
-})
 export default Plan;

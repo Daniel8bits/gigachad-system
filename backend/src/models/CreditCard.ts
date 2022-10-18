@@ -1,4 +1,4 @@
-import Model from "../utils/Database/Model";
+import Model, { DataType } from "../utils/Database/Model";
 
 export type ICreditCard = {
     numbers: number
@@ -8,9 +8,13 @@ export type ICreditCard = {
 }
 
 class CreditCard extends Model<ICreditCard>{
+    @DataType("NUMBER")
     declare numbers: number
+    @DataType("STRING")
     declare holder: string
+    @DataType("DATE")
     declare expirationDate: Date
+    @DataType("STRING")
     declare cvv: string
 
     validate<T extends any>(field: string, value: T): T {
@@ -18,10 +22,4 @@ class CreditCard extends Model<ICreditCard>{
     }
 }
 
-CreditCard.init({
-    numbers: "NUMBER",
-    holder: "STRING",
-    expirationDate: "DATE",
-    cvv: "STRING"
-})
 export default CreditCard;

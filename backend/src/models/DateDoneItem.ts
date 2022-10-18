@@ -1,4 +1,4 @@
-import Model from "../utils/Database/Model";
+import Model, { DataType } from "../utils/Database/Model";
 
 export type IDateDoneItem = {
     idTraining: number
@@ -8,9 +8,13 @@ export type IDateDoneItem = {
 }
 
 class DateDoneItem extends Model<IDateDoneItem>{
+    @DataType("NUMBER")
     declare idTraining: number
+    @DataType("NUMBER")
     declare cpfCustomer: number
+    @DataType("DATE")
     declare date: Date
+    @DataType("NUMBER")
     declare idExercise: number
 
     validate<T extends any>(field: string, value: T): T {
@@ -18,10 +22,4 @@ class DateDoneItem extends Model<IDateDoneItem>{
     }
 }
 
-DateDoneItem.init({
-    idTraining: "NUMBER",
-    cpfCustomer: "NUMBER",
-    date: "DATE",
-    idExercise: "NUMBER"
-})
 export default DateDoneItem;

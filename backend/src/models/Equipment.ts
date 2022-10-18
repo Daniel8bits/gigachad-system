@@ -1,4 +1,4 @@
-import Model from "../utils/Database/Model";
+import Model, { DataType } from "../utils/Database/Model";
 
 export type IEquipment = {
     qrCode: string
@@ -7,33 +7,15 @@ export type IEquipment = {
 }
 
 class Equipment extends Model<IEquipment>{
-
+    @DataType("STRING")
     declare qrCode: string
+    @DataType("STRING")
     declare name: string
+    @DataType("DATE")
     declare maintenanceDate: Date
 
     validate<T extends any>(field: string, value: T): T {
         return value;
     }
 }
-
-Equipment.init({
-    qrCode: "STRING",
-    name: "STRING",
-    maintenanceDate: "DATE"
-})
-
-// (async () => {
-
-//     const equipament = await Equipment.findOne({
-//         where: {
-//             qrCode: "aa"
-//         },
-//         attributes: {
-//             exclude: ["qrCode"]
-//         }
-//     })
-//     equipament.name;
-// })()
-
 export default Equipment;

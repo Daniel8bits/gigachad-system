@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import Model, { OptionsWhere, Where } from "../utils/Database/Model";
+import Database from '../utils/Database/Database';
+import Model, { DataType, OptionsWhere, TableName, Where } from "../utils/Database/Model";
 
 
 export enum UserType {
@@ -20,15 +21,20 @@ export type IUser = {
     phone: string
 }
 
+@TableName("Users")
 class User<A extends IUser = IUser> extends Model<A> {
 
+    @DataType("CPF")
     declare cpf: string;
+    @DataType("STRING")
     declare name: string;
+    @DataType("STRING")
     declare password: string;
+    @DataType("STRING")
     declare email: string;
+    @DataType("PHONE")
     declare phone: string;
-
-    static readonly tableName = "user";
+    declare type: UserType;
 
     async checkPassword(password: string) {
         return await bcrypt.compare(password, this.password);
@@ -70,21 +76,16 @@ class User<A extends IUser = IUser> extends Model<A> {
     }
 }
 
-User.init({
-    cpf: "STRING",
-    name: "STRING",
-    email: "STRING",
-    password: "STRING",
-    phone: "STRING"
-});
-/*const pg = new Database("67.23.238.111", "gigachad_user", "x74Gx4a0^", "gigachad_database", { port: 5432 });
+User.init();
+
+const pg = new Database("67.23.238.111", "gigachad_user", "x74Gx4a0^", "gigachad_database", { port: 5432 });
 (async () => {
 
     try {
 
-        const result = await User.findAll({
+        const result = await User.findOne({
             where: {
-                cpf: 'xxx.xxx.xxx-xx'
+                cpf: '74176465069'
             },
             limit: 1,
             order: [['cpf', 'DESC']],
@@ -99,8 +100,9 @@ User.init({
     } catch (e: any) {
         console.log("Error", e)
     }
-})();*/
+})();
+/*
 //Database.select(User).attributes("cpf,email").where("cpf=:cpf", { cpf: "xxx.xxx.xxx-xx" }).limit(1).execute();
-
+*/
 //console.log(user);
 export default User;

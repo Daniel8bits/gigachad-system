@@ -1,3 +1,4 @@
+import { DataType } from "utils/Database/DataType";
 import User, { IUser } from "./User";
 
 export type ICustomer = IUser & {
@@ -5,21 +6,14 @@ export type ICustomer = IUser & {
 }
 
 class Customer extends User<ICustomer>{
-
+    // Tem que ver isso depois
+    @DataType("NUMBER")
     declare idCurrentPlan: number;
 
     validate<T extends any>(field: string, value: T): T {
-        super.validate(field,value);
+        super.validate(field, value);
         return value;
     }
 }
 
-Customer.init({
-    cpf: "STRING",
-    name: "STRING",
-    email: "STRING",
-    password: "STRING",
-    phone: "STRING",
-    idCurrentPlan: "NUMBER"
-})
 export default Customer;    
