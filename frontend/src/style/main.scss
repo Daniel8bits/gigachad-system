@@ -1,3 +1,10 @@
 
 @import 'global';
 @import 'custom';
+@import 'mixins';
+
+@import '@pages/home/home';
+
+@import '@ui/button/ui-button';
+@import '@ui/textfield/ui-textfield';
+@import '@ui/checkbox/ui-checkbox';

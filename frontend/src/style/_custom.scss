@@ -1,39 +1,49 @@
+@use "sass:math";
 
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+/* Grid Medias */
+@mixin generateGridMedia($class, $minWidth, $max: false) {
+  @if $max {
+    @for $i from 1 through 12 {
+      @media (max-width: $minWidth) {
+        #{$class}\:w-#{$i}\/12 {
+          width: (math.div(100, 12) * $i) * 1%;
+        }
+      }
+    }
+  } @else {
+    @for $i from 1 through 12 {
+      @media (min-width: $minWidth) {
+        #{$class}\:w-#{$i}\/12 {
+          width: (math.div(100, 12) * $i) * 1%;
+        }
+      }
+    }
   }
 }
+/*sm*/
+//@include generateGridMedia('.sm', 640px);
+@include generateGridMedia('.sm', 768px, true);
+/*md*/
+@include generateGridMedia('.md', 768px);
+/*lg*/
+@include generateGridMedia('.lg', 1024px);
+/*xl*/
+@include generateGridMedia('.xl', 1280px);
+/*xxl*/
+@include generateGridMedia('.\\32xl', 1536px);
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+
+.flex-start {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: flex-start;
+}
+
+.flex-center {
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.flex-end {
+  display: flex;
+  justify-content: flex-end;
 }

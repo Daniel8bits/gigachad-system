@@ -1,0 +1,8 @@
+
+.ui-button {
+  @include theme($color-green, true);
+  @include flex();
+  @include border-rounded();
+  @include padding();
+  cursor: pointer;
+}

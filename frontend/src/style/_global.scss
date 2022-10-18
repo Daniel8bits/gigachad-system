@@ -1,15 +1,11 @@
+$color-green: #7BFF65;
+$color-dark-green: #34A522;
+$color-red: #FF6565;
+$color-dark-red: #A54040;
+$color-greenish-black: #1E1F21;
+$color-greenish-gray: #28292B;
 
-
-body {
+* {
+  padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
 }
