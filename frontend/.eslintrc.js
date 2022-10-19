@@ -43,6 +43,8 @@ module.exports = {
         "component": false,
         "html": false
       }],
+      'react/no-array-index-key': 'off',
+      'react/jsx-props-no-spreading': 'off',
       'import/no-unresolved': 'off',
       'import/no-extraneous-dependencies': 'off',
       'import/prefer-default-export': 'off',

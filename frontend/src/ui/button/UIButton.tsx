@@ -1,8 +1,10 @@
 import React from 'react';
 
 interface UIButtonProps {
-  children: string
+  children: any
   onAction: () => void
+  template?: string
+  className?: string
 }
 
 const UIButton: React.FC<UIButtonProps> = (props) => {
@@ -11,7 +13,7 @@ const UIButton: React.FC<UIButtonProps> = (props) => {
   }
   return (
     <button 
-      className='ui-button' 
+      className={`ui-button ${props.template ?? ''} ${props.className ?? ''}`}
       type='button'
       onClick={handleClick}
     >
