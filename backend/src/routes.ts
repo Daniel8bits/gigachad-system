@@ -1,8 +1,15 @@
-import Express from "express"
-import Account from "./routes/Account";
+import Express from "./utils/Express"
 
-const app = Express();
+import Training from "./routes/Training";
+import Plan from "./routes/Plan";
 
-app.use("/account",Account)
+//import Account from "./routes/Account";
+
+const app = new Express();
+
+//app.use("/account",Account)
+app.use("/training", Training)
+app.use("/plan", Plan)
+
 
 export default app;

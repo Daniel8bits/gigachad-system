@@ -1,6 +1,6 @@
-import Build from "./Build";
+import { Delete, Insert, Select, Update } from "./Build";
 import Database from "./Database";
-import MetaData from './MetaData';
+import { database as MetaData } from '../MetaData';
 export * from './DataType';
 
 //Credits: https://github.com/sequelize/sequelize
@@ -10,7 +10,7 @@ export type ModelStatic<M extends Model = Model> = OmitConstructors<typeof Model
 
 export type Attributes<M extends Model> = Partial<M['_attributes']>;
 
-export type AttributeType = 'NUMBER' | 'STRING' | 'JSON' | 'DATE' | 'CPF' | 'PHONE' | 'ENUM' | 'INT' | 'FLOAT' 
+export type AttributeType = 'NUMBER' | 'STRING' | 'JSON' | 'DATE' | 'CPF' | 'PHONE' | 'ENUM' | 'INT' | 'FLOAT' | 'BOOLEAN'
 export type AttributeConfig = {
     type: AttributeType
     options?: any
@@ -55,18 +55,22 @@ abstract class Model<A extends {} = any>{
 
     set values(values: A) {
         this._values = {};
+        const attributes = MetaData.get(this, "attributes") as Record<string, AttributeConfig>;
         for (const key in values) {
-            this._values[key] = this.prepareValue(key, values[key]);
+            this._values[key] = Model.decode(key, values[key], attributes[key]);
         }
         //this._values = values;
     }
 
-    protected prepareValue(key: string, value: any): any {
-        const attribute = MetaData.get(this, "attributes")[key] as AttributeConfig;
+    // Database -> Application
+    static decode(key: string, value: any, attribute?: AttributeConfig): any {
+        if (value == null) return null;
+        if (!attribute) attribute = MetaData.get(this, "attributes")[key.toLocaleLowerCase()] as AttributeConfig;
         switch (attribute.type) {
             case "CPF":
                 return value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
             case "PHONE":
+                // Tem q fazer ainda
                 return value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
             case "DATE":
                 return new Date(value);
@@ -77,7 +81,25 @@ abstract class Model<A extends {} = any>{
             case "FLOAT":
                 return parseFloat(value);
             case "ENUM":
-                return attribute.options.include(value) ? value : "none";
+                return attribute.options.includes(value) ? value : "none";
+        }
+        return value;
+    }
+
+    // Application -> Database
+    static encode(key: string, value: any, attribute?: AttributeConfig): any {
+        if (value == null) return null;
+        if (!attribute) attribute = MetaData.get(this, "attributes")[key.toLocaleLowerCase()] as AttributeConfig;
+        switch (attribute.type) {
+            case "CPF":
+                return value.replace(/(\d{3}).(\d{3}).(\d{3})-(\d{2})/, "$1$2$3$4");
+            case "PHONE":
+                // Tem q fazer ainda
+                return value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+            case "DATE":
+                return new Date(value).toDateString();
+            case "JSON":
+                return JSON.stringify(value);
         }
         return value;
     }
@@ -105,13 +127,15 @@ abstract class Model<A extends {} = any>{
     }
 
     // Retorna os dados Puro
-    static async findOne<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, options: Omit<OptionsWhere<M>, 'raw'> & { raw: true }): Promise<A>;
+    static async findOne<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, options: Omit<OptionsWhere<M>, 'raw'> & { raw: true }): Promise<A | false>;
     // Retorna na Classe do Modelo
-    static async findOne<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, options: Omit<OptionsWhere<M>, 'raw'> & { raw?: false }): Promise<M>;
-    static async findOne<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, options: OptionsWhere<M>): Promise<A | M> {
-        const build = new Build(this, options);
-        const result = await Database.query(build.toSQL("SELECT"), build.params);
+    static async findOne<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, options: Omit<OptionsWhere<M>, 'raw'> & { raw?: false }): Promise<M | false>;
+    static async findOne<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, options: OptionsWhere<M>): Promise<A | M | false> {
+        options.limit = 1;
+        const build = new Select(this, options);
+        const result = await Database.query(build.toSQL(), build.params);
         if (options.raw) return result.rows[0];
+        if (result.rowCount == 0) return false;
         const instance = new this;
         instance.values = result.rows[0];
         return instance;
@@ -122,9 +146,10 @@ abstract class Model<A extends {} = any>{
     // Retorna na Classe do Modelo
     static async findAll<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, options: Omit<OptionsWhere<M>, 'raw'> & { raw?: false }): Promise<M[]>;
     static async findAll<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, options: OptionsWhere<M>): Promise<A[] | M[]> {
-        const build = new Build(this, options);
-        const result = await Database.query(build.toSQL("SELECT"), build.params);
+        const build = new Select(this, options);
+        const result = await Database.query(build.toSQL(), build.params);
         if (options.raw) return result.rows;
+        if (result.rowCount == 0) return [];
         const instances = [] as M[];
         for (const row of result.rows) {
             const instance = new this;
@@ -134,6 +159,32 @@ abstract class Model<A extends {} = any>{
         return instances;
 
     }
+
+    static async create<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, values: A): Promise<M | false> {
+        const build = new Insert(this, values);
+        const result = await Database.query(build.toSQL(), build.params);
+        if (result.rowCount == 0) return false;
+        const instance = new this;
+        instance.values = result.rows[0];
+        return instance;
+    }
+
+    static async update<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, values: A, options: OptionsWhere<M>): Promise<M | false> {
+        const build = new Update(this, values, options);
+        const result = await Database.query(build.toSQL(), build.params);
+        if (result.rowCount == 0) return false;
+        const instance = new this;
+        instance.values = result.rows[0];
+        return instance;
+    }
+
+    static async delete<M extends Model>(this: ModelStatic<M>, options: OptionsWhere<M>): Promise<boolean> {
+        const build = new Delete(this, { limit: 1, ...options });
+        const result = await Database.query(build.toSQL(), build.params);
+        return result.rowCount !== 0
+    }
+
+
 
     //abstract validate<T extends any>(field: string, value: T): T;
 

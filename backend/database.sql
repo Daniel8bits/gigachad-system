@@ -4,7 +4,8 @@ CREATE TABLE Plan (
     name CHARACTER VARYING(40) NOT NULL,
     description TEXT NOT NULL,
     value real NOT NULL,
-    frequency frequencyPlan NOT NULL
+    frequency frequencyPlan NOT NULL,
+    available BOOLEAN NOT NULL
 );
 CREATE TYPE roleAdministrative AS ENUM ('financer', 'attendant', 'manager');
 CREATE TABLE Users(
@@ -47,7 +48,7 @@ CREATE TABLE Training(
     id INT NOT NULL,
     cpfCustomer CHARACTER(11) NOT NULL,
     --ERROR:  multiple primary keys for table "training" are not allowed
-    cpfTrainer CHARACTER(11) NOT NULL,
+    cpfTrainer CHARACTER(11),
     name CHARACTER VARYING(20) NOT NULL,
     creationDate TIMESTAMP NOT NULL,
     PRIMARY KEY (id, cpfCustomer),

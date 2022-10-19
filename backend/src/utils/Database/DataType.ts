@@ -1,4 +1,4 @@
-import MetaData from "./MetaData";
+import {database as MetaData} from "../MetaData";
 import Model, { AttributeType } from "./Model";
 
 export function enumerable(value: boolean) {
@@ -14,6 +14,7 @@ export function enumerable(value: boolean) {
 
 export function DataType(type: AttributeType, options?: any) {
     return function (target: Model, propertyKey: string) {
+        propertyKey = propertyKey.toLocaleLowerCase();
         // Salva o metadado
         const attributes = MetaData.get(target, "attributes") ?? {};
         attributes[propertyKey] = { type, options };

@@ -10,7 +10,7 @@ type RuleCustom = {
     callback: (value: any, options: any) => boolean
     message: string | ((options: any) => string)
 }
-type Rules = {
+export type Rules = {
     [key: string]: string | Partial<Rule> | RuleCustom
 }
 const globalRules: Record<string, RuleCustom> = {
@@ -83,7 +83,7 @@ const runRule = async (rule: RuleCustom, name: string, value: string, options: a
     throw new RuleError(name, rule, value, options);
 }
 
-const ValidData = async<T extends Record<string, any>>(data: T, options: Rules): Promise<void> => {
+const ValidData = async<T extends Record<string, any>>(data: T, options: Rules): Promise<T> => {
     for (let option in options) {
         const rules = options[option];
         const value = data[option] ?? "";
@@ -100,8 +100,9 @@ const ValidData = async<T extends Record<string, any>>(data: T, options: Rules):
             }
         }
     }
+    return data;
 }
-
+/*
 const data = {
     id: 1,
     name: 'Lucas Alviene Pereira',

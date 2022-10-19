@@ -22,10 +22,10 @@ if (process.env.NODE_ENV == "production") {
 }
 
 app.use(gigaChad);
-app.use(routes);
+app.use(routes.app);
 
 app.use((req, res) => {
-    res.send("Hello World")
+    res.error(404);
 })
 
 const port = process.env.PORT;

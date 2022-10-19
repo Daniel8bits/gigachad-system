@@ -8,7 +8,7 @@ import Database from './utils/Database/Database';
 declare global {
     namespace Express {
         interface Request {
-            user?: User
+            user: User
             database?: Database
             //isAuthenticated(): this is AuthenticatedRequest;
             //isUnauthenticated(): this is UnauthenticatedRequest;

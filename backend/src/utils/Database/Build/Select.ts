@@ -1,16 +1,14 @@
-import Model, { ModelStatic, OptionsWhere, Where } from "./Model";
+import {database as MetaData} from "../../MetaData";
+import Model, { ModelStatic, OptionsWhere, Where } from "../Model";
+import Build from "./index";
 
-export type BuildType = "SELECT" | "UPDATE" | "INSERT" | "DELETE";
-class Build<M extends Model> {
+class Select<M extends Model> extends Build<M>{
 
-    private model: ModelStatic<M>;
-    private options: OptionsWhere<M>;
-    private _where: string = "";
-    private _params: string[] = [];
+    protected _where: string = "";
+    protected _params: string[] = [];
 
     constructor(model: ModelStatic<M>, options: OptionsWhere<M>) {
-        this.model = model;
-        this.options = options;
+        super(model, options);
         this.prepareWhere();
     }
 
@@ -18,25 +16,20 @@ class Build<M extends Model> {
         this._where = this.buildWhere(this.options.where);
     }
 
-    buildWhere(wheres: Where<any>, or: boolean = true): string {
+    buildWhere(wheres: Where<any>, or: boolean = false): string {
         const where: string[] = [];
+        const attributes = MetaData.get(this.model, "attributes");
         for (let field in wheres) {
             const value = wheres[field];
             if (field == "or" || field == "and") {
                 where.push("(" + this.buildWhere(value, field === "or") + ")");
             } else if (value) {
-                const index = this._params.push(value);
+                const index = this._params.push(this.model.encode(field, value, attributes[field]));
                 where.push(field + " = $" + index);
             }
         }
         return where.join(or ? " OR " : " AND ");
     }
-    /*
-        set limit(limit: number, offset: number | undefined = undefined) {
-            this.options.limit = limit;
-            this.options.offset = offset;
-        }*/
-
     get attributes(): string {
         const { attributes } = this.options;
         if (attributes) {
@@ -83,36 +76,25 @@ class Build<M extends Model> {
         return "";
     }
 
-    toSQL(type: BuildType): string {
+    toSQL(): string {
         const sql: (string | number)[] = [];
 
-        sql.push(type);
-        if (type == "INSERT") {
+        sql.push("SELECT");
+        sql.push(this.attributes)
+        sql.push(this.from)
+        sql.push(this.where)
 
-        } else {
-            if (type == "SELECT") sql.push(this.attributes)
-            if (type == "SELECT" || type == "DELETE") sql.push(this.from)
-            else sql.push(this.model.tableName)
-            sql.push(this.where)
+        sql.push(this.orberby)
 
-            sql.push(this.orberby)
+        sql.push(this.groupby)
 
-            sql.push(this.groupby)
-
-            sql.push(this.limit)
-        }
+        sql.push(this.limit)
         return sql.join(" ");
-        /*
-        SELECT .. FROM .. WHERE .. 
-        UPDATE ... SET ... WHERE ...
-        DELETE FROM ... WHERE ...
-        INSERT ... (...) VALUES (...)
-        */
     }
 
-    get params() {
+     get params() {
         return this._params;
     }
 }
 
-export default Build;
+export default Select;

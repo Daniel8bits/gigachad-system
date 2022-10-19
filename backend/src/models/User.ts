@@ -77,12 +77,12 @@ class User<A extends IUser = IUser> extends Model<A> {
 }
 
 User.init();
-
+/*
 const pg = new Database("67.23.238.111", "gigachad_user", "x74Gx4a0^", "gigachad_database", { port: 5432 });
 (async () => {
 
     try {
-
+/*
         const result = await User.findOne({
             where: {
                 cpf: '74176465069'
@@ -96,6 +96,14 @@ const pg = new Database("67.23.238.111", "gigachad_user", "x74Gx4a0^", "gigachad
             }
         });
         console.log(result);
+        await User.update({
+            cpf: "032.3123.3232",
+            email: "lucasalp1@hotmail.com"
+        },{
+            where:{
+                cpf: "3121312"
+            }
+        })
         pg.end();
     } catch (e: any) {
         console.log("Error", e)

@@ -14,6 +14,7 @@ export type IPlan = {
     description: string
     value: number
     frequency: frequencyPlan
+    available: boolean
 }
 
 class Plan extends Model<IPlan> {
@@ -23,10 +24,12 @@ class Plan extends Model<IPlan> {
     declare name: string
     @DataType("STRING")
     declare description: string
-    @DataType("NUMBER")
+    @DataType("FLOAT")
     declare value: number
     @DataType("ENUM", ["montly", "semmiannual", "quarterly", "annual"])
     declare frequency: frequencyPlan
+    @DataType("BOOLEAN")
+    declare available: boolean
 
     validate<T extends any>(field: string, value: T): T {
         return value;
