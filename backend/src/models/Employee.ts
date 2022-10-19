@@ -1,26 +1,41 @@
-import { DataType } from "utils/Database/DataType";
-import User, { IUser } from "./User";
+import Model from "../utils/Database/Model";
+import { DataType, PrimarKey } from "../utils/Database/DataType";
+import User from "./User";
 
-export type IEmployee = IUser & {
+export type IEmployee = {
+    cpf: string
     administrative: string
     ctps: string
-    admissionDate: string
+    admissionDate: Date
     address: string
 }
 
-class Employee extends User<IEmployee> {
+class Employee<A extends IEmployee = IEmployee> extends Model<A> {
+    @PrimarKey
+    @DataType("CPF")
+    declare cpf: string;
     @DataType("STRING")
     declare administrative: string
     @DataType("STRING")
     declare ctps: string
     @DataType("STRING")
-    declare admissionDate: string
+    declare admissionDate: Date
     @DataType("STRING")
     declare address: string
+    @DataType("CLASS", { virtual: true })
+    declare Users: User;
 
     validate<T extends any>(field: string, value: T): T {
-        super.validate(field, value);
         return value;
     }
 }
+/*
+Employee.findOne({
+    include: [
+        {
+            model: User,
+            on: "employee.cpf=users.cpf"
+        }
+    ]
+}).then(console.log).catch(console.error)*/
 export default Employee;    

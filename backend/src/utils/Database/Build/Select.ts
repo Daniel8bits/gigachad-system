@@ -1,10 +1,10 @@
-import {database as MetaData} from "../../MetaData";
-import Model, { ModelStatic, OptionsWhere, Where } from "../Model";
+import { database as MetaData } from "../../MetaData";
+import Model, { Attributes, ModelStatic, OptionsWhere, Where } from "../Model";
 import Build from "./index";
 
 class Select<M extends Model> extends Build<M>{
 
-    protected _where: string = "";
+    protected _where: string[] = [];
     protected _params: string[] = [];
 
     constructor(model: ModelStatic<M>, options: OptionsWhere<M>) {
@@ -12,41 +12,78 @@ class Select<M extends Model> extends Build<M>{
         this.prepareWhere();
     }
 
+
     prepareWhere() {
-        this._where = this.buildWhere(this.options.where);
+        this._where.push(this.buildWhere(this.options.where, this.model.tableName));
+        const includes = this.options.include ?? [];
+        for (const include of includes) {
+            this._where.push(this.buildWhere(include.where, include.model.tableName))
+        }
     }
 
-    buildWhere(wheres: Where<any>, or: boolean = false): string {
+    buildWhere(wheres: Where<any>, tableName: string, or: boolean = false): string {
         const where: string[] = [];
-        const attributes = MetaData.get(this.model, "attributes");
         for (let field in wheres) {
             const value = wheres[field];
             if (field == "or" || field == "and") {
-                where.push("(" + this.buildWhere(value, field === "or") + ")");
+                where.push("(" + this.buildWhere(value, tableName, field === "or") + ")");
             } else if (value) {
-                const index = this._params.push(this.model.encode(field, value, attributes[field]));
-                where.push(field + " = $" + index);
+                if (field == "isNull") {
+                    where.push(tableName + "." + value + " IS NULL")
+                } else {
+                    const index = this._params.push(Model.encode(field, value, this.model));
+                    where.push(tableName + "." + field + " = $" + index);
+                }
             }
         }
         return where.join(or ? " OR " : " AND ");
     }
-    get attributes(): string {
-        const { attributes } = this.options;
-        if (attributes) {
-            if (attributes.include) return attributes.include.join(",");
-            if (attributes.exclude) return this.model.attributes.filter((field) => !attributes.exclude.includes(field)).join(",");
-            return attributes.join(",");
+
+    attributeName(tableName: string, field: string) {
+        return tableName + "." + field + " as \"" + tableName + "." + field + "\""
+    }
+
+    getAttributes(attributes: string[], tableName: string, config?: Attributes<any>): string {
+        //        if (attributes.include) return tableName + "." + attributes.include.join(",tableName.");
+        if (config) {
+            if (config.exclude) return attributes.filter((field) => !config.exclude.includes(field)).map((field) => this.attributeName(tableName, field)).join(",");
+            return config.map((field) => this.attributeName(tableName, field)).join();
         }
-        return "*";
+        return attributes.map((field) => this.attributeName(tableName, field)).join(",");
+    }
+
+    get attributes(): string {
+        const attributes: string[] = [];
+        const tableName = this.model.tableName;
+        attributes.push(this.getAttributes(this.model.attributes, tableName, this.options.attributes));
+        const includes = this.options.include ?? [];
+        for (const include of includes) {
+            attributes.push(this.getAttributes(include.model.attributes, include.model.tableName, include.attributes))
+        }
+
+        return attributes.join();
     }
 
     get from(): string {
         return "FROM public." + this.model.tableName;
     }
 
+    get join(): string {
+        /*
+        const pk = MetaData.get(this.model, "primarykey");
+        console.log(this.model, pk);
+        */
+        const includes = this.options.include ?? [];
+        const sql: string[] = [];
+        for (const include of includes) {
+            sql.push((include.optional ? "LEFT" : "") + " JOIN " + include.model.tableName + " ON " + include.on);
+        }
+        return sql.join(" ");//"INNER LEFT JOIN ON ...";
+    }
+
     get where(): string {
-        if (this.options.where) {
-            return "WHERE " + this._where;
+        if (this._where.length > 1) {
+            return "WHERE " + this._where.join("");
         }
         return "";
     }
@@ -79,20 +116,33 @@ class Select<M extends Model> extends Build<M>{
     toSQL(): string {
         const sql: (string | number)[] = [];
 
+        /*
+        SELECT * FROM user INNER
+        LEFT
+        RIGHT
+
+        JOin
+
+        INNER LEFT JOIN ...
+
+
+
+        */
         sql.push("SELECT");
         sql.push(this.attributes)
         sql.push(this.from)
+        sql.push(this.join);
         sql.push(this.where)
-
         sql.push(this.orberby)
 
         sql.push(this.groupby)
 
         sql.push(this.limit)
+        console.log(sql.join(" "))
         return sql.join(" ");
     }
 
-     get params() {
+    get params() {
         return this._params;
     }
 }

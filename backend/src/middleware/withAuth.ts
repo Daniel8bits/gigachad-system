@@ -5,7 +5,7 @@ const withAuth: Express.Handler = async (req, res, next) => {
     try {
         const token = (req.headers['authorization']?.replace("Bearer ", "") || req.query.token) as string;
         if (token) {
-            const payload = jwt.verify(token, process.env.SECRET_AUTH as string) as JwtPayload
+            const payload = jwt.decode(token/*, process.env.SECRET_AUTH as string*/) as JwtPayload
             const user = await User.findOne({
                 attributes: {
                     exclude: ["password"]

@@ -10,7 +10,7 @@ export type ModelStatic<M extends Model = Model> = OmitConstructors<typeof Model
 
 export type Attributes<M extends Model> = Partial<M['_attributes']>;
 
-export type AttributeType = 'NUMBER' | 'STRING' | 'JSON' | 'DATE' | 'CPF' | 'PHONE' | 'ENUM' | 'INT' | 'FLOAT' | 'BOOLEAN'
+export type AttributeType = 'NUMBER' | 'STRING' | 'JSON' | 'DATE' | 'CPF' | 'PHONE' | 'ENUM' | 'INT' | 'FLOAT' | 'BOOLEAN' | 'CLASS'
 export type AttributeConfig = {
     type: AttributeType
     options?: any
@@ -31,6 +31,8 @@ export type ModelAttributes<M extends Model = Model, TAttributes = any> = {
 
 export type Include<M extends Model = Model> = OptionsWhere<M> & {
     model: ModelStatic<M>
+    on: string
+    optional?: boolean
 }
 
 export type AttributesWhere<A> = { include: A, exclude?: undefined } | { exclude: A, include?: undefined } | A & { include?: undefined, exclude?: undefined };
@@ -44,34 +46,48 @@ export type OptionsWhere<M extends Model, A = Attributes<M>> = {
     attributes?: AttributesWhere<Array<keyof A>>
     groupby?: Array<keyof A>
     order?: Array<[keyof A, "ASC" | "DESC"]>// | [keyof A, "ASC" | "DESC"]
-    include?: Include
+    include?: Array<Include>
     raw?: boolean
 }
 
 abstract class Model<A extends {} = any>{
 
-    private _values;
+    private _values = {};
     declare _attributes: A;
 
-    set values(values: A) {
+    setValue(key: string, value: any) {
+        this._values[key] = Model.decode(key, value, this.constructor.name);
+    }
+
+    setValues(values: A, models: Record<string, ModelStatic<any>>) {
         this._values = {};
-        const attributes = MetaData.get(this, "attributes") as Record<string, AttributeConfig>;
+        // const attributes = MetaData.get(this, "attributes") as Record<string, AttributeConfig>;
         for (const key in values) {
-            this._values[key] = Model.decode(key, values[key], attributes[key]);
+            const [table, field] = key.split(".");
+            if (field == undefined || table === this.constructor.name) {
+                const value = Model.decode(field ?? table, values[key], this.constructor.name);
+                this._values[field] = value
+            } else {
+                const value = Model.decode(field, values[key], table);
+                if (value == null) continue;
+                //const value = Model.decode(field, values[key], attributes[key]);
+                if (this._values[table] === undefined) this._values[table] = new models[table]() as Model;
+                this._values[table].setValue(field, value);
+            }
         }
         //this._values = values;
     }
 
     // Database -> Application
-    static decode(key: string, value: any, attribute?: AttributeConfig): any {
+    static decode(key: string, value: any, target: any): any {
         if (value == null) return null;
-        if (!attribute) attribute = MetaData.get(this, "attributes")[key.toLocaleLowerCase()] as AttributeConfig;
+        const attribute = MetaData.get(target, "attributes")[key.toLocaleLowerCase()] as AttributeConfig;
         switch (attribute.type) {
             case "CPF":
                 return value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
             case "PHONE":
                 // Tem q fazer ainda
-                return value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+                return value.replace(/(\d{2})(\d{2})(\d{5})(\d{4})/, "+$1 ($2) $3-$4");
             case "DATE":
                 return new Date(value);
             case "JSON":
@@ -87,15 +103,15 @@ abstract class Model<A extends {} = any>{
     }
 
     // Application -> Database
-    static encode(key: string, value: any, attribute?: AttributeConfig): any {
+    static encode(key: string, value: any, target?: any): any {
         if (value == null) return null;
-        if (!attribute) attribute = MetaData.get(this, "attributes")[key.toLocaleLowerCase()] as AttributeConfig;
+        const attribute = MetaData.get(target, "attributes")[key.toLocaleLowerCase()] as AttributeConfig;
         switch (attribute.type) {
             case "CPF":
                 return value.replace(/(\d{3}).(\d{3}).(\d{3})-(\d{2})/, "$1$2$3$4");
             case "PHONE":
-                // Tem q fazer ainda
-                return value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+                // Tem q fazer ainda (55) 98428-4632  -> 55984284632
+                return value.replace(/\+(\d{2}) \((\d{2})\) (\d{5})-(\d{4})/, "$1$2$3$4");
             case "DATE":
                 return new Date(value).toDateString();
             case "JSON":
@@ -131,13 +147,12 @@ abstract class Model<A extends {} = any>{
     // Retorna na Classe do Modelo
     static async findOne<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, options: Omit<OptionsWhere<M>, 'raw'> & { raw?: false }): Promise<M | false>;
     static async findOne<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, options: OptionsWhere<M>): Promise<A | M | false> {
-        options.limit = 1;
         const build = new Select(this, options);
         const result = await Database.query(build.toSQL(), build.params);
         if (options.raw) return result.rows[0];
         if (result.rowCount == 0) return false;
         const instance = new this;
-        instance.values = result.rows[0];
+        instance.setValues(result.rows[0], build.models);
         return instance;
     }
 
@@ -150,14 +165,20 @@ abstract class Model<A extends {} = any>{
         const result = await Database.query(build.toSQL(), build.params);
         if (options.raw) return result.rows;
         if (result.rowCount == 0) return [];
+
         const instances = [] as M[];
         for (const row of result.rows) {
             const instance = new this;
-            instance.values = row;
+            instance.setValues(row, build.models);
             instances.push(instance);
         }
         return instances;
+    }
 
+    static async count<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, options: Omit<OptionsWhere<M>, 'raw'>): Promise<number> {
+        const build = new Select(this, options);
+        const result = await Database.query(build.toSQL(), build.params);
+        return result.rowCount;
     }
 
     static async create<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, values: A): Promise<M | false> {
@@ -165,8 +186,14 @@ abstract class Model<A extends {} = any>{
         const result = await Database.query(build.toSQL(), build.params);
         if (result.rowCount == 0) return false;
         const instance = new this;
-        instance.values = result.rows[0];
+        instance.setValues(result.rows[0], build.models);
         return instance;
+    }
+
+    static async findOrCreate<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, values: A, where: Where<A>): Promise<M | false> {
+        const item = await this.findOne<M, A>({ where });
+        if (item) return item;
+        return await this.create<M, A>(values);
     }
 
     static async update<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, values: A, options: OptionsWhere<M>): Promise<M | false> {
@@ -174,7 +201,7 @@ abstract class Model<A extends {} = any>{
         const result = await Database.query(build.toSQL(), build.params);
         if (result.rowCount == 0) return false;
         const instance = new this;
-        instance.values = result.rows[0];
+        instance.setValues(result.rows[0], build.models);
         return instance;
     }
 

@@ -1,4 +1,4 @@
-import {database as MetaData} from "../../MetaData";
+import { database as MetaData } from "../../MetaData";
 import Model, { Attributes, ModelStatic, OptionsWhere, Where } from "../Model";
 import Build from "./index";
 
@@ -14,9 +14,8 @@ class Insert<M extends Model> extends Build<M>{
     }
 
     prepareValues(values: Attributes<M>) {
-        const attributes = MetaData.get(this.model, "attributes");
         Object.entries(values).forEach(([field, value]) => {
-            const index = this._params.push(this.model.encode(field, value, attributes[field]));
+            const index = this._params.push(Model.encode(field, value, this.model));
             this._names.push(field);
             this._values.push("$" + index);
         });

@@ -1,6 +1,6 @@
 import Express from 'express';
 import { Route as Metadata } from '../utils/MetaData';
-import Route, { Path, Request, withUser } from "../utils/Route";
+import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import PlanModel from '../models/Plan';
 import ValidData, { Rules } from '../utils/ValidData';
 import { UserType } from '../models/User';
@@ -8,7 +8,12 @@ import { UserType } from '../models/User';
 class Plan extends Route {
 
     static rules: Rules = {
-
+        name: {
+            required: true
+        },
+        description: {
+            required: true
+        }
     };
 
     @Path("/availables")
@@ -27,6 +32,7 @@ class Plan extends Route {
         }
     }
 
+    @withAuth
     @withUser(UserType.manager)
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
@@ -40,6 +46,7 @@ class Plan extends Route {
         }
     }
 
+    @withAuth
     @withUser(UserType.manager)
     @Request("POST")
     @Path("/")
@@ -52,13 +59,14 @@ class Plan extends Route {
                 value,
                 frequency,
                 available
-            })
+            })              
             res.success(plan);
         } catch (e: any) {
             res.error(500, e.message);
         }
     }
 
+    @withAuth
     @withUser(UserType.manager)
     @Path("/:id")
     async findOne(req: Express.Request, res: Express.Response) {
@@ -79,6 +87,7 @@ class Plan extends Route {
         }
     }
 
+    @withAuth
     @withUser(UserType.manager)
     @Request("PUT")
     @Path("/:id")
@@ -101,6 +110,7 @@ class Plan extends Route {
         }
     }
 
+    @withAuth
     @withUser(UserType.manager)
     @Request("DELETE")
     @Path("/:id")

@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import Database from '../utils/Database/Database';
-import Model, { DataType, OptionsWhere, TableName, Where } from "../utils/Database/Model";
+import Model, { DataType, OptionsWhere, PrimarKey, TableName, Where } from "../utils/Database/Model";
 
 
 export enum UserType {
@@ -21,9 +21,9 @@ export type IUser = {
     phone: string
 }
 
-@TableName("Users")
-class User<A extends IUser = IUser> extends Model<A> {
+class Users<A extends IUser = IUser> extends Model<A> {
 
+    @PrimarKey
     @DataType("CPF")
     declare cpf: string;
     @DataType("STRING")
@@ -62,8 +62,8 @@ class User<A extends IUser = IUser> extends Model<A> {
         return value;
     }
 
-    static async findEmailorCPF(login: string, where?: Where<User>, options?: Omit<OptionsWhere<User>, 'raw'>) {
-        return await User.findOne({
+    static async findEmailorCPF(login: string, where?: Where<Users>, options?: Omit<OptionsWhere<Users>, 'raw'>) {
+        return await Users.findOne({
             where: {
                 or: {
                     cpf: login,
@@ -76,7 +76,6 @@ class User<A extends IUser = IUser> extends Model<A> {
     }
 }
 
-User.init();
 /*
 const pg = new Database("67.23.238.111", "gigachad_user", "x74Gx4a0^", "gigachad_database", { port: 5432 });
 (async () => {
@@ -113,4 +112,4 @@ const pg = new Database("67.23.238.111", "gigachad_user", "x74Gx4a0^", "gigachad
 //Database.select(User).attributes("cpf,email").where("cpf=:cpf", { cpf: "xxx.xxx.xxx-xx" }).limit(1).execute();
 */
 //console.log(user);
-export default User;
+export default Users;

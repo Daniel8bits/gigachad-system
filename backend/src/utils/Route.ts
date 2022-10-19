@@ -22,6 +22,7 @@ const RouteDecorator = (callback: RouteCallback) => (target: any, key: string, d
 
 export const Request = (method: MethodRequest) => RouteDecorator((current) => current.method = method);
 export const Path = (path: string) => RouteDecorator((current) => current.path = path);
+export const withAuth = RouteDecorator((current) => current.middlewares?.push(middleware.withAuth));
 export const withUser = (...types: UserType[]) => RouteDecorator((current) => current.middlewares?.push(middleware.withUser(...types)));
 /*
 return (target: any, key: string, descriptor: PropertyDescriptor) => {
@@ -38,10 +39,10 @@ class Route {
 
     constructor() {
         this._route = express.Router();
-        const routes = Metadata.get(this);
+        const routes = Metadata.get(this) as RouteData[];
         for (let key in routes) {
             const options = routes[key];
-            const method = (options.method as MethodRequest ?? "GET").toLocaleLowerCase();
+            const method = (options.method ?? "GET").toLocaleLowerCase();
             this._route[method].apply(this._route, [options.path, ...options.middlewares, options.fn]);
         }
     }

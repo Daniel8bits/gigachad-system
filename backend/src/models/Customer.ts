@@ -1,17 +1,19 @@
+import Model from "../utils/Database/Model";
 import { DataType } from "utils/Database/DataType";
-import User, { IUser } from "./User";
 
-export type ICustomer = IUser & {
+export type ICustomer = {
+    cpf: string
     idCurrentPlan: number
 }
 
-class Customer extends User<ICustomer>{
+class Customer extends Model<ICustomer>{
+    @DataType("CPF")
+    declare cpf: string;
     // Tem que ver isso depois
     @DataType("NUMBER")
     declare idCurrentPlan: number;
 
     validate<T extends any>(field: string, value: T): T {
-        super.validate(field, value);
         return value;
     }
 }

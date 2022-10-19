@@ -1,4 +1,4 @@
-import {database as MetaData} from "../../MetaData";
+import { database as MetaData } from "../../MetaData";
 import Model, { Attributes, ModelStatic, OptionsWhere, Where } from "../Model";
 import Select from './Select';
 
@@ -12,9 +12,8 @@ class Insert<M extends Model> extends Select<M>{
     }
 
     prepareSet(values: Attributes<M>): void {
-        const attributes = MetaData.get(this.model, "attributes");
         for (let field in values) {
-            const index = this._params.push(this.model.encode(field, values[field], attributes[field]));
+            const index = this._params.push(Model.encode(field, values[field], this.model));
             this._set.push(field + " = $" + index);
         }
     }

@@ -1,6 +1,7 @@
 import withUser from './withUser';
-
+import withAuth from './withAuth';
 const middlewares = {
-    withUser
+    withUser,
+    withAuth
 }
 export default middlewares;

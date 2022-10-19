@@ -1,6 +1,5 @@
 import ExpressJS from "express"
 import Route from "./Route";
-import withAuth from "../middleware/withAuth";
 
 class Express {
 
@@ -11,7 +10,7 @@ class Express {
     }
 
     use(path: string, route: Route) {
-        this._app.use(path, withAuth, route.route);
+        this._app.use(path, route.route);
     }
 
     get app(): ExpressJS.Express {

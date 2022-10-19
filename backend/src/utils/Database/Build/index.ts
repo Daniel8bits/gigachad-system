@@ -1,4 +1,4 @@
-import {database as MetaData} from "../../MetaData";
+import { database as MetaData } from "../../MetaData";
 import Model, { ModelStatic, OptionsWhere, Where } from "../Model";
 
 export type BuildType = "SELECT" | "UPDATE" | "INSERT" | "DELETE";
@@ -6,14 +6,22 @@ abstract class Build<M extends Model> {
 
     protected model: ModelStatic<M>;
     protected options: OptionsWhere<M>;
-    // private _where: string = "";
-    // private _params: string[] = [];
-    // private type: BuildType;
+    protected _models: Record<string, ModelStatic<any>> = {};
+
 
     constructor(model: ModelStatic<M>, options: OptionsWhere<M>) {
         this.model = model;
         this.options = options;
-       // this.prepareWhere();
+        this.prepareModels();
+    }
+
+    prepareModels() {
+        this._models[this.model.tableName] = this.model;
+        const includes = this.options.include ?? [];
+        for (const include of includes) {
+            this._models[include.model.tableName] = include.model;
+        }
+        console.log(this._models);
     }
 
     // prepareWhere() {
@@ -96,43 +104,13 @@ abstract class Build<M extends Model> {
 
     abstract toSQL(): string;
 
-    // toSQL(): string {
-    //     const type = this.type;
-    //     const sql: (string | number)[] = [];
-
-    //     sql.push(type);
-    //     if (type == "INSERT") {
-    //         sql.push(this.names);
-    //         sql.push("VALUES");
-    //         sql.push(this.values);
-    //     } else {
-    //         if (type == "SELECT") sql.push(this.attributes)
-    //         if (type == "SELECT" || type == "DELETE") sql.push(this.from)
-    //         else sql.push(this.model.tableName)
-    //         sql.push(this.where)
-
-    //         sql.push(this.orberby)
-
-    //         sql.push(this.groupby)
-
-    //         sql.push(this.limit)
-    //     }
-    //     return sql.join(" ");
-    //     /*
-    //     SELECT .. FROM .. WHERE .. 
-    //     UPDATE ... SET ... WHERE ...
-    //     DELETE FROM ... WHERE ...
-    //     INSERT ... (...) VALUES (...)
-    //     */
-    // }
-
-    // get params() {
-    //     return this._params;
-    // }
+    get models() {
+        return this._models;
+    }
 }
 
 export default Build;
-export {default as Select} from './Select';
-export {default as Insert} from './Insert';
-export {default as Update} from './Update';
-export {default as Delete} from './Delete';
+export { default as Select } from './Select';
+export { default as Insert } from './Insert';
+export { default as Update } from './Update';
+export { default as Delete } from './Delete';
