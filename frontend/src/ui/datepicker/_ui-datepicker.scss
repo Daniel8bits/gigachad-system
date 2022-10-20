@@ -1,0 +1,9 @@
+
+.ui-datepicker {
+
+  @include flex(center, center, nowrap);
+
+  > .ui-textfield {
+    width: 100%;
+  }
+}

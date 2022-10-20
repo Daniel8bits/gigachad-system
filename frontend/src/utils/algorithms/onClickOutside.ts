@@ -9,7 +9,7 @@ function onClickOutside(element: HTMLElement, callback: () => void): (e: MouseEv
             document.removeEventListener('click', event, true)
         }
     }
-    document.addEventListener('click', event, true)
+    setTimeout(() => document.addEventListener('click', event, true), 300)
     return event
 }
 

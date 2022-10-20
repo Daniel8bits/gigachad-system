@@ -27,7 +27,7 @@
 
 @mixin flex($horizontal:center, $vertical:center, $wrap:wrap) {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: $wrap;
   justify-content: $horizontal;
   align-items: $vertical;
 }

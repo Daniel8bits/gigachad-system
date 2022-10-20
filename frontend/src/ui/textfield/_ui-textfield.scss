@@ -4,7 +4,7 @@
 
   @include flex();
 
-  > * {
+  &:not(.hasIcon) > * {
     width: 100%;
   }
 
@@ -16,5 +16,18 @@
     @include theme($color-greenish-gray);
     @include border();
     @include padding();
+  }
+
+  &.hasIcon {
+    > label {
+      width: 100%;
+    }
+    > svg {
+      width: auto;
+      @include margin();
+    }
+    > input {
+      flex-grow: 1;
+    }
   }
 }

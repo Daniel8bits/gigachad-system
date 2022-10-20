@@ -1,4 +1,8 @@
 
 .ui-popover {
-  
+  position: absolute;
+
+  &:not(.open) {
+    display: none;
+  }
 }

@@ -288,7 +288,7 @@ const UITextField: React.ForwardRefRenderFunction<HTMLInputElement, UITextFieldP
     }
 
     return (
-        <div className={`ui-textfield ${props.className ?? ''} ${props.template ?? ''}`}>
+        <div className={`ui-textfield ${props.className ?? ''} ${props.template ?? ''} ${props.icon ? 'hasIcon' : ''}`}>
           {props.label && 
             <label 
             htmlFor={props.id} 

@@ -594,7 +594,7 @@ const UIDatePicker: React.FC<UIDatePickerProps> = (props) => {
   } = props;
   const [, updatePopOver] = usePopOver(popOverId)
                                     
-  const handleMouseUp = useCallback((e: React.MouseEvent) => {
+  const handleMouseUp = useCallback((e: React.MouseEvent) => {console.log('mouse up')
     updatePopOver({ open: true })
     if (onMouseUp) onMouseUp(e)
   }, [onMouseUp])

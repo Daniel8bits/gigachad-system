@@ -21,12 +21,12 @@ const UIPopOver: React.FC<UIPopOverProps> = (props) => {
 
     const dispatch = useDispatch()
     const popOver = useSelector(state => state.popOver.popOver)
-    const open = useMemo<boolean>((): boolean => {
+    const open = ((): boolean => {
       if(props.id) {
         return (popOver[props.id] ? popOver[props.id].open : false) as boolean
       }
       return props.open ?? false
-    }, [props.id, props.open, popOver])
+    })()
 
     const ref = useRef<HTMLDivElement>(null);
     const event = useRef<OnClickOutsideCallback>(null);
@@ -55,7 +55,7 @@ const UIPopOver: React.FC<UIPopOverProps> = (props) => {
       }))
     }, []);
 
-    useEffect(() => {
+    useEffect(() => {console.log(open)
         if(props.id && open && ref.current) {
 
           const e = event as OnClickOutsideCallbackRefObject
@@ -144,7 +144,7 @@ const UIPopOver: React.FC<UIPopOverProps> = (props) => {
               width: `${getWidth()}px`,
               height: `${props.height}px`,
           }}
-          className={`ui-popover ${props.template ?? ''} ${open && 'open'} ${props.className ?? ''}`}
+          className={`ui-popover ${props.template ?? ''} ${open ? 'open' : ''} ${props.className ?? ''}`}
         >
            <UIScroll maxHeight={props.height-16}>
                 {props.children}
