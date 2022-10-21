@@ -17,6 +17,7 @@ import {
   FaCaretLeft,
   FaCaretRight
 } from 'react-icons/fa'
+import UIScroll from '@ui/scroll/UIScroll';
 
 export class UIDate {
   
@@ -377,21 +378,22 @@ const UIDatePickerMonths: React.FC<UIDatePickerMonthsProps> = (props) => {
   }
   return (
     <>
-      <UIButton
-        template="secondary"
-        className="w-48 block mx-2 mb-3"
-        onAction={() => props.setPanel(UIDatePickerPanels.YEARS)}
-      >
-        {String(activeMonth.getYear())}
-      </UIButton>
-      <UIButton
+      <div className="year-control">
+        <UIButton
+          template="secondary"
+          onAction={() => props.setPanel(UIDatePickerPanels.YEARS)}
+        >
+          {String(activeMonth.getYear())}
+        </UIButton>
+      </div>
+      {/*<UIButton
         className="mb-2 p-2"
         onAction={decrementMonth}
       >
         <FaCaretUp  />
-      </UIButton>
-      <div>
-        {rangeOfMonths.map((value, key) => {
+      </UIButton>*/}
+      <UIScroll className='months' maxHeight={235}>
+        {/*rangeOfMonths.map((value, key) => {
           const monthNameList = [
             'Janeiro',
             'Fevereiro',
@@ -416,14 +418,41 @@ const UIDatePickerMonths: React.FC<UIDatePickerMonthsProps> = (props) => {
               {monthNameList[value]}
             </button>
           )
-        })}
-      </div>
-      <UIButton
+        })*/}
+        {
+          [
+            'Janeiro',
+            'Fevereiro',
+            'Março',
+            'Abril',
+            'Maio',
+            'Junho',
+            'Julho',
+            'Agosto',
+            'Setembro',
+            'Outubro',
+            'Novembro',
+            'Dezembro'
+          ].map((value, key) => {
+            return (
+              <button
+                type='button'
+                key={value}
+                className={`${key === activeMonth.getMonth() && 'active'}`}
+                onClick={() => updateDate(key)}
+              >
+                {value}
+              </button>
+            )
+          })
+        }
+      </UIScroll>
+      {/*<UIButton
         className="mb-2 p-2"
         onAction={incrementMonth}
       >
         <FaCaretDown  />
-      </UIButton>
+      </UIButton>*/}
     </>
   );
 };
@@ -431,6 +460,7 @@ const UIDatePickerMonths: React.FC<UIDatePickerMonthsProps> = (props) => {
                 
                 
 interface UIDatePickerWeeksProps extends UIDatePickerPanelProps {
+  ratio: number
 }
                 
 const UIDatePickerWeeks: React.FC<UIDatePickerWeeksProps> = (props) => {
@@ -513,7 +543,7 @@ const UIDatePickerWeeks: React.FC<UIDatePickerWeeksProps> = (props) => {
   }
   return (
     <>
-      <div className="flex justify-center items-center mb-3">
+      <div className="month-control">
         <UIButton
           className="mb-2 p-2"
           onAction={decrementMonth}
@@ -533,11 +563,14 @@ const UIDatePickerWeeks: React.FC<UIDatePickerWeeksProps> = (props) => {
           <FaCaretRight  />
         </UIButton>
       </div>
-      <div
-        className=" flex w-full bg-white text-black">
+      <div className="days-of-week">
         {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((value, key) => {
           return (
-            <div key={`${value}${key}`} className="font-bebas grow">
+            <div 
+              key={`${value}${key}`} 
+              className="font-bebas grow"
+              style={{width: props.ratio/7}}
+            >
               {value}
             </div>
           )
@@ -545,7 +578,7 @@ const UIDatePickerWeeks: React.FC<UIDatePickerWeeksProps> = (props) => {
       </div>
       {monthDays.map((week, weekKey) => {
         return (
-          <div key={['D0', 'S1', 'T2', 'Q3', 'Q4', 'S5', 'S6'][weekKey]}>
+          <div className="week" key={['D0', 'S1', 'T2', 'Q3', 'Q4', 'S5', 'S6'][weekKey]}>
             {week.map((day, dayKey) => {
               let value = day
               if (day < 0) {
@@ -558,8 +591,9 @@ const UIDatePickerWeeks: React.FC<UIDatePickerWeeksProps> = (props) => {
                 <button
                   type='button'
                   key={day}
-                  className={`${currentMonth.getDay() === day && 'active'}`}
+                  className={`${currentMonth.getDay() === day ? 'active' : ''} ${day < 0 || day > 100 ? 'from-other-month' : ''}`}
                   onClick={() => updateDate(weekKey, dayKey)}
+                  style={{width: props.ratio/7}}
                 >
                   {value}
                 </button>
@@ -580,8 +614,13 @@ interface UIDatePickerProps extends Override<UITextFieldProps, {
 }
                                 
 const UIDatePicker: React.FC<UIDatePickerProps> = (props) => {
+  const POPOVER_SIZE = {
+    WIDTH: 270,
+    HEIGHT: 315
+  }
   const [panel, setPanel] = useState<UIDatePickerPanels>(UIDatePickerPanels.WEEKS)
   const inputRef = useRef<HTMLInputElement>(null)
+  const iconButtonRef = useRef<HTMLDivElement>(null)
   const popOverId = `${props.id.trim()}__popOver`
   const {
     onAction,
@@ -595,7 +634,6 @@ const UIDatePicker: React.FC<UIDatePickerProps> = (props) => {
   const [, updatePopOver] = usePopOver(popOverId)
                                     
   const handleMouseUp = useCallback((e: React.MouseEvent) => {console.log('mouse up')
-    updatePopOver({ open: true })
     if (onMouseUp) onMouseUp(e)
   }, [onMouseUp])
                                     
@@ -619,7 +657,7 @@ const UIDatePicker: React.FC<UIDatePickerProps> = (props) => {
   const currentPanel = useMemo<JSX.Element>(() => {
     const panelProps = {
       value: props.value,
-      ratio: 200,
+      ratio: POPOVER_SIZE.WIDTH,
       setPanel,
       setDate: onAction
     }
@@ -650,9 +688,9 @@ const UIDatePicker: React.FC<UIDatePickerProps> = (props) => {
       <UIPopOver
         id={popOverId}
         template="primary"
-        width={220}
-        height={297}
-        anchor={inputRef as React.MutableRefObject<HTMLInputElement>}
+        width={POPOVER_SIZE.WIDTH}
+        height={POPOVER_SIZE.HEIGHT}
+        anchor={iconButtonRef as React.MutableRefObject<HTMLDivElement>}
         className="text-white p-1 font-bebas"
       >
       {currentPanel}
@@ -662,8 +700,11 @@ const UIDatePicker: React.FC<UIDatePickerProps> = (props) => {
         ref={inputRef}
         mask="{dd/dd/dddd}"
         icon={FaCalendarAlt}
-        onMouseUp={handleMouseUp}
+        iconPosition='right'
         onKeyDown={actionPerformed}
+        onMouseUp={handleMouseUp}
+        onClickIcon={() => updatePopOver({ open: true })}
+        iconContainerRef={iconButtonRef}
       />
     </div>
   );

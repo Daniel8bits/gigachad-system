@@ -2,32 +2,61 @@
 
 .ui-textfield {
 
-  @include flex();
+  &.default {
+    @include flex();
 
-  &:not(.hasIcon) > * {
-    width: 100%;
-  }
-
-  > label {
-    color: $color-green;
-  }
-
-  > input {
-    @include theme($color-greenish-gray);
-    @include border();
-    @include padding();
-  }
-
-  &.hasIcon {
     > label {
+      color: $color-green;
+    }
+
+    > * {
       width: 100%;
     }
-    > svg {
-      width: auto;
-      @include margin();
+
+    &:not(.hasIcon) {
+      > input {
+        @include theme($color-greenish-gray);
+        @include border();
+        @include padding();
+      }
     }
-    > input {
-      flex-grow: 1;
+
+    &.hasIcon {
+      > label {
+        width: 100%;
+      }
+
+      > div {
+
+        @include flex();
+        @include theme($color-greenish-gray);
+        @include border();
+
+        &.icon-as-button {
+          @include transition();
+        }
+
+        &.icon-as-button:has(> input:not(:hover)):hover {
+          @include theme($color-greenish-black);
+          cursor: pointer;
+        }
+
+        > svg {
+          margin: 0 .5rem;
+        }
+
+        > input {
+          @include padding();
+          @include justContent();
+          @include theme($color-greenish-gray);
+          border-right: 1px solid $color-green;
+          border-radius: 4px 0 0 4px;
+
+          flex-grow: 1;
+        }
+      }
     }
   }
+
+  
 }

@@ -2,7 +2,8 @@
 .ui-popover {
   position: absolute;
 
-  &:not(.open) {
-    display: none;
-  }
+  @include theme($color-greenish-gray);
+  @include border();
+
+  @include fadeInOut('open', true);
 }

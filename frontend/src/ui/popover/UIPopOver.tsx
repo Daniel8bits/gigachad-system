@@ -12,6 +12,7 @@ interface UIPopOverProps {
     anchor: React.MutableRefObject<HTMLElement>
     open?: boolean;
     position?: 'top' | 'bottom' | 'left' | 'right'
+    scroll?: boolean
     template?: string
     className?: string
     children?: any
@@ -146,9 +147,11 @@ const UIPopOver: React.FC<UIPopOverProps> = (props) => {
           }}
           className={`ui-popover ${props.template ?? ''} ${open ? 'open' : ''} ${props.className ?? ''}`}
         >
-           <UIScroll maxHeight={props.height-16}>
-                {props.children}
-           </UIScroll>
+            {props.scroll ? 
+                <UIScroll maxHeight={props.height-16}>
+                        {props.children}
+                </UIScroll>
+                : props.children}
         </div>
     );
 };

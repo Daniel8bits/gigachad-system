@@ -89,6 +89,7 @@ export interface UITextFieldProps {
     template?: string;
     password?: boolean;
     icon?: IconType
+    iconPosition?: 'left' | 'right'
     onFocus?: (ev: React.FocusEvent) => void;
     onBlur?: (ev: React.FocusEvent) => void;
     onChange?: (ev: React.ChangeEvent) => void;
@@ -96,6 +97,8 @@ export interface UITextFieldProps {
     onKeyDown?: (ev: React.KeyboardEvent) => void;
     onMouseUp?: (ev: React.MouseEvent) => void;
     onAction?: (value: string | ((oldValue: string) => string)) => void
+    onClickIcon?: () => void
+    iconContainerRef?: React.RefObject<HTMLDivElement>
 }
 
 const UITextField: React.ForwardRefRenderFunction<HTMLInputElement, UITextFieldProps> = (props, externRef) => {
@@ -287,18 +290,9 @@ const UITextField: React.ForwardRefRenderFunction<HTMLInputElement, UITextFieldP
         }
     }
 
-    return (
-        <div className={`ui-textfield ${props.className ?? ''} ${props.template ?? ''} ${props.icon ? 'hasIcon' : ''}`}>
-          {props.label && 
-            <label 
-            htmlFor={props.id} 
-            className='select-none font-bebas'
-            >
-              {props.label}
-            </label>}
-          {props.icon && 
-            <props.icon />}
-          <input 
+    const input = () => {
+
+        const inputElement = <input 
             ref={inputTextRef}
             id={props.id}
             type={props.password ? 'password' : 'text'}
@@ -310,7 +304,43 @@ const UITextField: React.ForwardRefRenderFunction<HTMLInputElement, UITextFieldP
             onKeyDown={handleKeyDown}
             onChange={props.onChange}
             onMouseUp={props.onMouseUp}
-          />
+            onClick={e => e.stopPropagation()}
+        />
+
+        const handleIconClick = (e: React.MouseEvent) => {
+            props.onClickIcon?.()
+        }
+
+        if(props.icon) {
+            return (
+                <div 
+                    ref={props.iconContainerRef}
+                    className={`${props.onClickIcon ? 'icon-as-button' : ''}`} 
+                    onClick={handleIconClick}
+                >
+                    {(!props.iconPosition || props.iconPosition === 'left') &&
+                        <props.icon />}
+                    {inputElement}
+                    {props.iconPosition === 'right' &&
+                        <props.icon />}
+                </div>
+            )
+        }
+
+        return inputElement;
+
+    }
+
+    return (
+        <div className={`ui-textfield ${props.className ?? ''} ${props.template ?? 'default'} ${props.icon && props.iconPosition ? 'hasIcon' : ''}`}>
+          {props.label && 
+            <label 
+                htmlFor={props.id} 
+                className='select-none font-bebas'
+            >
+              {props.label}
+            </label>}
+          {input()}
         </div>
     );
 };

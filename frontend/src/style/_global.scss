@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=K2D:wght@400;700&display=swap');
+
 $color-green: #7BFF65;
 $color-dark-green: #34A522;
 $color-red: #FF6565;
@@ -8,4 +10,5 @@ $color-greenish-gray: #28292B;
 * {
   padding: 0;
   margin: 0;
+  font-family: K2D;
 }

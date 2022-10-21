@@ -1,3 +1,4 @@
+$standard-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
 
 @mixin theme($color, $hover:false) {
   background-color: $color;
@@ -6,8 +7,7 @@
     $color == $color-red {
       color: $color-greenish-black;
       @if $hover {
-        transition: all .25s;
-        transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+        @include transition();
         &:hover {
           @if $color == $color-green {
             background-color: $color-dark-green;
@@ -23,6 +23,51 @@
     $color == $color-greenish-gray {
       color: white;
     }
+}
+
+@mixin transition() {
+  transition: all .25s;
+  transition-timing-function: $standard-timing-function;
+}
+
+@mixin animation($animationName) {
+  animation-name: $animationName;
+  animation-duration: 1s;
+  animation-timing-function: $standard-timing-function;
+  animation-fill-mode: forwards;
+}
+
+@mixin reverseAnimation($animationName) {
+  @include animation($animationName);
+  animation-direction: reverse;
+}
+
+@mixin fadeIn($className, $includeTrasition:false) {
+  .#{$className} {
+    @if $includeTrasition {@include transition();}
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@mixin fadeOut($className, $includeTrasition:false) {
+  &:not(.#{$className}) {
+    @if $includeTrasition {@include transition();}
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@mixin fadeInOut($className, $includeTrasition:false) {
+  @if $includeTrasition {@include transition();}
+  @include fadeIn($className);
+  @include fadeOut($className);
+}
+
+@mixin justContent() {
+  background-color: transparent;
+  border: none;
+  outline: none;
 }
 
 @mixin flex($horizontal:center, $vertical:center, $wrap:wrap) {

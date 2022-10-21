@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import {Provider} from 'react-redux'
 import RootStore from '@store/Root.store'
 import App from './App';
+import 'simplebar-react/dist/simplebar.min.css';
 import '@style/main.scss';
 
 const root = ReactDOM.createRoot(
