@@ -251,11 +251,12 @@ interface UIDatePickerYears extends UIDatePickerPanelProps {
 }
     
 const UIDatePickerYears: React.FC<UIDatePickerYears> = (props) => {
+  const YEARS_RANGE = 28
   const activeYear = props.value ?? UIDate.now()
   const [yearPivot, setYearPivot] = useState<number>(new Date().getFullYear());
   const rangeOfYears: number[] = useMemo<number[]>(() => {
     const range = []
-    for (let i = yearPivot - 15; i <= yearPivot; i++) {
+    for (let i = yearPivot - (YEARS_RANGE-1); i <= yearPivot; i++) {
       range.push(i)
     }
     return range
@@ -263,7 +264,7 @@ const UIDatePickerYears: React.FC<UIDatePickerYears> = (props) => {
       
   const decrementYear = useCallback(() => {
     setYearPivot(yearPivot => {
-      const newYear = yearPivot - 16
+      const newYear = yearPivot - YEARS_RANGE
       if (yearPivot >= 1915) {
         return newYear;
       }
@@ -274,7 +275,7 @@ const UIDatePickerYears: React.FC<UIDatePickerYears> = (props) => {
   const incrementYear = useCallback(() => {
     setYearPivot(yearPivot => {
       const maxYear = new Date().getFullYear()
-      const newYear = yearPivot + 16
+      const newYear = yearPivot + YEARS_RANGE
       if (newYear <= maxYear) {
         return newYear;
       }
@@ -290,39 +291,46 @@ const UIDatePickerYears: React.FC<UIDatePickerYears> = (props) => {
     ))
     props.setPanel(UIDatePickerPanels.MONTHS)
   }
-  let counter = 0
+
   return (
-    <div className='flex flex-col justify-center'>
-      <UIButton
-        className="mb-2 p-2"
-        onAction={decrementYear}
-      >
-        <FaCaretUp  />
-      </UIButton>
-      <div
-        style={{ height: `${props.ratio}px` }}
-        className="flex flex-wrap justify-center items-center"
-      >
-        {rangeOfYears.map((value, key) => {
-          counter++
+    <div className='years-panel'>
+      <div className='years-range-control'>
+        <UIButton
+          className="mb-2 p-2"
+          onAction={decrementYear}
+        >
+          <FaCaretLeft  />
+        </UIButton>
+        <UIButton
+          className="mb-2 p-2"
+          onAction={incrementYear}
+        >
+          <FaCaretRight  />
+        </UIButton>
+      </div>
+      <div className="years">
+        {[...Array(YEARS_RANGE/4)].map((value, rowKey) => {
           return (
-            <button
-              type='button'
-              key={value}
-              className={`${value === activeYear.getYear() && 'active'}`}
-              onClick={() => updateDate(value)}
-            >
-              {value}
-            </button>
+            <div className='year-row'>
+              {[...Array(4)].map((value, columnKey) => {
+                const year = rangeOfYears[rowKey*4+columnKey]
+                return (
+                  <button
+                    type='button'
+                    key={year}
+                    className={`${year === activeYear.getYear() && 'active'}`}
+                    onClick={() => updateDate(year)}
+                    style={{width: props.ratio/4}}
+                  >
+                    {year}
+                  </button>
+                )
+              })}
+            </div>
           )
         })}
+        
       </div>
-      <UIButton
-        className="mb-2 p-2"
-        onAction={incrementYear}
-      >
-        <FaCaretDown  />
-      </UIButton>
     </div>
   );
 };

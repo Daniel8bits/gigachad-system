@@ -66,8 +66,7 @@ $standard-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
 
 @mixin justContent() {
   background-color: transparent;
-  border: none;
-  outline: none;
+  @include noBorder();
 }
 
 @mixin flex($horizontal:center, $vertical:center, $wrap:wrap) {
@@ -90,14 +89,18 @@ $standard-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 @mixin border($radius: 4px) {
-  border: none;
   border-radius: $radius;
-  outline: none;
+  @include noBorder();
   @include shadow();
 }
 
 @mixin border-rounded() {
   @include border(9999px);
+}
+
+@mixin noBorder() {
+  border: none;
+  outline: none;
 }
 
 @mixin padding() {

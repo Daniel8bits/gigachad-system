@@ -106,6 +106,58 @@
       }
     }
 
+    > .years-panel {
+
+      > .years-range-control {
+        @include flex(space-between);
+        @include padding();
+      }
+
+      > .years {
+
+        height: auto;
+        border-top: 1px solid $color-green;
+        border-bottom: 1px solid $color-green;
+
+        > .year-row {
+
+          > button {
+            padding: $measure;
+            cursor: pointer;
+            @include noBorder();
+
+            &:hover {
+              background-color: $color-dark-green;
+              color: #000a;
+            }
+      
+            &.active {
+              @include theme($color-green);
+            }
+          }
+
+          &:nth-child(odd) {
+            > button:nth-child(odd):not(.active, :hover) {
+              @include theme($color-greenish-black)
+            }
+            > button:nth-child(even):not(.active, :hover) {
+              @include theme($color-greenish-gray)
+            }
+          }
+      
+          &:nth-child(even) {
+            > button:nth-child(odd):not(.active, :hover) {
+              @include theme($color-greenish-gray)
+            }
+            > button:nth-child(even):not(.active, :hover) {
+              @include theme($color-greenish-black)
+            }
+          }
+        }
+
+      }
+    }
+
   }
 
 
