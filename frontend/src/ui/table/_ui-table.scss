@@ -1,0 +1,66 @@
+.ui-table {
+    width: 100%;
+
+    @include theme($color-greenish-black);
+    @include border();
+    border-collapse: collapse;
+
+    >thead {
+        height:50px;
+        >tr>th {
+            color:#fff;
+            @include justContent();
+            @include padding();
+            border-bottom: 1px solid $color-green;
+            
+        }
+    }
+
+    >tbody {
+        >tr>td {
+            color:#dedede;
+            text-align:center;
+            @include justContent();
+            padding: 1rem;
+        }
+
+        >tr:nth-child(odd)>td {
+            background-color: $color-greenish-gray;
+        }
+    }
+
+    >tfoot {
+
+        height:50px;
+        >tr>td {
+            border-top: 1px solid $color-green;
+            color: $color-green;
+            @include padding();
+
+            >.pagination {
+                display: flex;
+                justify-content: flex-end;
+
+                >svg {
+                    font-size:26px;
+                    margin:0 0.5rem;
+                }
+
+                >span {
+                    font-size:14px;
+                    @include flex();
+                    margin-left: 0.5rem;
+                }
+
+                >.ui-textfield>input {
+                    width: 24px;
+                    box-shadow: none;
+                    padding:0.3rem;
+                    color: $color-green;
+                    text-align: center;
+                }
+            }
+
+        }
+    }
+}

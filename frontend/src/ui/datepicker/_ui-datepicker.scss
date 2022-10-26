@@ -125,6 +125,7 @@
             padding: $measure;
             cursor: pointer;
             @include noBorder();
+            @include transition();
 
             &:hover {
               background-color: $color-dark-green;

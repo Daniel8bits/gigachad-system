@@ -22,6 +22,17 @@ $standard-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
     $color == $color-greenish-black or
     $color == $color-greenish-gray {
       color: white;
+      @if $hover {
+        @include transition();
+        &:hover {
+          @if $color == $color-greenish-black {
+            background-color: $color-greenish-gray;
+          }
+          @else if $color == $color-greenish-gray {
+            background-color: $color-greenish-light-gray;
+          }
+        }
+      }
     }
 }
 

@@ -7,9 +7,9 @@ import UIScroll from '@ui/scroll/UIScroll';
 
 interface UIPopOverProps {
     readonly id?: string
-    readonly width: number | 'inherit' | 'anchor'
-    readonly height: number
-    anchor: React.MutableRefObject<HTMLElement>
+    width: number | 'inherit' | 'anchor'
+    height: number | 'auto'
+    anchor: React.MutableRefObject<HTMLElement|null>
     open?: boolean;
     position?: 'top' | 'bottom' | 'left' | 'right'
     scroll?: boolean
@@ -56,7 +56,7 @@ const UIPopOver: React.FC<UIPopOverProps> = (props) => {
       }))
     }, []);
 
-    useEffect(() => {console.log(open)
+    useEffect(() => {
         if(props.id && open && ref.current) {
 
           const e = event as OnClickOutsideCallbackRefObject
@@ -83,7 +83,7 @@ const UIPopOver: React.FC<UIPopOverProps> = (props) => {
             }
         }
         return props.width as number        
-    }, [])
+    }, [props.width, props.anchor])
 
     const getX = useCallback((): number => {
         if(!props.anchor.current) {
@@ -110,7 +110,7 @@ const UIPopOver: React.FC<UIPopOverProps> = (props) => {
             return anchorX2 + gap/2
         }
         return anchorX1 - gap/2 - popWidth
-    }, [props.anchor])
+    }, [props.anchor, getWidth, props.position])
 
     const getY = useCallback((): number => {
         if(!props.anchor.current) {
@@ -119,7 +119,7 @@ const UIPopOver: React.FC<UIPopOverProps> = (props) => {
         const gap = 8
         const anchorY1 = props.anchor.current.offsetTop
         const anchorY2 = anchorY1 + props.anchor.current.offsetHeight
-        const popHeight = props.height
+        const popHeight = props.height === 'auto' ? 0 : props.height
         if(props.position) {
             switch(props.position) {
                 case 'top':
@@ -134,7 +134,7 @@ const UIPopOver: React.FC<UIPopOverProps> = (props) => {
             return anchorY1
         }
         return anchorY2 - popHeight
-    }, [props.anchor])
+    }, [props.anchor, props.height, props.position])
 
     return (
         <div 
@@ -143,11 +143,11 @@ const UIPopOver: React.FC<UIPopOverProps> = (props) => {
               top: `${getY()}px`,
               left: `${getX()}px`,
               width: `${getWidth()}px`,
-              height: `${props.height}px`,
+              height: props.height === 'auto' ? props.height : `${props.height}px`
           }}
           className={`ui-popover ${props.template ?? ''} ${open ? 'open' : ''} ${props.className ?? ''}`}
         >
-            {props.scroll ? 
+            {props.scroll && props.height !== 'auto' ? 
                 <UIScroll maxHeight={props.height-16}>
                         {props.children}
                 </UIScroll>
