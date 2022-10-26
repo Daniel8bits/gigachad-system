@@ -32,12 +32,17 @@ export type ModelAttributes<M extends Model = Model, TAttributes = any> = {
 export type Include<M extends Model = Model> = OptionsWhere<M> & {
     model: ModelStatic<M>
     on: string
-    optional?: boolean
+    required?: boolean
 }
 
 export type AttributesWhere<A> = { include: A, exclude?: undefined } | { exclude: A, include?: undefined } | A & { include?: undefined, exclude?: undefined };
 
-export type Where<A> = { or: Where<A> } | { and: Where<A> } | A
+export type Where<A> = { or: Where<A> } | { and: Where<A> } | A /*| {
+    [key in keyof A]: {
+        or?: A[],
+        and?: A[]
+    }
+}*/
 
 export type OptionsWhere<M extends Model, A = Attributes<M>> = {
     where?: Where<A>
@@ -64,8 +69,11 @@ abstract class Model<A extends {} = any>{
         // const attributes = MetaData.get(this, "attributes") as Record<string, AttributeConfig>;
         for (const key in values) {
             const [table, field] = key.split(".");
-            if (field == undefined || table === this.constructor.name) {
-                const value = Model.decode(field ?? table, values[key], this.constructor.name);
+            if (field == undefined) {
+                const value = Model.decode(table, values[key], this.constructor.name);
+                this._values[table] = value
+            } else if (table === this.constructor.name) {
+                const value = Model.decode(field, values[key], this.constructor.name);
                 this._values[field] = value
             } else {
                 const value = Model.decode(field, values[key], table);
@@ -82,16 +90,16 @@ abstract class Model<A extends {} = any>{
     static decode(key: string, value: any, target: any): any {
         if (value == null) return null;
         const attribute = MetaData.get(target, "attributes")[key.toLocaleLowerCase()] as AttributeConfig;
+        if (!attribute) throw new Error("Column " + key + " not exists");
         switch (attribute.type) {
             case "CPF":
                 return value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
             case "PHONE":
-                // Tem q fazer ainda
                 return value.replace(/(\d{2})(\d{2})(\d{5})(\d{4})/, "+$1 ($2) $3-$4");
             case "DATE":
                 return new Date(value);
-            case "JSON":
-                return JSON.parse(value);
+           // case "JSON":
+            //    return JSON.parse(value);
             case "INT":
                 return parseInt(value);
             case "FLOAT":
@@ -99,6 +107,7 @@ abstract class Model<A extends {} = any>{
             case "ENUM":
                 return attribute.options.includes(value) ? value : "none";
         }
+
         return value;
     }
 
@@ -106,17 +115,19 @@ abstract class Model<A extends {} = any>{
     static encode(key: string, value: any, target?: any): any {
         if (value == null) return null;
         const attribute = MetaData.get(target, "attributes")[key.toLocaleLowerCase()] as AttributeConfig;
+        if (!attribute) throw new Error("Column " + key + " not exists");
+
         switch (attribute.type) {
             case "CPF":
                 return value.replace(/(\d{3}).(\d{3}).(\d{3})-(\d{2})/, "$1$2$3$4");
             case "PHONE":
-                // Tem q fazer ainda (55) 98428-4632  -> 55984284632
                 return value.replace(/\+(\d{2}) \((\d{2})\) (\d{5})-(\d{4})/, "$1$2$3$4");
             case "DATE":
                 return new Date(value).toDateString();
             case "JSON":
                 return JSON.stringify(value);
         }
+
         return value;
     }
 

@@ -14,14 +14,13 @@ export function enumerable(value: boolean) {
 
 export function DataType(type: AttributeType, options?: any) {
     return function (target: Model, propertyKey: string) {
-        propertyKey = propertyKey.toLocaleLowerCase();
         if(!options?.virtual){
+            propertyKey = propertyKey.toLocaleLowerCase();
             // Salva o metadado
             const attributes = MetaData.get(target, "attributes") ?? {};
             attributes[propertyKey] = { type, options };
             MetaData.add(target, "attributes", attributes);
         }
-
         // Define o getter e setter
         Object.defineProperty(target, propertyKey, {
             get() { return this._values[propertyKey] },

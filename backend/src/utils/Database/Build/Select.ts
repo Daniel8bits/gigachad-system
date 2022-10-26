@@ -19,6 +19,8 @@ class Select<M extends Model> extends Build<M>{
         for (const include of includes) {
             this._where.push(this.buildWhere(include.where, include.model.tableName))
         }
+
+        this._where = this._where.filter((value) => value != "");
     }
 
     buildWhere(wheres: Where<any>, tableName: string, or: boolean = false): string {
@@ -76,13 +78,13 @@ class Select<M extends Model> extends Build<M>{
         const includes = this.options.include ?? [];
         const sql: string[] = [];
         for (const include of includes) {
-            sql.push((include.optional ? "LEFT" : "") + " JOIN " + include.model.tableName + " ON " + include.on);
+            sql.push((include.required ? "" : "LEFT") + " JOIN " + include.model.tableName + " ON " + include.on);
         }
         return sql.join(" ");//"INNER LEFT JOIN ON ...";
     }
 
     get where(): string {
-        if (this._where.length > 1) {
+        if (this._where.length >= 1) {
             return "WHERE " + this._where.join("");
         }
         return "";
@@ -138,7 +140,7 @@ class Select<M extends Model> extends Build<M>{
         sql.push(this.groupby)
 
         sql.push(this.limit)
-        console.log(sql.join(" "))
+        //console.log(sql.join(" "))
         return sql.join(" ");
     }
 

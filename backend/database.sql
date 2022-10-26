@@ -138,7 +138,7 @@ CREATE TYPE typeExpense AS ENUM (
 );
 CREATE TABLE Expense(
     id SERIAL PRIMARY KEY NOT NULL,
-    qrCodeEquipment CHARACTER VARYING(40) NOT NULL,
+    qrCodeEquipment CHARACTER VARYING(40),
     date DATE NOT NULL,
     totalValue real NOT NULL,
     description TEXT NOT NULL,

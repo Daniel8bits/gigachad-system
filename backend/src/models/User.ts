@@ -2,14 +2,17 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import Database from '../utils/Database/Database';
 import Model, { DataType, OptionsWhere, PrimarKey, TableName, Where } from "../utils/Database/Model";
-
+import Administrative from './Administrative';
+import Customer from './Customer';
+import Trainer from './Trainer';
 
 export enum UserType {
     user,
     customer,
     employee,
+    attendant,
     manager,
-    financial,
+    financer,
     trainer
 }
 
@@ -35,6 +38,12 @@ class Users<A extends IUser = IUser> extends Model<A> {
     @DataType("PHONE")
     declare phone: string;
     declare type: UserType;
+    @DataType("CLASS", { virtual: true })
+    declare Administrative: Administrative;
+    @DataType("CLASS", { virtual: true })
+    declare Customer: Customer;
+    @DataType("CLASS", { virtual: true })
+    declare Trainer: Trainer;
 
     async checkPassword(password: string) {
         return await bcrypt.compare(password, this.password);

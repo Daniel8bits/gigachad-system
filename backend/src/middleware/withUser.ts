@@ -3,8 +3,7 @@ import { UserType } from "models/User";
 
 
 const withUser = (...types: UserType[]): Express.Handler => (req, res, next) => {
-    next();
-    return;
+    console.log("withUser")
     if (req.user) {
         console.log("WithUser",types);
         if (types.includes(req.user.type)) {

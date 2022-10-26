@@ -1,5 +1,5 @@
 import Model from "../utils/Database/Model";
-import { DataType } from "utils/Database/DataType";
+import { DataType } from "../utils/Database/DataType";
 
 export type ICustomer = {
     cpf: string

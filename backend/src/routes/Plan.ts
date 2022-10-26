@@ -32,8 +32,8 @@ class Plan extends Route {
         }
     }
 
-    @withAuth
     @withUser(UserType.manager)
+    @withAuth
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
         try {
@@ -46,8 +46,8 @@ class Plan extends Route {
         }
     }
 
-    @withAuth
     @withUser(UserType.manager)
+    @withAuth
     @Request("POST")
     @Path("/")
     async create(req: Express.Request, res: Express.Response) {
@@ -66,8 +66,8 @@ class Plan extends Route {
         }
     }
 
-    @withAuth
     @withUser(UserType.manager)
+    @withAuth
     @Path("/:id")
     async findOne(req: Express.Request, res: Express.Response) {
         try {
@@ -87,8 +87,8 @@ class Plan extends Route {
         }
     }
 
-    @withAuth
     @withUser(UserType.manager)
+    @withAuth
     @Request("PUT")
     @Path("/:id")
     async update(req: Express.Request, res: Express.Response) {
@@ -110,8 +110,8 @@ class Plan extends Route {
         }
     }
 
-    @withAuth
     @withUser(UserType.manager)
+    @withAuth
     @Request("DELETE")
     @Path("/:id")
     async delete(req: Express.Request, res: Express.Response) {

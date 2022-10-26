@@ -3,7 +3,7 @@ import { DataType } from "../utils/Database/DataType";
 
 export type IAdministrative = {
     cpf: string
-    role: string
+    role: 'financer' | 'attendant' | 'manager'
 }
 
 class Administrative extends Model<IAdministrative>{

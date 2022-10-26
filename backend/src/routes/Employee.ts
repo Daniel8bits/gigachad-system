@@ -12,8 +12,8 @@ class Employee extends Route {
     static rules: Rules = {
     };
 
-    @withAuth
     @withUser(UserType.manager)
+    @withAuth
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
         try {
@@ -28,13 +28,11 @@ class Employee extends Route {
                     },
                     {
                         model: Administrative,
-                        optional: true,
                         on: "administrative.cpf=users.cpf"
                     },
                     {
                         model: Trainer,
-                        on: "trainer.cpf=users.cpf",
-                        optional: true,
+                        on: "trainer.cpf=users.cpf"
                     }
                 ]
             })
@@ -45,8 +43,8 @@ class Employee extends Route {
         }
     }
 
-    @withAuth
     @withUser(UserType.manager)
+    @withAuth
     @Request("POST")
     @Path("/")
     async create(req: Express.Request, res: Express.Response) {
@@ -96,8 +94,8 @@ class Employee extends Route {
         }
     }
 
-    @withAuth
     @withUser(UserType.manager)
+    @withAuth
     @Path("/:cpf")
     async findOne(req: Express.Request, res: Express.Response) {
         try {
@@ -116,13 +114,13 @@ class Employee extends Route {
                     },
                     {
                         model: Administrative,
-                        optional: true,
+                        //optional: true,
                         on: "administrative.cpf=users.cpf"
                     },
                     {
                         model: Trainer,
                         on: "trainer.cpf=users.cpf",
-                        optional: true,
+                       // optional: true,
                     }
                 ]
             })
@@ -136,8 +134,8 @@ class Employee extends Route {
         }
     }
 
-    @withAuth
     @withUser(UserType.manager)
+    @withAuth
     @Request("PUT")
     @Path("/:cpf")
     async update(req: Express.Request, res: Express.Response) {
@@ -175,8 +173,8 @@ class Employee extends Route {
         }
     }
 
-    @withAuth
     @withUser(UserType.manager)
+    @withAuth
     @Request("DELETE")
     @Path("/:cpf")
     async delete(req: Express.Request, res: Express.Response) {

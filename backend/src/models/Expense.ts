@@ -21,7 +21,7 @@ class Expense extends Model<IExpense>{
     @DataType("NUMBER")
     declare id: number
     @DataType("STRING")
-    declare qrCodeEquipmen: string
+    declare qrCodeEquipment: string
     @DataType("DATE")
     declare date: Date
     @DataType("NUMBER")
@@ -29,7 +29,7 @@ class Expense extends Model<IExpense>{
     @DataType("STRING")
     declare description: string
     @DataType("ENUM", ["equipamentBuy", "equipamentMaintenance", "billPayment", "employeePayment", "others"])
-    declare typeExpense: TypeExpense
+    declare type: TypeExpense
 
     validate<T extends any>(field: string, value: T): T {
         return value;
