@@ -7,7 +7,10 @@ import Employee from "./routes/Employee";
 import Expense from './routes/Expense'
 import Equipment from "./routes/Equipment";
 import Exercise from "./routes/Exercise";
-import Tutorial from './routes/Tutorial'
+import Tutorial from './routes/Tutorial';
+import Customer from './routes/Customer';
+import Invoice from './routes/Invoice';
+import CreditCard from './routes/CreditCard';
 
 const app = new Express();
 
@@ -19,5 +22,8 @@ app.use("/expense", Expense)
 app.use("/equipment", Equipment)
 app.use("/exercise", Exercise)
 app.use("/tutorial",Tutorial)
+app.use("/customer",Customer)
+app.use("/invoice",Invoice)
+app.use("/creditcard",CreditCard)
 
 export default app;

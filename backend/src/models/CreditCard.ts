@@ -3,7 +3,7 @@ import Model, { DataType } from "../utils/Database/Model";
 export type ICreditCard = {
     numbers: number
     holder: string
-    expirationDate: Date
+    expirationDate: string
     cvv: string
 }
 
@@ -12,8 +12,8 @@ class CreditCard extends Model<ICreditCard>{
     declare numbers: number
     @DataType("STRING")
     declare holder: string
-    @DataType("DATE")
-    declare expirationDate: Date
+    @DataType("STRING")
+    declare expirationDate: string
     @DataType("STRING")
     declare cvv: string
 
