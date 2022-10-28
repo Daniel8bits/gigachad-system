@@ -1,0 +1,17 @@
+
+.ui-modal {
+
+  @include flex();
+  @include screenSize();
+  background-color: $color-greenish-black-transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  &:not(.open) {
+    display: none;
+  }
+
+
+
+}

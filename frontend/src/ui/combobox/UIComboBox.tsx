@@ -89,9 +89,12 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
       updatePopOver({ open: true })
     } else if (props.allowSearch && input && !(propsItems instanceof Array)) {
       setItems(oldItems => {
-        const newItems = { ...oldItems } as {[key: string]: string[]}
+        const newItems = {} as {[key: string]: string[]}
         Object.keys(props.items).forEach((key) => {
-          newItems[key] = (propsItems[key] as string[]).filter((item: string) => item.search(input.value) > -1)
+          const newItemsValue = (propsItems[key] as string[]).filter((item: string) => item.search(input.value) > -1)
+          if(newItemsValue.length > 0) {
+            newItems[key] = newItemsValue
+          }
         })
         return newItems
       })

@@ -1,4 +1,3 @@
-$standard-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
 
 @mixin theme($color, $hover:false) {
   background-color: $color;
@@ -120,4 +119,9 @@ $standard-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
 
 @mixin margin() {
   margin: .5rem;
+}
+
+@mixin screenSize() {
+  width: 100vw;
+  height: 100vh;
 }

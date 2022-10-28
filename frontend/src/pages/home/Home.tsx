@@ -1,9 +1,13 @@
 import UIButton from '@ui/button/UIButton';
-import UIComboBox, { UIComboItemType } from '@ui/combobox/UIComboBox';
+import UIComboBox from '@ui/combobox/UIComboBox';
 import UIDatePicker, { UIDate } from '@ui/datepicker/UIDatePicker';
 import UITextField from '@ui/textfield/UITextField';
 import UITable from '@ui/table/UITable';
 import React, { useState } from 'react';
+import useModal from '@hooks/useModal';
+import UIModal from '@ui/modal/UIModal';
+import UICheckBox from '@ui/checkbox/UICheckbox';
+import MainLayout from '@layouts/mainLayout/MainLayout';
 
 interface HomeProps {
 
@@ -67,23 +71,38 @@ const values = [
 ]
 
 const Home: React.FC<HomeProps> = () => {
+
+  const MODAL_TEST = 'moral-test'
+  
+  const [modal, updateModal] = useModal(MODAL_TEST)
   const [date, setDate] = useState<UIDate>(UIDate.now());
   const [comboValue, setComboValue] = useState<string | null>(null);
+  const [check, setCheck] = useState<boolean>(false);
 
   const comboItems = {
-    mamiferos: ['cahorro', 'gato', 'rato'],
+    mamiferos: ['cachorro', 'gato', 'rato'],
     aves: ['galinha', 'aguia']
   }
 
   return (
-    <div className='pg-home'>
-      <UIButton onAction={() => console.log('oi :3')}>click me</UIButton>
-      <UITextField id='test' label='test' />
-      <UIDatePicker id='date-test' label='date-test' value={date} onAction={setDate} />
-      <UIComboBox id='combo-test' label='combo-test' items={comboItems} value={comboValue} onActionPerformed={setComboValue} allowSearch />
-      <br />
-      <UITable columns={columns} values={values} onClick={(e,item) => console.log(item)} />
-    </div>
+    <MainLayout>
+      <div className='pg-home'>
+        <UIButton onAction={() => updateModal({open: true})}>open modal</UIButton>
+        <br />
+        <UITextField id='test' label='test' />
+        <br />
+        <UIDatePicker id='date-test' label='date-test' value={date} onAction={setDate} />
+        <br />
+        <UIComboBox id='combo-test' label='combo-test' items={comboItems} value={comboValue} onActionPerformed={setComboValue} allowSearch />
+        <br />
+        <UICheckBox label='check-test' value={check} onAction={setCheck}  />
+        <br />
+        <UITable columns={columns} values={values} onClick={(e,item) => console.log(item)} />
+        <UIModal id={MODAL_TEST}  >
+          modal test
+        </UIModal>
+      </div>
+    </MainLayout>
   );
 };
 

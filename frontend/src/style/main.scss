@@ -1,5 +1,6 @@
 
 @import 'global';
+@import 'variables';
 @import 'custom';
 @import 'mixins';
 
@@ -12,3 +13,9 @@
 @import '@ui/datepicker/ui-datepicker';
 @import '@ui/combobox/ui-combobox';
 @import '@ui/table/ui-table';
+@import '@ui/modal/ui-modal';
+
+@import '@components/sideMenu/side-menu';
+@import '@components/topBar/top-bar';
+
+@import '@layouts/mainLayout/main-layout';

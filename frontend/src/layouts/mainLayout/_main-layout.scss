@@ -1,0 +1,14 @@
+.main-layout {
+  @include screenSize();
+  @include flex();
+
+  .content {
+    @include flex-left();
+    width: $screen-width;
+    height: $content-height;
+
+    main {
+     flex-grow: 1;
+    }
+  }
+}
