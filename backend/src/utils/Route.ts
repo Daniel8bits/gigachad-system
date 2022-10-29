@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { Route as Metadata } from "./MetaData";
+import MetaData from "./MetaData";
 import middleware from '../middleware';
 import { UserType } from "../models/User";
 export type MethodRequest = "GET" | "DELETE" | "PUT" | "POST"
@@ -15,23 +15,15 @@ type RouteData = {
 type RouteCallback = (current: Partial<RouteData>) => void;
 
 const RouteDecorator = (callback: RouteCallback) => (target: any, key: string, descriptor: PropertyDescriptor) => {
-    const current = Metadata.get(target, key) ?? { target, fn: descriptor.value, middlewares: [] } as Partial<RouteData>;
+    const current = MetaData.route.get(target, key) ?? { target, fn: descriptor.value, middlewares: [] } as Partial<RouteData>;
     callback(current);
-    Metadata.add(target, key, current);
+    MetaData.route.add(target, key, current);
 }
 
 export const Request = (method: MethodRequest) => RouteDecorator((current) => current.method = method);
 export const Path = (path: string) => RouteDecorator((current) => current.path = path);
 export const withAuth = RouteDecorator((current) => current.middlewares?.push(middleware.withAuth));
 export const withUser = (...types: UserType[]) => RouteDecorator((current) => current.middlewares?.push(middleware.withUser(...types)));
-/*
-return (target: any, key: string, descriptor: PropertyDescriptor) => {
-    const current = Metadata.get(target, key) ?? { target, fn: descriptor.value };
-    current.path = path;
-    Metadata.add(target, key, current);
-}
-}
-*/
 
 class Route {
 
@@ -39,7 +31,7 @@ class Route {
 
     constructor() {
         this._route = express.Router();
-        const routes = Metadata.get(this) as RouteData[];
+        const routes = MetaData.route.get(this) as RouteData[];
         for (let key in routes) {
             const options = routes[key];
             const method = (options.method ?? "GET").toLocaleLowerCase();

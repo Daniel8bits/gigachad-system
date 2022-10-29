@@ -1,15 +1,15 @@
 import Model, { DataType } from "../utils/Database/Model";
 
 export type ICreditCard = {
-    numbers: number
+    numbers: string
     holder: string
     expirationDate: string
     cvv: string
 }
 
 class CreditCard extends Model<ICreditCard>{
-    @DataType("NUMBER")
-    declare numbers: number
+    @DataType("STRING")
+    declare numbers: string
     @DataType("STRING")
     declare holder: string
     @DataType("STRING")

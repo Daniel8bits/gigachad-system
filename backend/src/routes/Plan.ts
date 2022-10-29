@@ -1,5 +1,4 @@
 import Express from 'express';
-import { Route as Metadata } from '../utils/MetaData';
 import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import PlanModel from '../models/Plan';
 import ValidData, { Rules } from '../utils/ValidData';

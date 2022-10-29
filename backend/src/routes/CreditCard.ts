@@ -17,22 +17,36 @@ class CreditCard extends Route {
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
         try {
-            const cpfCustomer = req.body.cpfCustomer
+            const cpfCustomer = req.query.cpf as string;
+            if (cpfCustomer) {
 
-            /*
-                const creditCard = await CreditCardModel.findAll({
+                const creditCard = (await CustomerCreditCardModel.findAll({
                     where: {
                         cpfCustomer
                     },
                     include: [
                         {
                             model: CustomerModel,
-                            on: "customercreditcard.numberscreditcard=creditcard.numbers",
+                            on: "customer.cpf=CustomerCreditCard.cpfCustomer",
                         },
+                        {
+                            model: CreditCardModel,
+                            on: "CustomerCreditCard.numbersCreditCard=creditcard.numbers",
+                            attributes: {
+                                exclude: ["cvv", "holder"]
+                            }
+                        }
                     ]
+                })).map((item) => {
+                    item.numberscreditcard = "";
+                    item.CreditCard.numbers = "**** **** **** " + item.CreditCard.numbers.substring(13, 17);
+                    return item;
                 })
-            */
-            //res.success(creditCard);
+
+                res.success(creditCard);
+                return;
+            }
+            res.error(400);
         } catch (e: any) {
             res.error(500, e.message);
         }

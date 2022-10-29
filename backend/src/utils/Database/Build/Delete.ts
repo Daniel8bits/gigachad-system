@@ -1,4 +1,3 @@
-import {database as MetaData} from "../../MetaData";
 import Model, { ModelStatic, OptionsWhere, Where } from "../Model";
 import Select from "./Select";
 

@@ -1,6 +1,6 @@
 import { Delete, Insert, Select, Update } from "./Build";
 import Database from "./Database";
-import { database as MetaData } from '../MetaData';
+import MetaData from '../MetaData';
 export * from './DataType';
 
 //Credits: https://github.com/sequelize/sequelize
@@ -66,7 +66,7 @@ abstract class Model<A extends {} = any>{
 
     setValues(values: A, models: Record<string, ModelStatic<any>>) {
         this._values = {};
-        // const attributes = MetaData.get(this, "attributes") as Record<string, AttributeConfig>;
+        // const attributes = Metadata.database.get(this, "attributes") as Record<string, AttributeConfig>;
         for (const key in values) {
             const [table, field] = key.split(".");
             if (field == undefined) {
@@ -89,7 +89,7 @@ abstract class Model<A extends {} = any>{
     // Database -> Application
     static decode(key: string, value: any, target: any): any {
         if (value == null) return null;
-        const attribute = MetaData.get(target, "attributes")[key.toLocaleLowerCase()] as AttributeConfig;
+        const attribute = MetaData.database.get(target, "attributes")[key.toLocaleLowerCase()] as AttributeConfig;
         if (!attribute) throw new Error("Column " + key + " not exists");
         switch (attribute.type) {
             case "CPF":
@@ -98,7 +98,7 @@ abstract class Model<A extends {} = any>{
                 return value.replace(/(\d{2})(\d{2})(\d{5})(\d{4})/, "+$1 ($2) $3-$4");
             case "DATE":
                 return new Date(value);
-           // case "JSON":
+            // case "JSON":
             //    return JSON.parse(value);
             case "INT":
                 return parseInt(value);
@@ -114,7 +114,7 @@ abstract class Model<A extends {} = any>{
     // Application -> Database
     static encode(key: string, value: any, target?: any): any {
         if (value == null) return null;
-        const attribute = MetaData.get(target, "attributes")[key.toLocaleLowerCase()] as AttributeConfig;
+        const attribute = MetaData.database.get(target, "attributes")[key.toLocaleLowerCase()] as AttributeConfig;
         if (!attribute) throw new Error("Column " + key + " not exists");
 
         switch (attribute.type) {
@@ -132,39 +132,30 @@ abstract class Model<A extends {} = any>{
     }
 
     static get attributes(): string[] {
-        return Object.keys(MetaData.get(this, "attributes"));
+        return Object.keys(MetaData.database.get(this, "attributes"));
     }
 
     static get tableName() {
-        return MetaData.get(this, "tableName") ?? this.prototype.constructor.name;
+        return MetaData.database.get(this, "tableName") ?? this.prototype.constructor.name;
     }
-    /*
-        static init<MS extends ModelStatic<Model>, M extends InstanceType<MS>>(this: MS, attributes: ModelAttributes<M, Attributes<M>>) {
-            this.attributes = Object.keys(attributes);
-            for (const attribute in attributes) {
-                Object.defineProperty(this.prototype, attribute, {
-                    get() { return this._values[attribute] },
-                    set(value) { this._values[attribute] = value },
-                    enumerable: true
-                })
-            }
-        }
-    */
-    static init() {
-    }
+
 
     // Retorna os dados Puro
     static async findOne<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, options: Omit<OptionsWhere<M>, 'raw'> & { raw: true }): Promise<A | false>;
     // Retorna na Classe do Modelo
     static async findOne<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, options: Omit<OptionsWhere<M>, 'raw'> & { raw?: false }): Promise<M | false>;
     static async findOne<M extends Model, A extends Attributes<M>>(this: ModelStatic<M>, options: OptionsWhere<M>): Promise<A | M | false> {
-        const build = new Select(this, options);
+        options.limit = 1;
+        //@ts-ignore
+        const instances = await this.findAll<M, A>(options);
+        return instances[0];
+        /* const build = new Select(this, options);
         const result = await Database.query(build.toSQL(), build.params);
         if (options.raw) return result.rows[0];
         if (result.rowCount == 0) return false;
         const instance = new this;
         instance.setValues(result.rows[0], build.models);
-        return instance;
+        return instance;*/
     }
 
     // Retorna os dados Puro
@@ -221,10 +212,6 @@ abstract class Model<A extends {} = any>{
         const result = await Database.query(build.toSQL(), build.params);
         return result.rowCount !== 0
     }
-
-
-
-    //abstract validate<T extends any>(field: string, value: T): T;
 
     toJSON() {
         return this._values;

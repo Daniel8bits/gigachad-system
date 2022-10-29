@@ -1,4 +1,4 @@
-import { database as MetaData } from "../MetaData";
+import MetaData from "../MetaData";
 import Model, { AttributeType } from "./Model";
 
 export function enumerable(value: boolean) {
@@ -17,9 +17,9 @@ export function DataType(type: AttributeType, options?: any) {
         if(!options?.virtual){
             propertyKey = propertyKey.toLocaleLowerCase();
             // Salva o metadado
-            const attributes = MetaData.get(target, "attributes") ?? {};
+            const attributes = MetaData.database.get(target, "attributes") ?? {};
             attributes[propertyKey] = { type, options };
-            MetaData.add(target, "attributes", attributes);
+            MetaData.database.add(target, "attributes", attributes);
         }
         // Define o getter e setter
         Object.defineProperty(target, propertyKey, {
@@ -32,13 +32,13 @@ export function DataType(type: AttributeType, options?: any) {
 
 export function TableName(name: string) {
     return function (constructor: Function) {
-        MetaData.add(constructor, "tableName", name);
+        MetaData.database.add(constructor, "tableName", name);
     }
 }
 
 export function PrimarKey(target: Model, propertyKey: string) {
     propertyKey = propertyKey.toLocaleLowerCase();
-    const primarykey = MetaData.get(target, "primaryKey") ?? [];
+    const primarykey = MetaData.database.get(target, "primaryKey") ?? [];
     primarykey.push(propertyKey);
-    MetaData.add(target, "primarykey", primarykey);
+    MetaData.database.add(target, "primarykey", primarykey);
 }
