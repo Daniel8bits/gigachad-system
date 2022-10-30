@@ -18,8 +18,8 @@ CREATE TABLE Users(
 CREATE TABLE Customer(
     cpf CHARACTER(11) PRIMARY KEY NOT NULL,
     idCurrentPlan INT NOT NULL,
-    FOREIGN KEY (cpf) REFERENCES Users(cpf),
-    FOREIGN KEY (idCurrentPlan) REFERENCES Plan(id)
+    FOREIGN KEY (cpf) REFERENCES Users(cpf) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (idCurrentPlan) REFERENCES Plan(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE Employee(
     cpf CHARACTER(11) PRIMARY KEY NOT NULL,
@@ -27,18 +27,18 @@ CREATE TABLE Employee(
     ctps CHARACTER VARYING(40) NOT NULL,
     admissionDate DATE NOT NULL,
     address CHARACTER VARYING(100) NOT NULL,
-    FOREIGN KEY (cpf) REFERENCES Users(cpf)
+    FOREIGN KEY (cpf) REFERENCES Users(cpf) ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE Administrative(
     cpf CHARACTER(11) PRIMARY KEY NOT NULL,
     role roleAdministrative NOT NULL,
-    FOREIGN KEY (cpf) REFERENCES Employee (cpf)
+    FOREIGN KEY (cpf) REFERENCES Employee (cpf) ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE Trainer (
     cpf CHARACTER(11) PRIMARY KEY NOT NULL,
     cref CHARACTER(11) NOT NULL,
     -- 000000-G/RS
-    FOREIGN KEY (cpf) REFERENCES Employee (cpf)
+    FOREIGN KEY (cpf) REFERENCES Employee (cpf) ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE Exercise (
     id SERIAL PRIMARY KEY NOT NULL,
@@ -47,13 +47,12 @@ CREATE TABLE Exercise (
 CREATE TABLE Training(
     id INT NOT NULL,
     cpfCustomer CHARACTER(11) NOT NULL,
-    --ERROR:  multiple primary keys for table "training" are not allowed
     cpfTrainer CHARACTER(11),
     name CHARACTER VARYING(20) NOT NULL,
     creationDate TIMESTAMP NOT NULL,
     PRIMARY KEY (id, cpfCustomer),
-    FOREIGN KEY (cpfCustomer) REFERENCES Customer(cpf),
-    FOREIGN KEY (cpfTrainer) REFERENCES Trainer(cpf)
+    FOREIGN KEY (cpfCustomer) REFERENCES Customer(cpf) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (cpfTrainer) REFERENCES Trainer(cpf) ON DELETE SET NULL ON UPDATE CASCADE
 );
 CREATE TABLE ExerciseItem(
     idExercise INT NOT NULL,
@@ -63,16 +62,16 @@ CREATE TABLE ExerciseItem(
     series smallint NOT NULL,
     repetition smallint NOT NULL,
     PRIMARY KEY (idExercise, idTraining, cpfCustomer),
-    FOREIGN KEY (idTraining, cpfCustomer) REFERENCES Training(id, cpfCustomer),
-    FOREIGN KEY (idExercise) REFERENCES Exercise(id)
+    FOREIGN KEY (idTraining, cpfCustomer) REFERENCES Training(id, cpfCustomer) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (idExercise) REFERENCES Exercise(id) ON UPDATE CASCADE
 );
 CREATE TABLE DateTraining(
     idTraining INT NOT NULL,
     cpfCustomer CHARACTER(11) NOT NULL,
     date date NOT NULL,
     PRIMARY KEY (idTraining, cpfCustomer, date),
-    FOREIGN KEY (idTraining, cpfCustomer) REFERENCES Training(id, cpfCustomer),
-    FOREIGN KEY (cpfCustomer) REFERENCES Customer(cpf)
+    FOREIGN KEY (idTraining, cpfCustomer) REFERENCES Training(id, cpfCustomer) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (cpfCustomer) REFERENCES Customer(cpf) ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE DateDoneItem(
     idTraining INT NOT NULL,
@@ -80,15 +79,15 @@ CREATE TABLE DateDoneItem(
     date date NOT NULL,
     idExercise INT NOT NULL, -- column "cpf" referenced in foreign key constraint does not exist
     PRIMARY KEY (idTraining, cpfCustomer, date, idExercise),
-    FOREIGN KEY (idTraining, cpfCustomer, date) REFERENCES DateTraining(idTraining, cpfCustomer, date),
-    FOREIGN KEY (idExercise, idTraining, cpfCustomer) REFERENCES ExerciseItem(idExercise, idTraining, cpfCustomer)
+    FOREIGN KEY (idTraining, cpfCustomer, date) REFERENCES DateTraining(idTraining, cpfCustomer, date) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (idExercise, idTraining, cpfCustomer) REFERENCES ExerciseItem(idExercise, idTraining, cpfCustomer) ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE Tutorial(
     idExercise INT PRIMARY KEY NOT NULL,
     video_url CHARACTER VARYING(100),
     image JSON NOT NULL,
     explanation CHARACTER VARYING(256) NOT NULL,
-    FOREIGN key (idExercise) REFERENCES Exercise(id)
+    FOREIGN key (idExercise) REFERENCES Exercise(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 ----------------------------------------------------------
 CREATE TABLE CreditCard (
@@ -102,7 +101,7 @@ CREATE TABLE CustomerCreditCard (
     cpfCustomer CHARACTER(11) NOT NULL,
     numbersCreditCard CHARACTER(16) NOT NULL,
     PRIMARY KEY (cpfCustomer, numbersCreditCard),
-	FOREIGN key (cpfCustomer) REFERENCES Customer(cpf),
+	FOREIGN key (cpfCustomer) REFERENCES Customer(cpf) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN key (numbersCreditCard) REFERENCES CreditCard(numbers)
 );
 CREATE TYPE statusInvoice AS ENUM ('canceled', 'paid', 'open');
@@ -118,10 +117,10 @@ CREATE TABLE Invoice (
     status statusInvoice NOT NULL,
     payday DATE NOT NULL,
     payMethod payMethodInvoice NOT NULL,
-    PRIMARY KEY (id, idPlan),
-    FOREIGN key (cpfCustomer) REFERENCES Customer(cpf),
+    PRIMARY KEY (id, idPlan, cpfCustomer),
+    FOREIGN key (cpfCustomer) REFERENCES Customer(cpf) ON UPDATE CASCADE,
     FOREIGN key (cardNumbers) REFERENCES CreditCard(numbers),
-    FOREIGN key (idPlan) REFERENCES Plan(id)
+    FOREIGN key (idPlan) REFERENCES Plan(id) ON UPDATE CASCADE
 );
 ----------------------------------------------------
 CREATE TABLE Equipment(

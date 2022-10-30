@@ -4,7 +4,7 @@ export type IInvoice = {
     id: number
     cpfCustomer: string
     idPlan: number
-    cardNumbers: string
+    cardNumbers: string | null
     value: number
     status: string
     payday: string
@@ -13,7 +13,7 @@ export type IInvoice = {
 class Invoice extends Model<IInvoice>{
     @DataType("NUMBER")
     declare id: number
-    @DataType("STRING")
+    @DataType("CPF")
     declare cpfCustomer: string
     @DataType("NUMBER")
     declare idPlan: number
@@ -30,6 +30,19 @@ class Invoice extends Model<IInvoice>{
 
     validate<T extends any>(field: string, value: T): T {
         return value;
+    }
+
+    static async getLastID(cpfCustomer: string): Promise<number> {
+        const result = await Invoice.findOne({
+            where: {
+                cpfCustomer
+            },
+            attributes: ["id"],
+            order: [["id", "DESC"]]
+
+        });
+        if (result) return result.id;
+        return 1;
     }
 }
 

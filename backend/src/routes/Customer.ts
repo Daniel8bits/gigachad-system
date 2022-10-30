@@ -3,13 +3,26 @@ import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import ValidData, { Rules } from '../utils/ValidData';
 import User, { UserType } from '../models/User';
 import CustomerModel from '../models/Customer';
+import PlanModel from '../models/Plan';
 class Customer extends Route {
 
     static rules: Rules = {
-
+        plan: {
+            callback: async (value) => {
+                console.log(value);
+                const result = await PlanModel.count({
+                    where: {
+                        id: value
+                    }
+                })
+                console.log(result);
+                return result != 0;
+            },
+            message: "Plano não encontrado"
+        }
     };
 
-    //@withUser(UserType.attendant)
+    @withUser(UserType.manager, UserType.attendant)
     @withAuth
     @Request("POST")
     @Path("/")
@@ -25,10 +38,10 @@ class Customer extends Route {
             }, { cpf })
 
             if (user) {
-                const { idCurrentPlan } = await ValidData(req.body, Customer.rules);
+                const { plan } = await ValidData(req.body, Customer.rules);
                 const customer = await CustomerModel.create({
                     cpf,
-                    idCurrentPlan
+                    idCurrentPlan: plan
                 })
                 res.success({ user, customer });
             }
@@ -93,7 +106,8 @@ class Customer extends Route {
     @Path("/:cpf")
     async update(req: Express.Request, res: Express.Response) {
         try {
-            const { cpf, name, email, phone, password, idCurrentPlan } = await ValidData(req.body, Customer.rules);
+            const { cpf } = req.params;
+            const { name, email, phone, password, plan } = await ValidData(req.body, Customer.rules);
 
             const user = await User.findOne({
                 where: {
@@ -106,7 +120,7 @@ class Customer extends Route {
                         cpf
                     }
                 })
-                const customer = await CustomerModel.update({ idCurrentPlan }, {
+                const customer = await CustomerModel.update({ idCurrentPlan: plan }, {
                     where: {
                         cpf
                     }

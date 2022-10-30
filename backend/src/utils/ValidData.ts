@@ -7,7 +7,7 @@ type Rule = {
     value: string
 }
 type RuleCustom = {
-    callback: (value: any, options: any) => boolean
+    callback: (value: any, options: any) => boolean | Promise<boolean>
     message: string | ((options: any) => string)
 }
 export type Rules = {

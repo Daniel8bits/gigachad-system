@@ -7,13 +7,13 @@ import Customer from './Customer';
 import Trainer from './Trainer';
 
 export enum UserType {
-    user,
-    customer,
-    employee,
-    attendant,
-    manager,
-    financer,
-    trainer
+    user = 0,
+    customer = 2,
+    employee = 4,
+    attendant = 8,
+    manager = 16,
+    financer = 32,
+    trainer = 64
 }
 
 export type IUser = {
