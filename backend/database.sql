@@ -112,7 +112,7 @@ CREATE TABLE Invoice (
     id INT NOT NULL,
     cpfCustomer character(11) NOT NULL,
     idPlan INT NOT NULL,
-    cardNumbers CHARACTER(16) NOT NULL,
+    cardNumbers CHARACTER(16),
     --invoice number
     value real NOT NULL,
     status statusInvoice NOT NULL,

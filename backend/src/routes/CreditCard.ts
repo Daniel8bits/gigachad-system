@@ -5,6 +5,7 @@ import User, { UserType } from '../models/User';
 import CreditCardModel from '../models/CreditCard';
 import CustomerCreditCardModel from '../models/CustomerCreditCard';
 import CustomerModel from '../models/Customer';
+import CustomerCreditCard from '../models/CustomerCreditCard';
 
 class CreditCard extends Route {
 
@@ -12,7 +13,7 @@ class CreditCard extends Route {
 
     };
 
-    //@withUser(UserType.customer)
+    @withUser(UserType.customer)
     @withAuth
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
@@ -20,9 +21,9 @@ class CreditCard extends Route {
             const cpfCustomer = req.query.cpf as string;
             if (cpfCustomer) {
 
-                const creditCard = (await CustomerCreditCardModel.findAll({
+                const creditCard = await CreditCardModel.findAll({
                     where: {
-                        cpfCustomer
+                        holder: cpfCustomer
                     },
                     include: [
                         {
@@ -37,10 +38,6 @@ class CreditCard extends Route {
                             }
                         }
                     ]
-                })).map((item) => {
-                    item.numberscreditcard = "";
-                    item.CreditCard.numbers = "**** **** **** " + item.CreditCard.numbers.substring(13, 17);
-                    return item;
                 })
 
                 res.success(creditCard);
@@ -52,7 +49,7 @@ class CreditCard extends Route {
         }
     }
 
-    @withUser(UserType.manager)
+    @withUser(UserType.customer)
     @withAuth
     @Request("POST")
     @Path("/")
@@ -91,6 +88,97 @@ class CreditCard extends Route {
         }
     }
 
+    @withUser(UserType.customer)
+    @withAuth
+    @Path("/:numbersCreditCard")
+    async findOne(req: Express.Request, res: Express.Response) {
+        try {
+            const numbers = req.params.numbersCreditCard;
+            const creditCard = await CreditCardModel.findOne({
+                where: {
+                    numbers: numbers
+                }
+            })
+
+            if (creditCard) {
+                res.success(creditCard);
+            } else {
+                res.error(404, "Cartão de crédito não encontrado");
+            }
+        } catch (e: any) {
+            res.error(500, e.message);
+        }
+    }
+
+    @withUser(UserType.customer)
+    @withAuth
+    @Request("PUT")
+    @Path("/:numbersCreditCard")
+    async update(req: Express.Request, res: Express.Response) {
+        try {
+            const numPath = req.params.numbersCreditCard;
+            const { holder, expirationDate, cvv, cpfCustomer } = await ValidData(req.body, CreditCard.rules);
+            const creditCard = await CreditCardModel.findOne({
+                where: {
+                    numbers: numPath
+                }
+            })
+            if (creditCard) {
+                const customerCreditCard = await CustomerCreditCard.update({ cpfCustomer, numPath}, {
+                    where: {
+                        numbersCreditCard: numPath
+                    }
+                })
+                if (customerCreditCard) {
+                    const credit = await CreditCardModel.update({ numPath, holder, expirationDate, cvv }, {
+                        where: {
+                            numbers: numPath
+                        }
+                    })
+                    res.success({ ...customerCreditCard, credit });
+                } else {
+                    res.error(404, "Cartão de crédito não encontrado");
+                }
+            } else {
+                res.error(404, "Cartão de crédito não encontrado");
+            }
+
+        } catch (e: any) {
+            console.log(e)
+            res.error(500, e.message);
+        }
+    }
+
+    @withUser(UserType.customer)
+    @withAuth
+    @Request("DELETE")
+    @Path("/:numbersCreditCard")
+    async delete(req: Express.Request, res: Express.Response) {
+        try {
+            const numPath = req.params.numbersCreditCard;
+            const result1 = await CustomerCreditCard.delete({
+                where: {
+                    numbersCreditCard: numPath
+                }
+            })
+
+            // caso não for "ON DELETE SET NULL ON UPDATE CASCADE" no banco força o delete na outra tabela aqui mesmo
+            const result2 = await CreditCardModel.delete({
+                where: {
+                    numbers: numPath
+                }
+            })
+
+            if (result2) {
+                res.success(result2);
+            } else {
+                res.error(500);
+            }
+        } catch (e: any) {
+            res.error(500, e.message);
+        }
+
+    }
 
 }
 
