@@ -8,4 +8,10 @@
 
 body {
   overflow: hidden;
+  background-image: 
+    linear-gradient(to left, $color-background 0%, $color-background 100%),
+    url('/images/background.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
 }

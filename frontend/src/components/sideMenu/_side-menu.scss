@@ -1,5 +1,7 @@
 
 .side-menu {
+  @include theme($color-greenish-gray-transparent);
+  box-shadow: 2px 0 4px black;
   width: $side-menu-width;
   height: $content-height;
 

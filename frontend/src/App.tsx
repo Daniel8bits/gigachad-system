@@ -1,14 +1,27 @@
-import Home from '@pages/home/Home';
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import usePage from '@hooks/usePage'
+import { useLocation } from 'react-router-dom';
 
 function App() {
-  return (
+
+  const location = useLocation()
+  
+  const page = usePage(location.pathname)
+
+  return page
+}
+
+// <Route path="/home" element={<Home />}  />
+
+/*
+
+return (
     <Routes>
-      <Route path="/" element={<Home />}  />
-      <Route path="/home" element={<Home />}  />
+      <Route path="/" element={}  />
+      
     </Routes>
   );
-}
+
+*/
 
 export default App;

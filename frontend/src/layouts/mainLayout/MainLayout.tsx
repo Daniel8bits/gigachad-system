@@ -1,5 +1,6 @@
 import SideMenu from '@components/sideMenu/SideMenu';
 import TopBar from '@components/topBar/TopBar';
+import UIScroll from '@ui/scroll/UIScroll';
 import React from 'react';
 
 interface MainLayoutProps {
@@ -13,7 +14,9 @@ const MainLayout: React.FC<MainLayoutProps> = (props) => {
       <div className='content'>
         <SideMenu  />
         <main>
-          {props.children}
+          <UIScroll maxHeight={window.innerHeight-40}>
+            {props.children}
+          </UIScroll>
         </main>
       </div>
     </div>

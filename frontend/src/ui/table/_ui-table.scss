@@ -21,7 +21,8 @@
             color:#dedede;
             text-align:center;
             @include justContent();
-            padding: 1rem;
+            @include padding();
+            //padding: 1rem;
         }
 
         >tr:nth-child(odd)>td {

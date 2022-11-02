@@ -10,6 +10,8 @@
         "@style/*": ["./src/style/*"],
         "@store/*": ["./src/store/*"],
         "@pages/*": ["./src/pages/*"],
+        "@images/*": ["./src/images/*"],
+        "@templates/*": ["./src/templates/*"],
         "@custom-types/*": ["./src/custom-types/*"]
     }
   }
