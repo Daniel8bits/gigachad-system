@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 import UITextField from '../textfield/UITextField';
 
-interface RowDataType {
+export interface RowDataType {
     id: unknown,
     display: Record<string, React.ReactNode>
 }
@@ -16,7 +16,7 @@ export class UITableDocument<T> {
 
     private readonly _MAX_ROWS: number = 7
 
-    private _data: T[]
+    private _data!: T[]
 
     private _columns: string[]
     private _rows: Map<unknown, RowType<T>>
@@ -32,14 +32,14 @@ export class UITableDocument<T> {
     private _updateComponent?: () => void
 
     constructor(params: {
-        data: T[], 
+        data?: T[], 
         columns: string[], 
         description: (data: T) => RowDataType,
         paging?: boolean,
         onRowSelected?: (selectedRow: T) => void,
         onRowDoubleClicked?: (selectedRow: T) => void
     }) {
-        this._data                      = params.data
+        this._data                      = params.data ? params.data : []
         this._columns                   = params.columns
         this._description               = params.description
         this._paging                    = params.paging ?? true
@@ -85,7 +85,9 @@ export class UITableDocument<T> {
     }
 
     public getMaxPage(): number {
-        return Math.ceil(this._data.length / this._MAX_ROWS)
+        const maxPage = Math.ceil(this._data.length / this._MAX_ROWS)
+        if(maxPage === 0) return 1;
+        return maxPage;
     }
 
     public nextPage() {

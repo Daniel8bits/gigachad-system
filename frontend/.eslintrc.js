@@ -43,6 +43,8 @@ module.exports = {
         "component": false,
         "html": false
       }],
+      'no-restricted-globals': 'off',
+      'react-hooks/rules-of-hooks': 'off',
       'react/no-array-index-key': 'off',
       'react/jsx-props-no-spreading': 'off',
       'import/no-unresolved': 'off',

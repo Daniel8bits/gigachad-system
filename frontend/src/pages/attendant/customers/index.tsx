@@ -1,48 +1,74 @@
-import FilterPageTable from '@templates/FilterTablePage'
+import { InputType } from '@components/filter/Filter'
+import FilterPageTemplate from '@templates/FilterTableTemplate'
+//import {columns, APIType} from '@middlewares/Endpoint'
+import TemplateActions from '@templates/TemplateActions'
 
-export const CustomersAction = {
+/*
+GET /plan -> filterPage
+GET /plan/{id} -> open modal load data
+POST /plan
+PUT /plan/{id}
+DELETE /plan/{id}
 
+*/
+interface APIType {
+  name: string,
+  address: string,
+  cpf: string,
+  ctps: string,
+  admissionDate: string
 }
 
-export default () => alert('Not implemented yet!')
-/*
-export default FilterPageTable({
+const columns = ["Nome", "Endereço", "CPF", "CTPS", "Data Admissão"]
+
+export default FilterPageTemplate<APIType>({
+  endpoint: '/plan',
+  title: 'Essa pagina é um teste',
+  actions: [TemplateActions.OPEN, TemplateActions.DELETE],
   filter: {
     layout: [
       [
         {
+          id: 'cpf1',
           title: 'CPF', 
-          value: api => api.cpf,
+          type: InputType.TEXTFIELD,
           size: { sm: 3, md: 3, lg: 3, xl: 3, xxl: 3 }
         },
         {
+          id: 'cpf1',
           title: 'CPF-Nome', 
-          type: InputType.TEXTFIELD, 
-          value: api => api.cpf + api.name,
+          type: InputType.TEXTFIELD,
           size: { sm: 3, md: 3, lg: 3, xl: 3, xxl: 3 }
         }
       ],
       [
         {
+          id: 'cpf1',
           title: 'CPF', 
-          value: api => api.cpf,
+          type: InputType.TEXTFIELD,
           size: { sm: 3, md: 3, lg: 3, xl: 3, xxl: 3 }
         },
         {
+          id: 'cpf1',
           title: 'CPF-Nome', 
           type: InputType.TEXTFIELD, 
-          value: api => api.cpf + api.name,
           size: { sm: 3, md: 3, lg: 3, xl: 3, xxl: 3 }
         }
       ],
     ]
   },
   table: {
-    content: [
-      ["CPF", api => api.cpf],
-      ["Nome", api => api.name],
-      ["Email", api => api.email]
-    ],
+    columns,
+    description: data => ({
+      id: data.cpf,
+      display: {
+        name: data.name,
+        address: data.address,
+        cpf: data.cpf,
+        ctps: data.ctps,
+        admissionDate: data.admissionDate
+      }
+    }),
     paging: true,
   }
-})*/
+})
