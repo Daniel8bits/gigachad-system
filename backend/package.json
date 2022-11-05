@@ -4,23 +4,30 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "start": "webpack --mode development",
-    "build": "webpack --mode production"
+    "start": "ts-node src/index.ts --watch",
+    "dev": "ts-node-dev src/index.ts --trace-sync-io",
+    "buiild": "tsc src/index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/express": "^4.17.14",
-    "ts-loader": "^9.4.0",
-    "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0",
-    "webpack-node-externals": "^3.0.0"
+    "@types/jsonwebtoken": "^8.5.9",
+    "@types/pg": "^8.6.5",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^4.8.4"
   },
   "engines": {
-    "node": "16.16.0"
+    "node": "16.6.0"
   },
   "dependencies": {
-    "express": "^4.18.1"
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.1",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.8.0"
   }
 }
