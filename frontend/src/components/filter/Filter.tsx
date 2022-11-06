@@ -151,28 +151,34 @@ const Filter: React.FC<FilterProps> = (props) => {
     props.onClean()
   }, []);
 
+  const height = useMemo<number>(() => {
+    return props.inputs.length * 86 + 40
+  }, [props.inputs.length])
+
   return (
-    <div className='filter'>
+    <div className={`filter ${open ? 'open' : ''}`}>
       <button 
         type='button'
         onClick={() => setOpen(open => !open)}
       > 
         Filtro <FaChevronUp /> 
       </button>
-      <div className={`filter-inputs ${open ? 'open' : ''}`}>
-        {props.inputs.map(row => (
-          <Row>
-            {row.map(cell => (
-              <Column {...cell.size}>
-                {reduceInput(cell)}
-              </Column>
-            ))}
-          </Row>
-        ))}
-      </div>
-      <div className='filter-control'>
-        <UIButton onAction={handleSearch}> Pesquisar </UIButton>
-        <UIButton onAction={cleanFilter}> Limpar filtro </UIButton>
+      <div className='filter-content' style={{height: open ? height : 0}}>
+        <div className='filter-inputs'>
+          {props.inputs.map(row => (
+            <Row>
+              {row.map(cell => (
+                <Column {...cell.size}>
+                  {reduceInput(cell)}
+                </Column>
+              ))}
+            </Row>
+          ))}
+        </div>
+        <div className='filter-control'>
+          <UIButton onAction={handleSearch}> Pesquisar </UIButton>
+          <UIButton onAction={cleanFilter}> Limpar filtro </UIButton>
+        </div>
       </div>
     </div>
   );

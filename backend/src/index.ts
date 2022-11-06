@@ -1,4 +1,5 @@
 import express, { Express, Request, Response } from 'express';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import gigaChad from './middleware/gigaChad';
 import withAuth from './middleware/withAuth';
@@ -16,6 +17,9 @@ const app: Express = express();
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+app.use(cors({
+    origin: "http://localhost:3000"
+}));
 
 if (process.env.NODE_ENV == "production") {
     //app.use(cors());

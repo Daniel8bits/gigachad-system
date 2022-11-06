@@ -1,14 +1,14 @@
 import { ModalData, ModalActions } from "@store/components/ModalStore";
 import { useDispatch, useSelector } from "@store/Root.store";
 
-type UseModalReturnType = [ModalData, (value: ModalData) => void]
+type UseModalReturnType<T> = [ModalData<T>, (value: ModalData<T>) => void]
 
-function useModal(key: string): UseModalReturnType {
+function useModal<T>(key: string): UseModalReturnType<T> {
     const dispatch = useDispatch()
     const data = useSelector(state => state.modal.modal)[key]
     return [
-        data as ModalData,
-        (value: ModalData) => dispatch(ModalActions.update({key, value}))
+        data as ModalData<T>,
+        (value: ModalData<T>) => dispatch(ModalActions.update({key, value}))
     ]
 }
 

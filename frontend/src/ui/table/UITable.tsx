@@ -1,5 +1,6 @@
 import { UIDate } from '@ui/datepicker/UIDatePicker';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import EventEmitter from 'events';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 import UITextField from '../textfield/UITextField';
 
@@ -12,11 +13,12 @@ interface RowType<T> extends RowDataType {
     data: T
 }
 
-export class UITableDocument<T> {
+export class UITableDocument<T> extends EventEmitter{
 
     private readonly _MAX_ROWS: number = 7
 
     private _data!: T[]
+    private _loading: boolean = true;
 
     private _columns: string[]
     private _rows: Map<unknown, RowType<T>>
@@ -39,6 +41,7 @@ export class UITableDocument<T> {
         onRowSelected?: (selectedRow: T) => void,
         onRowDoubleClicked?: (selectedRow: T) => void
     }) {
+        super();
         this._data                      = params.data ? params.data : []
         this._columns                   = params.columns
         this._description               = params.description
@@ -48,6 +51,9 @@ export class UITableDocument<T> {
         this._rows                      = new Map()
         this._pageNumber                = 1
         this.update()
+
+        this.nextPage = this.nextPage.bind(this);
+        this.previousPage = this.previousPage.bind(this);
     }
 
     public update() {
@@ -57,6 +63,10 @@ export class UITableDocument<T> {
             this._rows.set(transformedRowData.id, {data: rowData, ...transformedRowData})
         })
         this._updateComponent?.()
+    }
+
+    public get loading(){
+        return this._loading;
     }
 
     private getPageRows(): T[] {
@@ -69,6 +79,7 @@ export class UITableDocument<T> {
 
     public setData(data: T[]) {
         this._data = data
+        this._loading = false;
         this.update();
     }
 
@@ -77,11 +88,16 @@ export class UITableDocument<T> {
     }
 
     public setPageNumber(pageNumber: number) {
-        if(this.getMaxPage() > pageNumber || pageNumber < 1) {
+        if(this.getMaxPage() < pageNumber || pageNumber < 1) {
             return;
         }
-        this._pageNumber = pageNumber
+        this.pageNumber = pageNumber
         this.update()
+    }
+    
+    public set pageNumber(value : number){
+        this._pageNumber = value;
+        this.emit("page",value)
     }
 
     public getMaxPage(): number {
@@ -93,7 +109,7 @@ export class UITableDocument<T> {
     public nextPage() {
         const nextPage = this._pageNumber + 1
         const maxPage = this.getMaxPage()
-        if(nextPage > maxPage) {
+        if(nextPage < maxPage) {
             this.setPageNumber(nextPage)
         }
     }
@@ -103,6 +119,10 @@ export class UITableDocument<T> {
         if(previousPage > 0) {
             this.setPageNumber(previousPage)
         }
+    }
+
+    public setPage(page : number){
+        this.setPageNumber(page);
     }
 
     public rowMapping(fn: (row: RowType<T>) => JSX.Element): JSX.Element[] {
@@ -146,9 +166,13 @@ interface UITableProps {
 
 const UITable: React.FC<UITableProps> = (props) => {
     const [, setUpdater] = useState<boolean>(false);
+    const refInput = useRef<HTMLInputElement>(null);
     
     useEffect(() => {
         props.document.setComponentUpdaterTrigger(() => setUpdater(update => !update))
+        props.document.on("page",(page) => {
+            if(refInput.current) refInput.current.value = page;
+        })
     }, []);
    
     return (
@@ -159,6 +183,10 @@ const UITable: React.FC<UITableProps> = (props) => {
                 </tr>
             </thead>
             <tbody>
+                {
+                props.document.loading && <tr><td colSpan={props.document.getColumnsLength()}>Carregando...</td></tr> ||
+                (props.document.getRowsLength() === 0 && <tr><td colSpan={props.document.getColumnsLength()}>Nenhum Dado Encontrado</td></tr>)
+                }
                 {props.document.rowMapping(row => (
                     <tr
                         onClick={() => props.document.triggerOnRowSelected(row)}
@@ -174,10 +202,15 @@ const UITable: React.FC<UITableProps> = (props) => {
                 <tr>
                     <td colSpan={props.document.getColumnsLength()}>
                         <div className='pagination'>
-                            <FaAngleLeft onClick={props.document.nextPage} size={32} />
-                            <UITextField id="page" defaultValue={String(props.document.getPageNumber())} />
+                            <FaAngleLeft onClick={props.document.previousPage} size={32} />
+                            <UITextField 
+                                ref={refInput} 
+                                id="page" 
+                                defaultValue={String(props.document.getPageNumber())} 
+                                onAction={value => props.document.setPage(Number(value))}
+                            />
                             <span>de {props.document.getMaxPage()}</span>
-                            <FaAngleRight onClick={props.document.previousPage} size={32} />
+                            <FaAngleRight onClick={props.document.nextPage} size={32} />
                         </div>
                     </td>
                 </tr>

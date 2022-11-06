@@ -35,9 +35,16 @@
     }
 }
 
-@mixin transition() {
-  transition: all .25s;
+@mixin transition($time: .25s) {
+  transition: all $time;
   transition-timing-function: $standard-timing-function;
+}
+
+@mixin infiniteAnimation($animationName, $time: 4s, $function: linear) {
+  animation-name: $animationName;
+  animation-duration: $time;
+  animation-timing-function: $function;
+  animation-iteration-count: infinite;
 }
 
 @mixin animation($animationName) {

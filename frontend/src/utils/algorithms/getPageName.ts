@@ -1,20 +1,21 @@
-import getLinkParamsKeys from "./getLinkParamsKeys";
+import { Location } from "react-router-dom";
 
+function getPageName(location: Location) {
+  
+  const pathname = location.pathname.at(location.pathname.length) === '/' ? 
+  location.pathname.substring(0, location.pathname.length-1) :
+  location.pathname
 
-function getPageName() {
-  const keys = getLinkParamsKeys()
-  let paramname: string = ''
-  if(keys) {
-    paramname = '['
-    keys?.forEach((key, i) => {
-      if(i > 0) {
-        paramname += ','
-      }
-      paramname += key
-    })
-    paramname += ']'
+  if(
+    pathname.match(/\/new$/g) ||
+    pathname.match(/\/open$/g) ||
+    pathname.match(/\/edit$/g) 
+  ) {
+    return pathname.substring(0, pathname.lastIndexOf('/'))
   }
-  return `${location.pathname}/${paramname}`
+
+  return pathname
+
 }
 
 export default getPageName

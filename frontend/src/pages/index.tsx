@@ -7,7 +7,7 @@ import React, { useState, useRef } from 'react';
 import useModal from '@hooks/useModal';
 import UIModal from '@ui/modal/UIModal';
 import UICheckBox from '@ui/checkbox/UICheckbox';
-import MainLayout from '@layouts/mainLayout/MainLayout';
+import ContentLayout from '@layouts/contentLayout/ContentLayout';
 
 interface HomeProps {
 
@@ -112,7 +112,7 @@ const Home: React.FC<HomeProps> = () => {
   }
 
   return (
-    <MainLayout>
+    <ContentLayout title='home'>
       <div className='pg-home'>
         <UIButton onAction={() => updateModal({open: true})}>open modal</UIButton>
         <br />
@@ -129,7 +129,7 @@ const Home: React.FC<HomeProps> = () => {
           modal test
         </UIModal>
       </div>
-    </MainLayout>
+    </ContentLayout>
   );
 };
 

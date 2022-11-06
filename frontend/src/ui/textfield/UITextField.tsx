@@ -259,10 +259,13 @@ const UITextField: React.ForwardRefRenderFunction<HTMLInputElement, UITextFieldP
     }
 
     useEffect(() => {
-      if(props.mask && inputTextRef.current) {
-        if(externRef) {
+
+        if(externRef && inputTextRef.current) {
             (externRef as React.MutableRefObject<HTMLInputElement>).current = inputTextRef.current
         }
+    
+      if(props.mask && inputTextRef.current) {
+
 
         const [base] = toRegExp(props.mask)
         const input = inputTextRef.current

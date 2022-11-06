@@ -1,0 +1,28 @@
+
+.loading-screen {
+  width: 100%;
+  @include flex();
+
+  > svg {
+    @include infiniteAnimation(loading-animation);
+    width: 20%;
+    height: 20%;
+  }
+
+  &.below-menu {
+    height: $content-height;
+  }
+
+  &:not(.below-menu) {
+    height: 100vh;
+  }
+}
+
+@keyframes loading-animation {
+  from {
+    transform: rotateZ(0deg);
+  }
+  to {
+    transform: rotateZ(360deg);
+  }
+}

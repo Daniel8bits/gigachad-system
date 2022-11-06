@@ -1,5 +1,5 @@
 import { InputType } from '@components/filter/Filter'
-import FilterPageTemplate from '@templates/FilterTableTemplate'
+import FilterPageTemplate from '@templates/filterTableTemplate/FilterTableTemplate'
 //import {columns, APIType} from '@middlewares/Endpoint'
 import TemplateActions from '@templates/TemplateActions'
 
@@ -12,19 +12,20 @@ DELETE /plan/{id}
 
 */
 interface APIType {
-  name: string,
-  address: string,
-  cpf: string,
-  ctps: string,
-  admissionDate: string
+  id: number
+  name: string
+  description: string
+  value: number
+  frequency: string
+  available: boolean
 }
 
-const columns = ["Nome", "Endereço", "CPF", "CTPS", "Data Admissão"]
+const columns = ["Nome", "Descrição", "Valor", "Frequência", "Disponibilidade"]
 
 export default FilterPageTemplate<APIType>({
   endpoint: '/plan',
   title: 'Essa pagina é um teste',
-  actions: [TemplateActions.OPEN, TemplateActions.DELETE],
+  actions: [TemplateActions.OPEN, TemplateActions.EDIT],
   filter: {
     layout: [
       [
@@ -60,13 +61,13 @@ export default FilterPageTemplate<APIType>({
   table: {
     columns,
     description: data => ({
-      id: data.cpf,
+      id: data.id,
       display: {
         name: data.name,
-        address: data.address,
-        cpf: data.cpf,
-        ctps: data.ctps,
-        admissionDate: data.admissionDate
+        description: data.description,
+        value: data.value,
+        frequency: data.frequency,
+        available: data.available
       }
     }),
     paging: true,

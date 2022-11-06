@@ -1,14 +1,17 @@
 import React from 'react';
 import usePage from '@hooks/usePage'
-import { useLocation } from 'react-router-dom';
+import MainLayout from '@layouts/mainLayout/MainLayout';
+import LoadingScreen from '@components/loadingScreen/LoadingScreen';
 
 function App() {
 
-  const location = useLocation()
-  
-  const page = usePage(location.pathname)
+  const page = usePage(<LoadingScreen bellowMenu  />)
 
-  return page
+  return (
+    <MainLayout>
+      {page}
+    </MainLayout>
+  )
 }
 
 // <Route path="/home" element={<Home />}  />
