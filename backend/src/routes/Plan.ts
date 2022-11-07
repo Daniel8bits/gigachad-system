@@ -31,8 +31,8 @@ class Plan extends Route {
         }
     }
 
-    //@withUser(UserType.manager)
-    //@withAuth
+    @withUser(UserType.manager)
+    @withAuth
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
         try {

@@ -4,6 +4,8 @@ import ValidData, { Rules } from '../utils/ValidData';
 import User, { UserType } from '../models/User';
 import CustomerModel from '../models/Customer';
 import PlanModel from '../models/Plan';
+import Invoice from '../models/Invoice';
+
 class Customer extends Route {
 
     static rules: Rules = {
@@ -55,6 +57,7 @@ class Customer extends Route {
     @withAuth
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
+        const { cpf, name } = req.query;
         try {
             const customer = await CustomerModel.findAll({
                 include: [
@@ -63,8 +66,18 @@ class Customer extends Route {
                         on: "customer.cpf=users.cpf",
                         attributes: {
                             exclude: ["password"]
+                        },
+                        where: {
+                            name
                         }
-                    }
+                    },
+                    /* ...(req.user.type === UserType.attendant && {
+                     {
+                         model: Invoice,
+                         on: "invoice.cpfCustomer=customer.cpf",
+                         required:false
+                     }
+                   //  } || {})*/
                 ]
             })
             res.success(customer);

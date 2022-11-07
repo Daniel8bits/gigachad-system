@@ -5,7 +5,7 @@
     @include border();
     border-collapse: collapse;
 
-    >thead {
+    > thead {
         height:50px;
         >tr>th {
             color:#fff;
@@ -16,18 +16,34 @@
         }
     }
 
-    >tbody {
-        >tr>td {
-            color:#dedede;
-            text-align:center;
-            @include justContent();
-            @include padding();
-            //padding: 1rem;
+    > tbody {
+        > tr {
+            
+            > td {
+                color:#dedede;
+                text-align:center;
+                @include justContent();
+                @include padding();
+                //padding: 1rem;
+            }
+
+            &:nth-child(odd) > td {
+                background-color: $color-greenish-gray;
+            }
+
+            &:hover > td {
+                background-color: $color-dark-green;
+                color: $color-greenish-black;
+            }
+
+            &.selected > td {
+                background-color: $color-green;
+                color: $color-greenish-black;
+            }
         }
 
-        >tr:nth-child(odd)>td {
-            background-color: $color-greenish-gray;
-        }
+
+
     }
 
     >tfoot {

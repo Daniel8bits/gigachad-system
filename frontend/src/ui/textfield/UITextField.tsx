@@ -98,6 +98,7 @@ export interface UITextFieldProps {
     onMouseUp?: (ev: React.MouseEvent) => void;
     onAction?: (value: string | ((oldValue: string) => string)) => void
     onClickIcon?: () => void
+    onLoad?: (ref: React.RefObject<HTMLInputElement>) => void
     iconContainerRef?: React.RefObject<HTMLDivElement>
 }
 
@@ -260,23 +261,26 @@ const UITextField: React.ForwardRefRenderFunction<HTMLInputElement, UITextFieldP
 
     useEffect(() => {
 
-        if(externRef && inputTextRef.current) {
-            (externRef as React.MutableRefObject<HTMLInputElement>).current = inputTextRef.current
+        if(inputTextRef.current) {
+            if(externRef) {
+                (externRef as React.MutableRefObject<HTMLInputElement>).current = inputTextRef.current
+            }
+            props.onLoad?.(inputTextRef)
         }
     
-      if(props.mask && inputTextRef.current) {
+        if(props.mask && inputTextRef.current) {
 
 
-        const [base] = toRegExp(props.mask)
-        const input = inputTextRef.current
-        //console.log(props.id + '#TESTE> ' + base);
-            
-        input.maxLength = base.length
-        input.value = base;
-        previousValue.current = base
-      } else if (props.defaultValue && inputTextRef.current) {
-        inputTextRef.current.value = props.defaultValue
-      }
+            const [base] = toRegExp(props.mask)
+            const input = inputTextRef.current
+            //console.log(props.id + '#TESTE> ' + base);
+                
+            input.maxLength = base.length
+            input.value = base;
+            previousValue.current = base
+        } else if (props.defaultValue && inputTextRef.current) {
+            inputTextRef.current.value = props.defaultValue
+        }
     }, []);
 
     /**

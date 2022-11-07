@@ -1,8 +1,59 @@
-
 .side-menu {
   @include theme($color-greenish-gray-transparent);
-  box-shadow: 2px 0 4px black;
-  width: $side-menu-width;
+  @include transition();
   height: $content-height;
+  padding-top:1em;
+  box-shadow: 2px 0 4px black;
+  overflow: hidden;
+  
+  &.open {
+    width: $side-menu-width;
+  }
 
+  &:not(.open) {
+    width: 0;
+  }
+
+  >ul {
+    padding:0;
+    border:0;
+    margin:0;
+    list-style: none;
+    >li{
+      >a {
+        @include flex(left);
+        @include padding();
+        color: white;
+        text-decoration: none;
+        &.active{
+          color: $color-green;
+        }
+        >.name{
+          flex:1;
+        }
+      }
+      >.submenu{
+        padding:0;
+        border:0;
+        margin:0;
+        list-style: none;
+        padding-left:1.5em;
+        background-color:#1E1F21;
+        overflow:hidden;
+        @include transition();
+        >li{
+          >a {
+            @include flex(left);
+            @include padding();
+            color: white;
+            text-decoration: none;
+            &.active{
+              color: $color-green;
+            } 
+          }
+        }
+      }
+
+    }
+  }
 }

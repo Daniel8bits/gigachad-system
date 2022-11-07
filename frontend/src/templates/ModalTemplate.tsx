@@ -1,4 +1,7 @@
+import useModal from '@hooks/useModal';
 import FilterTableModalLayout from '@layouts/filterTableModalLayout/FilterTableModalLayout';
+import Endpoint from '@middlewares/Endpoint';
+import Middleware from '@middlewares/Middleware';
 import UIModal from '@ui/modal/UIModal';
 import getPageName from '@utils/algorithms/getPageName';
 import React, { useCallback } from 'react';
@@ -8,40 +11,64 @@ import TemplateURLActions from './TemplateURLAction';
 
 export interface ModalTemplateParamType<T> {
   mode: TemplateURLActions
+  data: T
 
 }
 
-interface ModalTemplateConfig {
+interface ModalTemplateBodyProps<T> {
+  mode: TemplateURLActions
+  data?: T
+  endpoint: Endpoint<T>
+}
+
+interface ModalTemplateConfig<T> {
   title: string,
   actions: TemplateActions[],
-  body: React.FC<JSX.IntrinsicAttributes>
+  body: React.FC<ModalTemplateBodyProps<T>>
 }
 
-function ModalTemplate(config: ModalTemplateConfig) {
+interface ModalTemplateComponentProps {
+  endpoint: string
+}
 
-  const WithFoo: React.FC<JSX.IntrinsicAttributes> = (props) => {
+function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
 
-    const navigate = useNavigate()
-    const location = useLocation()
+  const ModalTemplateComponent: React.FC<ModalTemplateComponentProps> = (props) => {
 
-    const onClose = useCallback(() => {
-      const pageName = getPageName(location)
-      navigate(pageName)
-    }, []);
+    const Template = Middleware<T>(props.endpoint, false, endpoint => {
+      return (() => {
+        const [modal, updateModal] = useModal<ModalTemplateParamType<T>>(props.endpoint)
+    
+        const navigate = useNavigate()
+        const location = useLocation()
+    
+        const onClose = useCallback(() => {
+          const pageName = getPageName(location)
+          navigate(pageName)
+        }, []);
+    
+        return (
+          <FilterTableModalLayout 
+            title={config.title}
+            onClose={onClose}
+          >
+            <config.body 
+              data={modal?.params?.data} 
+              endpoint={endpoint}  
+              mode={modal?.params?.mode ?? TemplateURLActions.CLOSED}
+            />
+          </FilterTableModalLayout>
+        )
+      }) as React.FC<JSX.IntrinsicAttributes>
 
-    return (
-      <FilterTableModalLayout 
-        title={config.title}
-        onClose={onClose}
-      >
-        <config.body  />
-      </FilterTableModalLayout>
-    )
+    })
+
+    return <Template  />
   };
 
-  WithFoo.displayName = `ModalTemplate`;
+  ModalTemplateComponent.displayName = `ModalTemplate`;
 
-  return WithFoo;
+  return ModalTemplateComponent;
 }
 
 export default ModalTemplate;

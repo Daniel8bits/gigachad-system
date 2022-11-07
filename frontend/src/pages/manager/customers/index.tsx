@@ -12,11 +12,9 @@ interface APIType {
     email: number
     phone: string
   }
-  invoiceDate: string,
-  status: 'canceled' | 'paid' | 'open'
 }
 
-const columns = ["Nome", "CPF", "Email", "Telefone", "Data da Fatura", "Situação"]
+const columns = ["Nome", "CPF", "Email", "Telefone"]
 
 export default FilterPageTemplate<APIType>({
   endpoint: '/customer',
@@ -27,14 +25,14 @@ export default FilterPageTemplate<APIType>({
       [
         {
           id: '1',
-          title: 'CPF', 
+          title: 'Cpf',
           type: InputType.TEXTFIELD,
           mask: "{ddd.ddd.ddd-dd}",
           size: { sm: 3, md: 3, lg: 3, xl: 3, xxl: 3 }
         },
         {
           id: '2',
-          title: 'Nome do cliente', 
+          title: 'Nome do cliente',
           type: InputType.TEXTFIELD,
           size: { sm: 3, md: 3, lg: 3, xl: 3, xxl: 3 }
         }
@@ -66,9 +64,7 @@ export default FilterPageTemplate<APIType>({
         name: data.Users.name,
         cpfCustomer: data.cpf,
         email: data.Users.email,
-        phone: data.Users.phone,
-        invoiceDate: data.invoiceDate,
-        status: data.status 
+        phone: data.Users.phone
       }
     })
   }

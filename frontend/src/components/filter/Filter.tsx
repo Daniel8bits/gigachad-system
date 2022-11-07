@@ -21,6 +21,7 @@ export interface InputConfig {
   type: InputType,
   defaultValue?: unknown
   items?: UIComboItemType
+  mask?: string
   size: { 
     sm: number,
     md: number,
@@ -30,7 +31,7 @@ export interface InputConfig {
   }
 }
 
-interface FilterData {
+export interface FilterData {
   textfieldValues: Map<string, string>
   dateValues: Map<string, UIDate>
   comboValues: Map<string, UIComboItemData|null>
@@ -78,9 +79,13 @@ const Filter: React.FC<FilterProps> = (props) => {
   }, [])
 
   const textfieldValues = useRef<Map<string, string>>(maps.textfieldValues)
-  const [dateValues, setDateValues] = useState<Map<string, UIDate>>(maps.dateValues);
-  const [comboValues, setComboValues] = useState<Map<string, UIComboItemData|null>>(maps.comboValues);
-  const [checkValues, setCheckValues] = useState<Map<string, boolean>>(maps.checkValues);
+  const dateValues = useRef<Map<string, UIDate>>(maps.dateValues)
+  const comboValues = useRef<Map<string, UIComboItemData|null>>(maps.comboValues)
+  const checkValues = useRef<Map<string, boolean>>(maps.checkValues)
+
+  const [update, setUpdate] = useState<boolean>(false);
+
+  const textfieldRefs = useRef<HTMLInputElement[]>([]);
 
   const reduceInput = useCallback((inputConfig: InputConfig) => {
     switch(inputConfig.type) {
@@ -89,16 +94,22 @@ const Filter: React.FC<FilterProps> = (props) => {
           <UIDatePicker 
             id={inputConfig.id} 
             label={inputConfig.title}  
-            value={dateValues.get(inputConfig.id) as UIDate}
-            onAction={(value) => setDateValues(dateValue => dateValue?.set(inputConfig.id, value as UIDate))}
+            value={dateValues.current.get(inputConfig.id) as UIDate}
+            onAction={(value) => {
+              dateValues.current.set(inputConfig.id, value as UIDate)
+              setUpdate(update => !update)
+            }}
           />
         )
       case InputType.CHECKBOX:
         return (
           <UICheckBox 
             label={inputConfig.title} 
-            value={checkValues.get(inputConfig.id) as boolean}
-            onAction={(value) => setCheckValues(checkValues => checkValues?.set(inputConfig.id, value as boolean))}
+            value={checkValues.current.get(inputConfig.id) as boolean}
+            onAction={(value) => {
+              checkValues.current.set(inputConfig.id, value as boolean)
+              setUpdate(update => !update)
+            }}
           />
         )
       case InputType.COMBOBOX:
@@ -110,8 +121,11 @@ const Filter: React.FC<FilterProps> = (props) => {
             id={inputConfig.id} 
             label={inputConfig.title}  
             items={inputConfig.items}
-            value={comboValues.get(inputConfig.id) as UIComboItemData}
-            onAction={(value) => setComboValues(comboValues => comboValues?.set(inputConfig.id, value as UIComboItemData))}
+            value={comboValues.current.get(inputConfig.id) as UIComboItemData}
+            onAction={(value) => {
+              comboValues.current.set(inputConfig.id, value as UIComboItemData)
+              setUpdate(update => !update)
+            }}
           />
         )
       default:
@@ -119,19 +133,24 @@ const Filter: React.FC<FilterProps> = (props) => {
           <UITextField 
             id={inputConfig.id} 
             label={inputConfig.title}  
+            mask={inputConfig.mask}
             defaultValue={textfieldValues.current.get(inputConfig.id)}
-            onAction={value => textfieldValues.current.set(inputConfig.id, value as string)}
+            onAction={value => {textfieldValues.current.set(inputConfig.id, value as string)}}
+            onLoad={ref => {
+              if(!ref.current) return
+              textfieldRefs.current.push(ref.current)
+            }}
           />
         )
     }
-  }, []);
+  }, [update]);
 
   const handleSearch = useCallback(() => {
     props.onSearch({
       textfieldValues: textfieldValues.current,
-      dateValues,
-      checkValues,
-      comboValues
+      dateValues: dateValues.current,
+      checkValues: checkValues.current,
+      comboValues: comboValues.current
     })
   }, []);
 
@@ -139,20 +158,35 @@ const Filter: React.FC<FilterProps> = (props) => {
     textfieldValues.current.forEach((value, key, map) => {
       map.set(key, '')
     })
-    dateValues.forEach((value, key, map) => {
+    textfieldRefs.current.forEach((textfield) => {
+      textfield.value = ''
+    })
+    dateValues.current.forEach((value, key, map) => {
       map.set(key, UIDate.now())
     })
-    checkValues.forEach((value, key, map) => {
+    checkValues.current.forEach((value, key, map) => {
       map.set(key, false)
     })
-    comboValues.forEach((value, key, map) => {
+    comboValues.current.forEach((value, key, map) => {
       map.set(key, null)
     })
+    setUpdate(update => !update)
     props.onClean()
   }, []);
 
   const height = useMemo<number>(() => {
-    return props.inputs.length * 86 + 40
+    let height = 40;
+    props.inputs.forEach(row => {
+      if(
+        row.filter(cell => cell.type === InputType.CHECKBOX).length > 0 &&
+        row.filter(cell => cell.type !== InputType.CHECKBOX).length === 0
+      ) {
+        height += 56
+        return
+      }
+      height += 86
+    })
+    return height
   }, [props.inputs.length])
 
   return (
@@ -165,10 +199,10 @@ const Filter: React.FC<FilterProps> = (props) => {
       </button>
       <div className='filter-content' style={{height: open ? height : 0}}>
         <div className='filter-inputs'>
-          {props.inputs.map(row => (
-            <Row>
-              {row.map(cell => (
-                <Column {...cell.size}>
+          {props.inputs.map((row, rowKey) => (
+            <Row key={rowKey}>
+              {row.map((cell, columnKey) => (
+                <Column {...cell.size} key={columnKey}>
                   {reduceInput(cell)}
                 </Column>
               ))}

@@ -1,15 +1,69 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
+import { FaChevronDown } from 'react-icons/fa'
+import MenuItem, {IMenuItem} from '../menuItem/MenuItem';
 
-interface SideMenuProps {
-  
+export enum UserType {
+  //user = 0,
+  customer = 2,
+  //employee = 4,
+  attendant = 8,
+  manager = 16,
+  financer = 32,
+  trainer = 64
 }
 
-const SideMenu: React.FC<SideMenuProps> = () => {
+const menuConfig: Record<number, IMenuItem[]> = {
+  [UserType.manager]: [
+    {
+      to: "/manager/customers",
+      text: "Clientes"
+    },
+    {
+      to: "/manager/plans",
+      text: "Planos",
+    },
+    {
+      to: "/manager/employee",
+      text: "Funcionários"
+    },
+    {
+      to: "/manager/equipament",
+      text: "Equipamentos"
+    },
+    {
+      to: "/manager/expenses",
+      text: "Gastos",
+      submenu: [
+        {
+          to: "/manager/expenses",
+          text: "Gastos"
+        }
+      ]
+    }
+  ]
+}
+
+
+interface SideMenuProps {
+  open: boolean
+}
+
+
+
+const SideMenu: React.FC<SideMenuProps> = (props) => {
+  const location = useLocation();
+  const selected = location.pathname;
+  const menu = useMemo(() => menuConfig[UserType.manager], []);
+  
   return (
-    <div className='side-menu'>
-      <div>bruno</div>
-      <div>bruno2</div>
-      <div>bruno3</div>
+    <div className={`side-menu ${props.open ? 'open' : ''}`}>
+      <ul>
+        {menu.map((item, key) => (
+          <MenuItem item={item} key={key} active={item.to === selected}/>
+        ))
+        }
+      </ul>
 
     </div>
   );
