@@ -3,6 +3,7 @@
   width: 80vw;
   @include theme($color-greenish-gray);
   @include border();
+  @include padding();
 
   > .header {
     @include flex-left();

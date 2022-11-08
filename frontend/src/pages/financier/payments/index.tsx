@@ -7,6 +7,14 @@ interface APIType {
   id: number
   cpfCustomer: number
   idPlan: number
+
+  Users: {
+    cpf: string
+    name: string
+    email: number
+    phone: string
+  }
+
   cardNumbers?: number
   value: number
   status: 'canceled' | 'paid' | 'open'
@@ -85,6 +93,8 @@ export default FilterPageTemplate<APIType>({
       ],
     ],
     validate: data => {
+      //const cpf = data.textfieldValues.get('1')
+      //   /([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})/.test(value as string)
       const name = data.textfieldValues.get('1')
       const cpf = data.textfieldValues.get('2')
       const date = data.dateValues.get('3')
@@ -99,7 +109,7 @@ export default FilterPageTemplate<APIType>({
     format: data => {
       const name = data.textfieldValues.get('1')
       const cpf = data.textfieldValues.get('2')
-      const payday = data.dateValues.get('3')
+      const date = data.dateValues.get('3')
       const plan = data.comboValues.get('4')
       const payMethod = data.comboValues.get('5')
       const status = data.comboValues.get('6')
@@ -112,7 +122,7 @@ export default FilterPageTemplate<APIType>({
       return {
         name,
         cpfCustomer: cpf,
-        payday: payday?.getFormattedDate().replaceAll('/', '-'),
+        payday: date?.getFormattedDate().replaceAll('/', '-'),
         idPlan,
         payMethod: formatedPayMethod,
         status: formatedStatus

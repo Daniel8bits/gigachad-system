@@ -86,6 +86,13 @@
   @include noBorder();
 }
 
+@mixin inlineFlex($horizontal:center, $vertical:center, $wrap:wrap) {
+  display: inline-flex;
+  flex-wrap: $wrap;
+  justify-content: $horizontal;
+  align-items: $vertical;
+}
+
 @mixin flex($horizontal:center, $vertical:center, $wrap:wrap) {
   display: flex;
   flex-wrap: $wrap;
@@ -106,9 +113,13 @@
 }
 
 @mixin border($radius: 4px) {
+  @include borderNoShadow($radius);
+  @include shadow();
+}
+
+@mixin borderNoShadow($radius: 4px) {
   border-radius: $radius;
   @include noBorder();
-  @include shadow();
 }
 
 @mixin border-rounded() {

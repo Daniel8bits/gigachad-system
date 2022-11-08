@@ -1,7 +1,7 @@
 import { UIDate } from '@ui/datepicker/UIDatePicker';
 import EventEmitter from 'events';
 import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
-import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
+import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 import UITextField from '../textfield/UITextField';
 
 export interface RowDataType {
@@ -58,6 +58,7 @@ export class UITableDocument<T> extends EventEmitter {
         this.nextPage = this.nextPage.bind(this);
         this.previousPage = this.previousPage.bind(this);
         this.triggerOnRowSelected = this.triggerOnRowSelected.bind(this);
+        this.triggerOnRowDoubleClicked = this.triggerOnRowDoubleClicked.bind(this);
 
     }
 
@@ -167,6 +168,7 @@ export class UITableDocument<T> extends EventEmitter {
     }
 
     public triggerOnRowDoubleClicked(dbClickedRow: RowType<T>) {
+        this.triggerOnRowSelected(dbClickedRow)
         this._onRowDoubleClicked?.(dbClickedRow.data)
     }
 
@@ -228,7 +230,7 @@ const UITable: React.FC<UITableProps> = (props) => {
                 <tr>
                     <td colSpan={props.document.getColumnsLength()}>
                         <div className='pagination'>
-                            <FaAngleLeft onClick={props.document.previousPage} size={32} />
+                            <MdChevronLeft onClick={props.document.previousPage} size={32} />
                             <UITextField
                                 ref={refInput}
                                 id="page"
@@ -236,7 +238,7 @@ const UITable: React.FC<UITableProps> = (props) => {
                                 onAction={value => props.document.setPage(Number(value))}
                             />
                             <span>de {props.document.getMaxPage()}</span>
-                            <FaAngleRight onClick={props.document.nextPage} size={32} />
+                            <MdChevronRight onClick={props.document.nextPage} size={32} />
                         </div>
                     </td>
                 </tr>

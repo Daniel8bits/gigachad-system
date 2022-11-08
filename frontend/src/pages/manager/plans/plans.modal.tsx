@@ -1,5 +1,5 @@
 import React from 'react'
-import ModalTemplate from '@templates/ModalTemplate'
+import ModalTemplate from '@templates/modalTemplate/ModalTemplate'
 
 export default ModalTemplate({
   

@@ -6,7 +6,7 @@ import TemplateActions from '@templates/TemplateActions'
       "cpf": "741.764.650-69",
       "administrative": true,
       "ctps": "312312",
-      "admissionDate": "2022-10-19T03:00:00.000Z",
+      "admissiondate": "2022-10-19T03:00:00.000Z",
       "address": "Rua Tal",
       "Users": {
         "cpf": "741.764.650-69",
@@ -18,7 +18,7 @@ interface APIType {
   cpf: string
   administrative: boolean
   ctps: string
-  admissionDate: string
+  admissiondate: string
   address: string
   Users: {
     cpf: string
@@ -83,10 +83,10 @@ export default FilterPageTemplate<APIType>({
         const name = data.textfieldValues.get('2')
         const address = data.textfieldValues.get('3')
         const ctps = data.textfieldValues.get('4')
-        const admissionDate = data.textfieldValues.get('5')
-        const administrative = data.textfieldValues.get('6')
+        const admissiondate = data.dateValues.get('5')
+        const administrative = data.checkValues.get('6')
 
-        if(!cpfEmployee && !name && !address && !ctps && !admissionDate && !administrative) return false;
+        if(!cpfEmployee && !name && !address && !ctps && !admissiondate && !administrative) return false;
       
         return true
       },
@@ -95,16 +95,16 @@ export default FilterPageTemplate<APIType>({
         const name = data.textfieldValues.get('2')
         const address = data.textfieldValues.get('3')
         const ctps = data.textfieldValues.get('4')
-        const admissionDate = data.textfieldValues.get('5')
-        const administrative = data.textfieldValues.get('6')
-  
+        const admissiondate = data.dateValues.get('5')
+        const administrative = data.checkValues.get('6')
+
         return {
             cpfEmployee,
             name,
             address,
             ctps,
-            admissionDate,
-            administrative
+            admissiondate: admissiondate?.getFormattedDate().replaceAll('/', '-'),
+            administrative: String(administrative)
         }
       }
   },
@@ -117,7 +117,7 @@ export default FilterPageTemplate<APIType>({
         address: data.address,
         cpfEmployee: data.cpf,
         ctps: data.ctps,
-        admissionDate: new Date(data.admissionDate).toLocaleDateString() 
+        admissiondate: new Date(data.admissiondate).toLocaleDateString() 
       }
     })
   }

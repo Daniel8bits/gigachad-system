@@ -28,7 +28,7 @@ const menuConfig: Record<number, IMenuItem[]> = {
       text: "Funcionários"
     },
     {
-      to: "/manager/equipament",
+      to: "/manager/equipments",
       text: "Equipamentos"
     },
     {

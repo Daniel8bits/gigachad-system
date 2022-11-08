@@ -102,15 +102,6 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
           if(params) {
             document.setParams(params);
           }
-          // Linha 79
-          // endpoint.get(params)
-          //   .then(document.setData)
-          //   .catch(err => {
-          //     console.log(err)
-          //     // tratar erro de permissão
-          //     // tratar demais erros
-          //   })
-
         }, [])
 
         const clean = useCallback(() => {

@@ -7,6 +7,7 @@ export interface ActionsCallbacks {
   onEdit?: () => void
   onNew?: () => void
   onDelete?: () => void
+  onCancel?: () => void
 }
 
 interface ActionsProps {
@@ -19,7 +20,8 @@ const Actions: React.FC<ActionsProps> = (props) => {
     onSave, 
     onEdit, 
     onNew, 
-    onDelete
+    onDelete,
+    onCancel
   } = props.actionsCallbacks
   return (
     <div className='actions'>
@@ -28,6 +30,7 @@ const Actions: React.FC<ActionsProps> = (props) => {
       {onEdit   && <UIButton onAction={onEdit}>   Editar </UIButton>}
       {onNew    && <UIButton onAction={onNew}>    Novo </UIButton>}
       {onDelete && <UIButton onAction={onDelete}> Deletar </UIButton>}
+      {onCancel && <UIButton onAction={onCancel}> Cancelar </UIButton>}
     </div>
   );
 };

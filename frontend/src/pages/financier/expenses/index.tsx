@@ -61,10 +61,10 @@ export default FilterPageTemplate<APIType>({
     validate: data => {
       const name = data.textfieldValues.get('1')
       const qrCode = data.textfieldValues.get('2')
-      const type = data.comboValues.get('3')
-      const maintenanceDate = data.dateValues.get('4')
+      const typeExpense = data.comboValues.get('3')
+      const date = data.dateValues.get('4')
 
-      if(!name && !qrCode && !type && !maintenanceDate) return false;
+      if(!name && !qrCode && !typeExpense && !date) return false;
 
       return true
     }, 
@@ -72,13 +72,14 @@ export default FilterPageTemplate<APIType>({
       const name = data.textfieldValues.get('1')
       const qrCode = data.textfieldValues.get('2')
       const type = data.comboValues.get('3')
-      const maintenanceDate = data.dateValues.get('4')
+      const date = data.dateValues.get('4')
 
+      
       return {
         name,
         qrCode,
         type: String(type),
-        maintenanceDate: maintenanceDate?.getFormattedDate().replaceAll('/', '-')
+        date: date?.getFormattedDate().replaceAll('/', '-'),
       }
     }
   },
@@ -89,7 +90,7 @@ export default FilterPageTemplate<APIType>({
       display: {
         description: data.description,
         date: new Date(data.date).toLocaleDateString(),
-        type: stringType(data.type), 
+        type: stringType(data.type),   
         totalValue: data.totalvalue
       }
     }),

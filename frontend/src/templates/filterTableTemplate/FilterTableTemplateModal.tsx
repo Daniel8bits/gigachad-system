@@ -1,6 +1,6 @@
 import LoadingScreen from "@components/loadingScreen/LoadingScreen";
 import useModal from "@hooks/useModal";
-import { ModalTemplateParamType } from "@templates/ModalTemplate";
+import { ModalTemplateComponentProps, ModalTemplateParamType } from "@templates/modalTemplate/ModalTemplate";
 import TemplateURLActions from "@templates/TemplateURLAction";
 import UIModal from "@ui/modal/UIModal";
 import getModalName from "@utils/algorithms/getModalName";
@@ -9,13 +9,13 @@ import { useLocation } from "react-router-dom";
 
 
 function FilterTableTemplateModal<T>(
-  modalName: string,
+  endpoint: string,
   template: () => React.FC<JSX.IntrinsicAttributes>
 ) {
 
   const Page: React.FC<JSX.IntrinsicAttributes> = () => {
     const Template = useMemo(() => template(), []);
-    const [modal, updateModal] = useModal<ModalTemplateParamType<T>>(modalName)
+    const [modal, updateModal] = useModal<ModalTemplateParamType<T>>(endpoint)
     const location = useLocation()
 
     /**
@@ -39,23 +39,21 @@ function FilterTableTemplateModal<T>(
       } else if(modal?.params && modal?.open && modal.params?.mode !== TemplateURLActions.CLOSED) {
         const [modalName, modalMode] = getModalName(location)
 
-        if(modalMode === TemplateURLActions.CLOSED) {
-          updateModal({
-            open: false,
-            params: {
-              mode: modalMode,
-              data: modal.params.data
-            }
-          })
-        }
+        updateModal({
+          open: modalMode !== TemplateURLActions.CLOSED,
+          params: {
+            mode: modalMode,
+            data: modal.params.data
+          }
+        })
       }
-    }, [modal, location])
+    }, [modal?.open, modal?.params?.mode, location.pathname])
 
     const ModalContent = useMemo(() => {
 
       const [modalName] = getModalName(location)
       if(modalName) {
-        return lazy(() => import(`/src/pages${modalName}`))
+        return lazy<React.ComponentType<ModalTemplateComponentProps>>(() => import(`/src/pages${modalName}`))
       }
       return null
     }, [location])
@@ -64,12 +62,12 @@ function FilterTableTemplateModal<T>(
       <>
         <Template />
         <UIModal<ModalTemplateParamType<any>> 
-          id={modalName} 
+          id={endpoint} 
           params={{mode: TemplateURLActions.CLOSED, data: null}}
           disableClickOutside
         >
           <Suspense fallback={<LoadingScreen  />}>
-            {ModalContent && <ModalContent  />}
+            {ModalContent && <ModalContent endpoint={endpoint}  />}
           </Suspense>
         </UIModal>
       </>
