@@ -1,14 +1,30 @@
-import Home from '@pages/home/Home';
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import usePage from '@hooks/usePage'
+import MainLayout from '@layouts/mainLayout/MainLayout';
+import LoadingScreen from '@components/loadingScreen/LoadingScreen';
 
 function App() {
+
+  const page = usePage(<LoadingScreen bellowMenu  />)
+
   return (
+    <MainLayout>
+      {page}
+    </MainLayout>
+  )
+}
+
+// <Route path="/home" element={<Home />}  />
+
+/*
+
+return (
     <Routes>
-      <Route path="/" element={<Home />}  />
-      <Route path="/home" element={<Home />}  />
+      <Route path="/" element={}  />
+      
     </Routes>
   );
-}
+
+*/
 
 export default App;

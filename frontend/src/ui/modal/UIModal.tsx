@@ -5,15 +5,17 @@ import { ModalActions } from '@store/components/ModalStore'
 import onClickOutside, { OnClickOutsideCallbackRefObject } from '@utils/algorithms/onClickOutside';
 
 
-interface UIModalProps {
+interface UIModalProps<T> {
     readonly id?: string
     open?: boolean;
     template?: string
     className?: string
     children?: any
+    params?: T
+    disableClickOutside?: boolean
 }
 
-const UIModal: React.FC<UIModalProps> = (props) => {
+function UIModal<T>(props: UIModalProps<T>) {
 
   const dispatch = useDispatch()
   const modals = useSelector(state => state.modal.modal)
@@ -33,7 +35,8 @@ const UIModal: React.FC<UIModalProps> = (props) => {
       dispatch(ModalActions.create({
         key: props.id, 
         value: {
-          open: props.open ?? false
+          open: props.open ?? false,
+          params: props.params
         }
       }))
 
@@ -56,7 +59,7 @@ const UIModal: React.FC<UIModalProps> = (props) => {
   }, []);
 
   useEffect(() => {
-    if(props.id && open && ref.current) {
+    if(props.id && open && ref.current && !props.disableClickOutside) {
 
       const e = event as OnClickOutsideCallbackRefObject
 
@@ -67,7 +70,7 @@ const UIModal: React.FC<UIModalProps> = (props) => {
 
       e.current = onClickOutside(ref.current, handleClose)
     }
-  }, [props.id, open]);
+  }, [props.id, open, props.disableClickOutside]);
 
     return (
       <div className={`ui-modal ${props.template ?? ''} ${open ? 'open' : ''} ${props.className ?? ''}`}>
@@ -76,6 +79,6 @@ const UIModal: React.FC<UIModalProps> = (props) => {
           </div>
       </div>
     );
-};
+}
 
 export default UIModal;

@@ -1,0 +1,46 @@
+
+.filter {
+
+  margin: 1rem 0;
+
+  > button {
+    @include flex();
+    @include justContent();
+    @include transition();
+    color: $color-green;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+
+    > svg {
+      @include transition();
+      margin-left: .5rem;
+    }
+
+    &:hover {
+      color: $color-dark-green;
+    }
+
+  }
+
+  &.open > button > svg {
+    transform: rotateZ(180deg);
+  }
+
+  > .filter-content {
+
+    @include transition(.75s);
+
+    overflow: hidden;
+
+    > .filter-control {
+      @include flex-left();
+  
+      > .ui-button {
+        margin-right: 1rem;
+      }
+    }
+  }
+
+
+}

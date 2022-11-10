@@ -5,7 +5,7 @@
     @include border();
     border-collapse: collapse;
 
-    >thead {
+    > thead {
         height:50px;
         >tr>th {
             color:#fff;
@@ -16,17 +16,34 @@
         }
     }
 
-    >tbody {
-        >tr>td {
-            color:#dedede;
-            text-align:center;
-            @include justContent();
-            padding: 1rem;
+    > tbody {
+        > tr {
+            
+            > td {
+                color:#dedede;
+                text-align:center;
+                @include justContent();
+                @include padding();
+                //padding: 1rem;
+            }
+
+            &:nth-child(odd) > td {
+                background-color: $color-greenish-gray;
+            }
+
+            &:hover > td {
+                background-color: $color-dark-green;
+                color: $color-greenish-black;
+            }
+
+            &.selected > td {
+                background-color: $color-green;
+                color: $color-greenish-black;
+            }
         }
 
-        >tr:nth-child(odd)>td {
-            background-color: $color-greenish-gray;
-        }
+
+
     }
 
     >tfoot {
@@ -42,14 +59,29 @@
                 justify-content: flex-end;
 
                 >svg {
-                    font-size:26px;
-                    margin:0 0.5rem;
+                    @include transition();
+                    @include borderNoShadow();
+                    cursor: pointer;
+                    padding: .1rem;
+
+                    &:hover {
+                        color: $color-dark-green;
+                        background-color: #fff2;
+                    }
+
+                    &:first-child {
+                        margin-right: .75rem;
+                    }
+
+                    &:last-child {
+                        margin-left: .75rem;
+                    }
                 }
 
                 >span {
                     font-size:14px;
                     @include flex();
-                    margin-left: 0.5rem;
+                    margin-left: .75rem;
                 }
 
                 >.ui-textfield>input {

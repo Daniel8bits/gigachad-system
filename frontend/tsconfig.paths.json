@@ -10,6 +10,9 @@
         "@style/*": ["./src/style/*"],
         "@store/*": ["./src/store/*"],
         "@pages/*": ["./src/pages/*"],
+        "@images/*": ["./src/images/*"],
+        "@templates/*": ["./src/templates/*"],
+        "@middlewares/*": ["./src/middlewares/*"],
         "@custom-types/*": ["./src/custom-types/*"]
     }
   }

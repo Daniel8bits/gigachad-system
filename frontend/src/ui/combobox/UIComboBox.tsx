@@ -24,22 +24,22 @@ const UIComboBoxItem: React.FC<UIComboBoxItemProps> = (props) => {
   );
 };
 
-
-export type UIComboItemType = string[] | { [key: string]: string[] }
+export type UIComboItemData = {value: string, label: string}
+export type UIComboItemType = UIComboItemData[] | { [key: string]: UIComboItemData[] }
 
 interface UIComboBoxProps {
     id: string
     template?: string
     items: UIComboItemType
-    value: string|null
-    onActionPerformed: (value: string|null | ((oldValue: string|null) => string)) => void
+    value: UIComboItemData|null
+    onAction: (value: UIComboItemData|null | ((oldValue: UIComboItemData|null) => UIComboItemData)) => void
     label?: string
     allowNull?: boolean
     allowSearch?: boolean
 }
 
 const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
-  const [items, setItems] = useState<string[] | { [key: string]: string[] }>(props.items)
+  const [items, setItems] = useState<UIComboItemData[] | { [key: string]: UIComboItemData[] }>(props.items)
   const popOverId = `${props.id}__popOver`
   const [popOver, updatePopOver] = usePopOver(popOverId)
   const anchorRef = useRef<HTMLDivElement>(null)
@@ -50,7 +50,7 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
     if(props.items instanceof Array && props.items.length <= MAX_ITEMS_TO_BE_AUTO) {
       return 'auto'
     }
-    const propsItems = props.items as {[key: string]: string[]}
+    const propsItems = props.items as {[key: string]: UIComboItemData[]}
     let numItems = 0
     Object.keys(propsItems).forEach(key => {
       numItems += propsItems[key].length
@@ -70,8 +70,8 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
     }
   }, [popOver?.open])
 
-  function handleChange(value: string|null) {
-    props.onActionPerformed(value)
+  function handleChange(value: UIComboItemData|null) {
+    props.onAction(value)
     updatePopOver({ open: false })
   }
 
@@ -83,15 +83,15 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
     const input = inputRef.current
     const propsItems = props.items
     if (props.allowSearch && propsItems instanceof Array && input) {
-      setItems((propsItems as string[]).filter((item) =>
-        item.search(input.value) > -1
+      setItems((propsItems as UIComboItemData[]).filter((item) =>
+        item.label.search(input.value) > -1
       ))
       updatePopOver({ open: true })
     } else if (props.allowSearch && input && !(propsItems instanceof Array)) {
       setItems(oldItems => {
-        const newItems = {} as {[key: string]: string[]}
+        const newItems = {} as {[key: string]: UIComboItemData[]}
         Object.keys(props.items).forEach((key) => {
-          const newItemsValue = (propsItems[key] as string[]).filter((item: string) => item.search(input.value) > -1)
+          const newItemsValue = (propsItems[key] as UIComboItemData[]).filter((item: UIComboItemData) => item.label.search(input.value) > -1)
           if(newItemsValue.length > 0) {
             newItems[key] = newItemsValue
           }
@@ -107,12 +107,12 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
       const propsItems = props.items
       return (
         <div className='combobox-items'>
-          {(items as string[]).map((item, key) => {
+          {(items as UIComboItemData[]).map((item, key) => {
             return (
               <UIComboBoxItem
                 key={key}
-                value={item}
-                active={item === props.value}
+                value={item.label}
+                active={item.value === props.value?.value}
                 onClick={() => handleChange(propsItems[key])}
               />
             )
@@ -121,8 +121,8 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
       )
     }
 
-    const itemsAsObject = items as {[key: string]: string[]}
-    const propsItemsAsObject = props.items as {[key: string]: string[]}
+    const itemsAsObject = items as {[key: string]: UIComboItemData[]}
+    const propsItemsAsObject = props.items as {[key: string]: UIComboItemData[]}
 
     return (
       <div className='combobox-items'>
@@ -130,12 +130,12 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
           <div key={collectionKey}>
             <h5> {collection} </h5>
             <div>
-              {itemsAsObject[collection].map((item: string, itemKey: number) => {
+              {itemsAsObject[collection].map((item: UIComboItemData, itemKey: number) => {
                 return (
                   <UIComboBoxItem
                     key={itemKey}
-                    value={item}
-                    active={item === props.value}
+                    value={item.label}
+                    active={item.value === props.value?.value}
                     onClick={() => handleChange(propsItemsAsObject[collection][itemKey])}
                   />
                 )
@@ -150,9 +150,8 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
   useEffect(() => {
     if (inputRef.current) {
       if (props.value) {
-        inputRef.current.value = props.value
-      }
-      else {
+        inputRef.current.value = props.value.label
+      } else {
         inputRef.current.value = ''
       }
     }
@@ -161,7 +160,7 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
 
   useEffect(() => {
     if(inputRef.current) {
-      inputRef.current.value = props.value ?? ''
+      inputRef.current.value = props.value?.label ?? ''
     }
   }, []);
 
@@ -202,6 +201,12 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
         height={popOverHeight}
         position="bottom"
       >
+        {props.allowNull && 
+          <UIComboBoxItem
+            value=''
+            active={props.value === null}
+            onClick={() => handleChange(null)}
+          />}
         {getOptions()}
       </UIPopOver>
     </div>

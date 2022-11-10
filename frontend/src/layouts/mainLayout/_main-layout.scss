@@ -3,7 +3,7 @@
   @include flex();
 
   .content {
-    @include flex-left();
+    @include flex-left(flex-start);
     width: $screen-width;
     height: $content-height;
 

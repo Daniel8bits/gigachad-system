@@ -5,9 +5,9 @@ import ComponentStore, {
     ComponentStoreState 
 } from '@store/components/ComponentStore'
 
-export interface ModalData extends ComponentStoreData {
+export interface ModalData<T> extends ComponentStoreData {
     open: boolean, 
-    params?: any
+    params?: T
 }
 
 const initialState: ComponentStoreState = {

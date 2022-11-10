@@ -35,9 +35,16 @@
     }
 }
 
-@mixin transition() {
-  transition: all .25s;
+@mixin transition($time: .25s) {
+  transition: all $time;
   transition-timing-function: $standard-timing-function;
+}
+
+@mixin infiniteAnimation($animationName, $time: 4s, $function: linear) {
+  animation-name: $animationName;
+  animation-duration: $time;
+  animation-timing-function: $function;
+  animation-iteration-count: infinite;
 }
 
 @mixin animation($animationName) {
@@ -79,6 +86,13 @@
   @include noBorder();
 }
 
+@mixin inlineFlex($horizontal:center, $vertical:center, $wrap:wrap) {
+  display: inline-flex;
+  flex-wrap: $wrap;
+  justify-content: $horizontal;
+  align-items: $vertical;
+}
+
 @mixin flex($horizontal:center, $vertical:center, $wrap:wrap) {
   display: flex;
   flex-wrap: $wrap;
@@ -99,9 +113,13 @@
 }
 
 @mixin border($radius: 4px) {
+  @include borderNoShadow($radius);
+  @include shadow();
+}
+
+@mixin borderNoShadow($radius: 4px) {
   border-radius: $radius;
   @include noBorder();
-  @include shadow();
 }
 
 @mixin border-rounded() {
