@@ -1,10 +1,6 @@
 import Model from "../utils/Database/Model";
 import { DataType } from "../utils/Database/DataType";
-
-export type ITrainer = {
-    cpf: string
-    cref: string
-}
+import {ITrainer} from 'gigachad-shareds/models'
 
 class Trainer extends Model<ITrainer>{
     @DataType("CPF")

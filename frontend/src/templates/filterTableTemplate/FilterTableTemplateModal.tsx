@@ -7,74 +7,70 @@ import getModalName from "@utils/algorithms/getModalName";
 import React, { lazy, Suspense, useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 
+const MAIN_MODAL = 'MAIN_MODAL'
 
-function FilterTableTemplateModal<T>(
-  endpoint: string,
-  template: () => React.FC<JSX.IntrinsicAttributes>
-) {
+export function useFilterTableTemplateModal<T>() {
+  return useModal<ModalTemplateParamType<T>>(MAIN_MODAL)
+}
 
-  const Page: React.FC<JSX.IntrinsicAttributes> = () => {
-    const Template = useMemo(() => template(), []);
-    const [modal, updateModal] = useModal<ModalTemplateParamType<T>>(endpoint)
-    const location = useLocation()
+const FilterTableTemplateModal: React.FC<JSX.IntrinsicAttributes> = () => {
+  const [modal, updateModal] = useFilterTableTemplateModal<unknown>()
+  const location = useLocation()
 
-    /**
-     *  MODAL MODE OPENING
-     */
-    useEffect(() => {
+  /**
+   *  MODAL MODE OPENING
+   */
+  useEffect(() => {
 
-      if(modal && modal.params?.mode === TemplateURLActions.CLOSED) {
-        const [modalName, modalMode] = getModalName(location)
+    if(modal && modal.params?.mode === TemplateURLActions.CLOSED) {
+      const [modalName, modalMode] = getModalName(location)
 
-        if(modalName && modalMode !== TemplateURLActions.CLOSED) {
-          updateModal({
-            open: true,
-            params: {
-              mode: modalMode,
-              data: modal.params.data
-            }
-          })
-        }
-
-      } else if(modal?.params && modal?.open && modal.params?.mode !== TemplateURLActions.CLOSED) {
-        const [modalName, modalMode] = getModalName(location)
-
+      if(modalName && modalMode !== TemplateURLActions.CLOSED) {
         updateModal({
-          open: modalMode !== TemplateURLActions.CLOSED,
+          open: true,
           params: {
             mode: modalMode,
-            data: modal.params.data
+            data: modal.params.data,
+            endpoint: modal.params.endpoint
           }
         })
       }
-    }, [modal?.open, modal?.params?.mode, location.pathname])
 
-    const ModalContent = useMemo(() => {
+    } else if(modal?.params && modal?.open && modal.params?.mode !== TemplateURLActions.CLOSED) {
+      const [modalName, modalMode] = getModalName(location)
 
-      const [modalName] = getModalName(location)
-      if(modalName) {
-        return lazy<React.ComponentType<ModalTemplateComponentProps>>(() => import(`/src/pages${modalName}`))
-      }
-      return null
-    }, [location])
+      updateModal({
+        open: modalMode !== TemplateURLActions.CLOSED,
+        params: {
+          mode: modalMode,
+          data: modal.params.data,
+          endpoint: modal.params.endpoint
+        }
+      })
+    }
+  }, [modal?.open, modal?.params?.mode, location.pathname])
 
-    return (
-      <>
-        <Template />
-        <UIModal<ModalTemplateParamType<any>> 
-          id={endpoint} 
-          params={{mode: TemplateURLActions.CLOSED, data: null}}
-          disableClickOutside
-        >
-          <Suspense fallback={<LoadingScreen  />}>
-            {ModalContent && <ModalContent endpoint={endpoint}  />}
-          </Suspense>
-        </UIModal>
-      </>
-    )
-  }
+  const ModalContent = useMemo(() => {
 
-  return Page
+    const [modalName] = getModalName(location)
+    if(modalName) {
+      return lazy<React.ComponentType<ModalTemplateComponentProps>>(() => import(`/src/pages${modalName}`))
+    }
+    return null
+  }, [location])
+
+  return (
+    <UIModal<ModalTemplateParamType<unknown>> 
+      id={MAIN_MODAL} 
+      params={{mode: TemplateURLActions.CLOSED, data: null, endpoint: null}}
+      disableClickOutside
+    >
+      <Suspense fallback={<LoadingScreen  />}>
+        {ModalContent && modal?.params?.endpoint &&
+          <ModalContent endpoint={modal.params.endpoint}  />}
+      </Suspense>
+    </UIModal>
+  )
 }
 
 export default FilterTableTemplateModal

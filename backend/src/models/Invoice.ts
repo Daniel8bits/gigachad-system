@@ -1,15 +1,6 @@
 import Model, { DataType } from "../utils/Database/Model";
+import {IInvoice} from 'gigachad-shareds/models'
 
-export type IInvoice = {
-    id: number
-    cpfCustomer: string
-    idPlan: number
-    cardNumbers: string | null
-    value: number
-    status: string
-    payday: string
-    payMethod: string
-}
 class Invoice extends Model<IInvoice>{
     @DataType("NUMBER")
     declare id: number

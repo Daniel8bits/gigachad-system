@@ -1,11 +1,5 @@
 import Model, { DataType } from "../utils/Database/Model";
-
-export type ICreditCard = {
-    numbers: string
-    holder: string
-    expirationDate: string
-    cvv: string
-}
+import {ICreditCard} from 'gigachad-shareds/models'
 
 class CreditCard extends Model<ICreditCard>{
     @DataType("STRING")

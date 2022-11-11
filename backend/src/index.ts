@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 import gigaChad from './middleware/gigaChad';
 import withAuth from './middleware/withAuth';
 import withUser from './middleware/withUser';
-import { UserType } from './models/User';
 
 import routes from './routes';
 

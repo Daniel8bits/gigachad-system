@@ -1,8 +1,12 @@
 import Actions, { ActionsCallbacks } from '@components/actions/Actions';
+import { useDialogBox } from '@components/dialogBox/DialogBox';
+import { useMessageBox } from '@components/messageBox/MessageBox';
 import useModal from '@hooks/useModal';
-import FilterTableModalLayout from '@layouts/filterTableModalLayout/FilterTableModalLayout';
+import { DialogType } from '@layouts/dialogLayout/DialogLayout';
+import FilterTableModalLayout from '@layouts/modalLayout/ModalLayout';
 import Endpoint from '@middlewares/Endpoint';
 import Middleware from '@middlewares/Middleware';
+import { useFilterTableTemplateModal } from '@templates/filterTableTemplate/FilterTableTemplateModal';
 import UIModal from '@ui/modal/UIModal';
 import getPageName from '@utils/algorithms/getPageName';
 import React, { useCallback, useMemo, useRef } from 'react';
@@ -13,15 +17,17 @@ import TemplateURLActions from '../TemplateURLAction';
 export interface ModalTemplateParamType<T> {
   mode: TemplateURLActions
   data: T
-
+  endpoint: string|null
 }
 
-type DataGetter = (() => Record<string, string|undefined>)
+type DataGetter<T> = (() => T|string)
 
 interface ModalTemplateBodyProps<T> {
   mode: TemplateURLActions
   data?: T
-  getData: (data: DataGetter) => void
+  onSave: (data: DataGetter<T>) => void
+  onNew: (callback: () => void) => void
+  onDelete: (pk: () => string) => void
 }
 
 interface ModalTemplateConfig<T> {
@@ -41,11 +47,18 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
     const Template = Middleware<T>(props.endpoint, false, endpoint => {
       return (() => {
         
-        const refGetData = useRef<DataGetter>();
-        const [modal, updateModal] = useModal<ModalTemplateParamType<T>>(props.endpoint)
+        const refOnSave = useRef<DataGetter<T>>();
+        const refOnNew = useRef<() => void>();
+        const refOnDelete = useRef<() => string>();
+
+        const [modal, updateModal] = useFilterTableTemplateModal<T>()
+        const [, updateDialog] = useDialogBox()
+        const [, updateMessageBox] = useMessageBox()
     
         const navigate = useNavigate()
         const location = useLocation()
+
+        const refDataBackup = useRef<T>(modal.params?.data as T)
 
         /*
         
@@ -62,8 +75,16 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
         
         */
 
-        const handleGetData = useCallback((data: DataGetter) => {
-          refGetData.current = data
+        const handleOnSave = useCallback((data: DataGetter<T>) => {
+          refOnSave.current = data
+        }, []);
+
+        const handleOnNew = useCallback((callback: () => void) => {
+          refOnNew.current = callback
+        }, []);
+
+        const handleOnDelete = useCallback((callback: () => string) => {
+          refOnDelete.current = callback
         }, []);
 
        /*============================== 
@@ -77,21 +98,57 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
           const actionsCallbacks: ActionsCallbacks = {}
           const pageName = getPageName(location)
           
-          if (modal?.params?.mode === TemplateURLActions.NEW) {
-            actionsCallbacks.onSave = () => {
-              navigate(`${pageName}/${TemplateURLActions.OPEN}`)
+          if (
+            modal?.params?.mode === TemplateURLActions.EDIT ||
+            modal?.params?.mode === TemplateURLActions.NEW
+          ) {
+
+            actionsCallbacks.onSave = async () => {
+
+              if(refOnSave.current) {
+
+                const data = refOnSave.current()
+                if(typeof data === 'string') {
+                  updateMessageBox({
+                    open: true,
+                    params: {
+                      message: data,
+                      type: DialogType.ERROR
+                    }
+                  })
+                  return
+                }
+
+                updateDialog({
+                  open: true,
+                  params: {
+                    message: "Deseja salvar as alterações?",
+                    type: DialogType.WARNING,
+                    onConfirm: async () => {
+                      await endpoint.post(data)
+                        .then(value => {
+                          navigate(`${pageName}/${TemplateURLActions.OPEN}`)
+                        })
+                    }
+                  }
+                })
+              }
+              
             }
+
             actionsCallbacks.onCancel = () => {
               navigate(`${pageName}/${TemplateURLActions.OPEN}`)
             }
-          } else if (modal?.params?.mode === TemplateURLActions.EDIT) {
-            actionsCallbacks.onSave = () => {
-              navigate(`${pageName}/${TemplateURLActions.OPEN}`)
-            }
-            actionsCallbacks.onCancel = () => {
-              navigate(`${pageName}/${TemplateURLActions.OPEN}`)
-            }
+
           } else {
+
+            if (actionsSet.has(TemplateActions.NEW)) {
+              actionsCallbacks.onNew = () => {
+                refOnNew.current?.()
+                navigate(`${pageName}/${TemplateURLActions.NEW}`)
+              }
+            }
+
             if (actionsSet.has(TemplateActions.EDIT)) {
               actionsCallbacks.onEdit = () => {
                 navigate(`${pageName}/${TemplateURLActions.EDIT}`)
@@ -99,10 +156,26 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
             }
 
             if (actionsSet.has(TemplateActions.DELETE)) {
-            actionsCallbacks.onDelete = () => {
-              console.log('here delete line')
+              actionsCallbacks.onDelete = () => {
+                
+                updateDialog({
+                  open: true,
+                  params: {
+                    message: "Deseja excluir registro?",
+                    type: DialogType.WARNING,
+                    onConfirm: async () => {
+                      if(refOnDelete.current) {
+                        await endpoint.delete(refOnDelete.current())
+                          .then(value => {
+                            navigate(pageName)
+                          })
+                      }
+                    }
+                  }
+                })
+
+              }
             }
-          }
           }
 
           return actionsCallbacks
@@ -123,7 +196,9 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
             <config.body 
               data={modal?.params?.data}
               mode={modal?.params?.mode ?? TemplateURLActions.CLOSED}
-              getData={handleGetData}
+              onSave={handleOnSave}
+              onNew={handleOnNew}
+              onDelete={handleOnDelete}
             />
           </FilterTableModalLayout>
         )

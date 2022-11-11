@@ -1,8 +1,8 @@
 import Express from 'express';
 import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import ValidData, { Rules } from '../utils/ValidData';
-import User, { UserType } from '../models/User';
 import ExpenseModel from '../models/Expense';
+import { UserType } from 'gigachad-shareds/models'
 
 class Expense extends Route {
 

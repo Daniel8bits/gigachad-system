@@ -1,11 +1,5 @@
 import Model, { DataType } from "../utils/Database/Model";
-
-export type IDateDoneItem = {
-    idTraining: number
-    cpfCustomer: number
-    date: Date
-    idExercise: number
-}
+import {IDateDoneItem} from 'gigachad-shareds/models'
 
 class DateDoneItem extends Model<IDateDoneItem>{
     @DataType("NUMBER")

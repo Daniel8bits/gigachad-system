@@ -2,15 +2,15 @@ import UIScroll from '@ui/scroll/UIScroll';
 import React from 'react';
 import {MdOutlineClose} from 'react-icons/md'
 
-interface FilterTableModalLayoutProps {
+interface ModalLayoutProps {
   title: string
   onClose: () => void 
   children: any
 }
 
-const FilterTableModalLayout: React.FC<FilterTableModalLayoutProps> = (props) => {
+const ModalLayout: React.FC<ModalLayoutProps> = (props) => {
   return (
-    <div className='filter-table-modal-layout'>
+    <div className='modal-layout'>
       <div className='header'>
         <h2> {props.title} </h2>
         <button type='button' onClick={props.onClose}> <MdOutlineClose  /> </button>
@@ -22,4 +22,4 @@ const FilterTableModalLayout: React.FC<FilterTableModalLayoutProps> = (props) =>
   );
 };
 
-export default FilterTableModalLayout;
+export default ModalLayout;

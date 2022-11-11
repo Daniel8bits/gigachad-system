@@ -1,6 +1,8 @@
 import Actions, { ActionsCallbacks } from '@components/actions/Actions';
 import Filter, { FilterData, InputConfig } from '@components/filter/Filter';
+import { useMessageBox } from '@components/messageBox/MessageBox';
 import ContentLayout from '@layouts/contentLayout/ContentLayout';
+import { DialogType } from '@layouts/dialogLayout/DialogLayout';
 import Endpoint from '@middlewares/Endpoint';
 import Middleware from '@middlewares/Middleware';
 import TemplateURLActions from '@templates/TemplateURLAction';
@@ -37,7 +39,7 @@ interface FilterTableTemplateConfig<T> {
 function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
 
   config.preloaded ??= true
-
+/*
   const enableModal = config.actions && config.actions.filter(action => {
     return (
       action === TemplateActions.OPEN ||
@@ -45,13 +47,14 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
       action === TemplateActions.EDIT
     )
   })
-
+*/
   return Middleware(config.endpoint, config.preloaded, (endpoint: Endpoint<T>) => {
     const template = () => {
 
       const template: React.FC<JSX.IntrinsicAttributes> = (props) => {
 
         //const [modal, updateModal] = useModal<ModalTemplateParamType<any>>(config.endpoint)
+        const [messageBox, updateMessageBox] = useMessageBox()
         const navigate = useNavigate()
         const location = useLocation()
 
@@ -122,6 +125,13 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
           if (actionsSet.has(TemplateActions.OPEN)) {
             actionsCallbacks.onOpen = () => {
               if (!document.getSelectedRow()) {
+                updateMessageBox({
+                  open: true,
+                  params: {
+                    message: "Selecione uma linha antes para abrir.",
+                    type: DialogType.INFO
+                  }
+                })
                 return
               }
               navigate(`${pageName}/${TemplateURLActions.OPEN}`)
@@ -174,10 +184,6 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
 
       return template;
 
-    }
-
-    if (enableModal) {
-      return FilterTableTemplateModal(config.endpoint, template);
     }
 
     return template()

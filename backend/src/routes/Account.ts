@@ -1,7 +1,7 @@
 import Express from 'express';
 import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import ValidData, { Rules } from '../utils/ValidData';
-import User, { UserType, IUser } from '../models/User';
+import User from '../models/User';
 
 class Account extends Route {
 

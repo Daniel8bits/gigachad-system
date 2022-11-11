@@ -1,10 +1,5 @@
 import Model, { DataType } from "../utils/Database/Model";
-
-export type IEquipment = {
-    qrCode: string
-    name: string
-    maintenanceDate: Date
-}
+import {IEquipment} from 'gigachad-shareds/models'
 
 class Equipment extends Model<IEquipment>{
     @DataType("STRING")

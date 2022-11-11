@@ -1,36 +1,9 @@
 import { InputType } from '@components/filter/Filter'
 import FilterPageTemplate from '@templates/filterTableTemplate/FilterTableTemplate'
-//import {columns, APIType} from '@middlewares/Endpoint'
 import TemplateActions from '@templates/TemplateActions'
-/*
-      "cpf": "741.764.650-69",
-      "administrative": true,
-      "ctps": "312312",
-      "admissiondate": "2022-10-19T03:00:00.000Z",
-      "address": "Rua Tal",
-      "Users": {
-        "cpf": "741.764.650-69",
-        "name": "Lucas",
-        "email": "...",
-        "phone": "...          "
-*/
-interface APIType {
-  cpf: string
-  administrative: boolean
-  ctps: string
-  admissiondate: string
-  address: string
-  Users: {
-    cpf: string
-    name: string
-    email: string
-    phone: string
-  }
-}
+import { IEmployee } from 'gigachad-shareds/models'
 
-const columns = ["Nome", "Endereço", "CPF" , "CTPS", "Data Admissão"]
-
-export default FilterPageTemplate<APIType>({
+export default FilterPageTemplate<IEmployee>({
   endpoint: '/employee',
   title: 'Consultar Funcionários',
   actions: [TemplateActions.OPEN, TemplateActions.EDIT],
@@ -83,33 +56,33 @@ export default FilterPageTemplate<APIType>({
         const name = data.textfieldValues.get('2')
         const address = data.textfieldValues.get('3')
         const ctps = data.textfieldValues.get('4')
-        const admissiondate = data.dateValues.get('5')
+        const admissionDate = data.dateValues.get('5')
         const administrative = data.checkValues.get('6')
 
-        if(!cpfEmployee && !name && !address && !ctps && !admissiondate && !administrative) return false;
+        if(!cpfEmployee && !name && !address && !ctps && !admissionDate && administrative === undefined) return false;
       
         return true
       },
-      format: data => {
-        const cpfEmployee = data.textfieldValues.get('1')
-        const name = data.textfieldValues.get('2')
-        const address = data.textfieldValues.get('3')
-        const ctps = data.textfieldValues.get('4')
-        const admissiondate = data.dateValues.get('5')
-        const administrative = data.checkValues.get('6')
+    format: data => {
+      const cpfEmployee = data.textfieldValues.get('1')
+      const name = data.textfieldValues.get('2')
+      const address = data.textfieldValues.get('3')
+      const ctps = data.textfieldValues.get('4')
+      const admissionDate = data.dateValues.get('5')
+      const administrative = data.checkValues.get('6')
 
-        return {
-            cpfEmployee,
-            name,
-            address,
-            ctps,
-            admissiondate: admissiondate?.getFormattedDate().replaceAll('/', '-'),
-            administrative: String(administrative)
-        }
+      return {
+          cpfEmployee,
+          name,
+          address,
+          ctps,
+          admissionDate: admissionDate?.getFormattedDate().replaceAll('/', '-'),
+          administrative: String(administrative)
       }
+    }
   },
   table: {
-    columns,
+    columns: ["Nome", "Endereço", "CPF" , "CTPS", "Data Admissão"],
     description: data => ({
       id: data.cpf,
       display: {
@@ -117,7 +90,7 @@ export default FilterPageTemplate<APIType>({
         address: data.address,
         cpfEmployee: data.cpf,
         ctps: data.ctps,
-        admissiondate: new Date(data.admissiondate).toLocaleDateString() 
+        admissiondate: new Date(data.admissionDate).toLocaleDateString() 
       }
     })
   }

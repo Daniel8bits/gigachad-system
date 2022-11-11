@@ -9,6 +9,7 @@ import UIModal from '@ui/modal/UIModal';
 import UICheckBox from '@ui/checkbox/UICheckbox';
 import ContentLayout from '@layouts/contentLayout/ContentLayout';
 
+
 interface HomeProps {
 
 }
@@ -128,6 +129,7 @@ const Home: React.FC<HomeProps> = () => {
         <UIModal id={MODAL_TEST}  >
           modal test
         </UIModal>
+        
       </div>
     </ContentLayout>
   );

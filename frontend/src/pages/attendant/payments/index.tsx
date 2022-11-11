@@ -2,29 +2,9 @@ import { InputType } from '@components/filter/Filter'
 import FilterPageTemplate from '@templates/filterTableTemplate/FilterTableTemplate'
 //import {columns, APIType} from '@middlewares/Endpoint'
 import TemplateActions from '@templates/TemplateActions'
+import { IInvoice } from 'gigachad-shareds/models'
 
-interface APIType {
-  id: number
-  cpfCustomer: number
-  idPlan: number
-  cardNumbers?: number
-  value: number
-  status: 'canceled' | 'paid' | 'open'
-  payday: string
-  payMethod: 'creditCard' | 'pix' | 'bankSlip' | 'money'
-}
-
-const columns = ["Número", "Data pagamento", "Valor", "Forma pagamento", "Status"]
-
-
-const plans = [
-  { value: '0', label: 'plano 1' }, //value : idPlan
-  { value: '1', label: 'plano 2' },
-  { value: '2', label: 'plano 3' },
-  { value: '3', label: 'plano 4' }
-]
-
-export default FilterPageTemplate<APIType>({
+export default FilterPageTemplate<IInvoice>({
   endpoint: '/invoice',
   title: 'Consultar pagamentos',
   actions: [TemplateActions.OPEN, TemplateActions.EDIT],
@@ -56,7 +36,12 @@ export default FilterPageTemplate<APIType>({
           id: '4',
           title: 'Tipo de plano',
           type: InputType.COMBOBOX,
-          items: plans,
+          items: [
+            { value: '0', label: 'plano 1' },
+            { value: '1', label: 'plano 2' },
+            { value: '2', label: 'plano 3' },
+            { value: '3', label: 'plano 4' }
+          ],
           size: { sm: 3, md: 3, lg: 3, xl: 3, xxl: 3 }
         },
         {
@@ -120,7 +105,7 @@ export default FilterPageTemplate<APIType>({
     }
   },
   table: {
-    columns,
+    columns: ["Número", "Data pagamento", "Valor", "Forma pagamento", "Status"],
     description: data => ({
       id: String(data.id),
       display: {

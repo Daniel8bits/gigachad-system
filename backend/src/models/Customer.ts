@@ -1,10 +1,7 @@
 import Model from "../utils/Database/Model";
 import { DataType } from "../utils/Database/DataType";
+import {ICustomer} from 'gigachad-shareds/models'
 
-export type ICustomer = {
-    cpf: string
-    idCurrentPlan: number
-}
 
 class Customer extends Model<ICustomer>{
     @DataType("CPF")

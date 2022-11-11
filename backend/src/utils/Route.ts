@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import MetaData from "./MetaData";
 import middleware from '../middleware';
-import { UserType } from "../models/User";
+import { UserType } from "gigachad-shareds/models";
 export type MethodRequest = "GET" | "DELETE" | "PUT" | "POST"
 
 type RouteData = {

@@ -1,21 +1,5 @@
 import Model, { DataType } from "../utils/Database/Model";
-
-export enum TypeExpense {
-    equipamentBuy = 'equipamentBuy',
-    equipamentMaintenance = 'equipamentMaintenance',
-    billPayment = 'billPayment',
-    employeePayment = 'employeePayment',
-    others = 'others'
-}
-
-export type IExpense = {
-    id: number
-    qrCodeEquipmen: string
-    date: Date
-    totalValue: number
-    description: string
-    typeExpense: TypeExpense
-}
+import {IExpense, TypeExpense} from 'gigachad-shareds/models'
 
 class Expense extends Model<IExpense>{
     @DataType("NUMBER")
@@ -28,7 +12,13 @@ class Expense extends Model<IExpense>{
     declare totalValue: number
     @DataType("STRING")
     declare description: string
-    @DataType("ENUM", ["equipamentBuy", "equipamentMaintenance", "billPayment", "employeePayment", "others"])
+    @DataType("ENUM", [
+        TypeExpense.billPayment, 
+        TypeExpense.employeePayment,
+        TypeExpense.equipamentBuy,
+        TypeExpense.equipamentMaintenance,
+        TypeExpense.others
+    ])
     declare type: TypeExpense
 
     validate<T extends any>(field: string, value: T): T {

@@ -18,16 +18,19 @@
     "baseUrl": "./src/",
     "typeRoots": [
       "@types",
-      "./node_modules/@types"
+      "./node_modules/@types",
+      "../node_modules/gigachad-shareds"
     ]
   },
   "include": [
-    "src"
+    "src",
+    "../node_modules/gigachad-shareds/models.d.ts"
+  ],
+  "files": [
+    "./src/global.d.ts",
   ],
   "ts-node": {
-    "files": true
-  },
-  "files": [
-    "src/global.d.ts"
-  ]
+    "transpileOnly": true,
+    
+  }
 }

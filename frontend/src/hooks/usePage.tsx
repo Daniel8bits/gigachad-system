@@ -1,3 +1,5 @@
+import MainLayout from "@layouts/mainLayout/MainLayout";
+import FilterTableTemplateModal from "@templates/filterTableTemplate/FilterTableTemplateModal";
 import getModalName from "@utils/algorithms/getModalName";
 import React, { lazy, Suspense, useMemo } from "react";
 import { useLocation } from "react-router-dom";
@@ -47,13 +49,19 @@ function usePage(fallback?: React.ReactNode) {
     }
 
     return lazy(() => import(`../pages/404`))
-  }, [location, path])
+  }, [location.pathname, path])
 
   return (
-    <Suspense fallback={fallback}>
-      {Page && <Page  />}
-    </Suspense>
+    <>
+      <MainLayout>
+        <Suspense fallback={fallback}>
+          {Page && <Page  />}
+        </Suspense>
+      </MainLayout>
+      <FilterTableTemplateModal  />
+    </>
   )
+  
 }
 
 export default usePage

@@ -1,7 +1,7 @@
 import Express from 'express';
 import Route, { Path, Request, withUser, withAuth } from "../utils/Route";
 import TrainingModel from '../models/Training';
-import { UserType } from '../models/User';
+import { UserType } from 'gigachad-shareds/models'
 
 class Training extends Route {
 
