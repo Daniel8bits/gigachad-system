@@ -7,7 +7,7 @@ import DialogBox from '@components/dialogBox/DialogBox';
 
 function App() {
 
-  const page = usePage(<LoadingScreen bellowMenu  />)
+  const page = usePage()
 
   return (
     <>

@@ -2,17 +2,12 @@
   "name": "gigachad-shareds",
   "version": "1.0.0",
   "description": "Code shared among the project modules",
-  "main": "",
+  "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {},
-  "exports": {
-    "./models": {
-      "types": "./models.d.ts"
-    }
-  }
+  "devDependencies": {}
 }

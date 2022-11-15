@@ -6,6 +6,7 @@ import { DialogType } from '@layouts/dialogLayout/DialogLayout';
 import FilterTableModalLayout from '@layouts/modalLayout/ModalLayout';
 import Endpoint from '@middlewares/Endpoint';
 import Middleware from '@middlewares/Middleware';
+import { useSelector } from '@store/Root.store';
 import { useFilterTableTemplateModal } from '@templates/filterTableTemplate/FilterTableTemplateModal';
 import UIModal from '@ui/modal/UIModal';
 import getPageName from '@utils/algorithms/getPageName';
@@ -57,6 +58,7 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
     
         const navigate = useNavigate()
         const location = useLocation()
+        const role = useSelector(state => state.auth.role);
 
         const refDataBackup = useRef<T>(modal.params?.data as T)
 
@@ -96,7 +98,7 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
           const actionsSet = new Set<TemplateActions>(config.actions)
 
           const actionsCallbacks: ActionsCallbacks = {}
-          const pageName = getPageName(location)
+          const pageName = `/${role}${getPageName(location)}`
           
           if (
             modal?.params?.mode === TemplateURLActions.EDIT ||
@@ -180,10 +182,10 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
 
           return actionsCallbacks
 
-        }, [modal?.params?.mode])
+        }, [modal?.params?.mode, role])
     
         const onClose = useCallback(() => {
-          const pageName = getPageName(location)
+          const pageName = `/${role}${getPageName(location)}`
           navigate(pageName)
         }, []);
     

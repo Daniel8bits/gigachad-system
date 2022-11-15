@@ -4,7 +4,7 @@ import User from "../models/User";
 import Administrative from "../models/Administrative";
 import Customer from "../models/Customer";
 import Trainer from "../models/Trainer";
-import { UserType } from 'gigachad-shareds/models'
+import { UserType } from '../modelstype'
 
 const withAuth: Express.Handler = async (req, res, next) => {
     console.log("withAuth")

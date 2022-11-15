@@ -5,6 +5,7 @@ import ContentLayout from '@layouts/contentLayout/ContentLayout';
 import { DialogType } from '@layouts/dialogLayout/DialogLayout';
 import Endpoint from '@middlewares/Endpoint';
 import Middleware from '@middlewares/Middleware';
+import { useSelector } from '@store/Root.store';
 import TemplateURLActions from '@templates/TemplateURLAction';
 import UITable, { RowDataType, UITableDocument } from '@ui/table/UITable';
 import getPageName from '@utils/algorithms/getPageName';
@@ -57,6 +58,7 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
         const [messageBox, updateMessageBox] = useMessageBox()
         const navigate = useNavigate()
         const location = useLocation()
+        const role = useSelector(state => state.auth.role);
 
         /*============================== 
                     TABLE
@@ -120,7 +122,7 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
           const actionsSet = new Set<TemplateActions>(config.actions)
 
           const actionsCallbacks: ActionsCallbacks = {}
-          const pageName = getPageName(location)
+          const pageName = `/${role}${getPageName(location)}`
 
           if (actionsSet.has(TemplateActions.OPEN)) {
             actionsCallbacks.onOpen = () => {
@@ -164,7 +166,7 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
 
           return actionsCallbacks
 
-        }, [])
+        }, [role])
 
         return (
           <ContentLayout title={config.title}>

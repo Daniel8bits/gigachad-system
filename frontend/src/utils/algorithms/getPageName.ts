@@ -1,3 +1,4 @@
+import TemplateURLActions from "@templates/TemplateURLAction";
 import { Location } from "react-router-dom";
 
 function getPageName(location: Location) {
@@ -6,11 +7,9 @@ function getPageName(location: Location) {
   location.pathname.substring(0, location.pathname.length-1) :
   location.pathname
 
-  if(
-    pathname.match(/\/new$/g) ||
-    pathname.match(/\/open$/g) ||
-    pathname.match(/\/edit$/g) 
-  ) {
+  const modalRegex = `^(/[a-zA-Z]+)+/(${TemplateURLActions.OPEN}|${TemplateURLActions.NEW}|${TemplateURLActions.EDIT})$`
+
+  if(pathname.match(new RegExp(modalRegex))) {
     return pathname.substring(0, pathname.lastIndexOf('/'))
   }
 

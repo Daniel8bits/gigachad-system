@@ -1,35 +1,43 @@
+import LoadingScreen from "@components/loadingScreen/LoadingScreen";
 import MainLayout from "@layouts/mainLayout/MainLayout";
+import { useSelector } from "@store/Root.store";
 import FilterTableTemplateModal from "@templates/filterTableTemplate/FilterTableTemplateModal";
 import getModalName from "@utils/algorithms/getModalName";
 import React, { lazy, Suspense, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 
-function usePage(fallback?: React.ReactNode) {
+function usePage() {
 
+  const auth = useSelector(state => state.auth);
   const location = useLocation()
-
   const path = location.pathname
 
   const Page = useMemo(() => {
-    if(path === '' || path === '/') {
-      return lazy(() => import(`../pages`))
+
+    if(!auth.signedIn) {
+      if(path === '' || path === '/') {
+        return lazy(() => import(`../pages`))
+      }
+      return lazy(() => import(`../pages/401`))
     }
 
-    if(path.match(/^\/(customer|attendant|financier|manager|trainer)$/g)) {
+    //let pathRegex = `/${auth.role}`
+
+    if(path === '' || path === '/') {
       return lazy(() => {
         try {
-          return import(`../pages${path}`)
+          return import(`../pages/${auth.role}${path}`)
         } catch(e: unknown) {
           return import(`../pages/404`)
         }
       })
     }
 
-    if(path.match(/^\/(customer|attendant|financier|manager|trainer)\/([a-zA-Z]*)$/g)) {
+    if(path.match(/^\/([a-zA-Z]*)$/g)) {
 
       return lazy(() => {
         try {
-          return import(`../pages${path}`)
+          return import(`../pages/${auth.role}${path}`)
         } catch(e: unknown) {
           return import(`../pages/404`)
         }
@@ -41,7 +49,7 @@ function usePage(fallback?: React.ReactNode) {
     if(modalName) {
       return lazy(() => {
         try {
-          return import(`../pages${pageName}`)
+          return import(`../pages/${auth.role}${pageName}`)
         } catch(e: unknown) {
           return import(`../pages/404`)
         }
@@ -49,12 +57,20 @@ function usePage(fallback?: React.ReactNode) {
     }
 
     return lazy(() => import(`../pages/404`))
-  }, [location.pathname, path])
+  }, [location.pathname, path, auth.signedIn, auth.role])
+
+  if(!auth.signedIn) {
+    return (
+      <Suspense fallback={<LoadingScreen  />}>
+        {Page && <Page  />}
+      </Suspense>
+    )
+  }
 
   return (
     <>
       <MainLayout>
-        <Suspense fallback={fallback}>
+        <Suspense fallback={<LoadingScreen bellowMenu  />}>
           {Page && <Page  />}
         </Suspense>
       </MainLayout>

@@ -1,5 +1,6 @@
 import LoadingScreen from "@components/loadingScreen/LoadingScreen";
 import useModal from "@hooks/useModal";
+import { useSelector } from "@store/Root.store";
 import { ModalTemplateComponentProps, ModalTemplateParamType } from "@templates/modalTemplate/ModalTemplate";
 import TemplateURLActions from "@templates/TemplateURLAction";
 import UIModal from "@ui/modal/UIModal";
@@ -16,6 +17,7 @@ export function useFilterTableTemplateModal<T>() {
 const FilterTableTemplateModal: React.FC<JSX.IntrinsicAttributes> = () => {
   const [modal, updateModal] = useFilterTableTemplateModal<unknown>()
   const location = useLocation()
+  const role = useSelector(state => state.auth.role);
 
   /**
    *  MODAL MODE OPENING
@@ -54,10 +56,10 @@ const FilterTableTemplateModal: React.FC<JSX.IntrinsicAttributes> = () => {
 
     const [modalName] = getModalName(location)
     if(modalName) {
-      return lazy<React.ComponentType<ModalTemplateComponentProps>>(() => import(`/src/pages${modalName}`))
+      return lazy<React.ComponentType<ModalTemplateComponentProps>>(() => import(`/src/pages/${role}${modalName}`))
     }
     return null
-  }, [location])
+  }, [location.pathname, role])
 
   return (
     <UIModal<ModalTemplateParamType<unknown>> 

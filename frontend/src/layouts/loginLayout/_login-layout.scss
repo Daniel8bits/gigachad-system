@@ -1,0 +1,56 @@
+
+
+.login-layout {
+
+  @include flex-left();
+  @include screenSize();
+
+
+  background-image: url('/images/login-background.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+
+  > .login-panel {
+    @include theme($color-greenish-black);
+    @include shadow();
+    border-radius: 8px;
+    border-top: 5px solid $color-green;
+    border-bottom: 5px solid $color-green;
+
+    margin: 0 8rem;
+    padding: 4rem;
+
+    > a {
+      color: $color-green;
+      text-decoration: none;
+      @include flex();
+      @include transition;
+      > svg {
+        margin-top: .2rem;
+      }
+
+      &:hover {
+        color: $color-dark-green;
+      }
+    }
+
+    > .ui-button {
+      width: 100%;
+    }
+
+    > h1, > h4 {
+      text-align: center;
+    }
+
+    > h4 {
+      font-weight: normal;
+    }
+
+    > *:not(h1) {
+      margin-top: 1.5rem;
+    }
+
+  }
+
+}

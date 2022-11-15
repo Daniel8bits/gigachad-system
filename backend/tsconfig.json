@@ -15,22 +15,24 @@
     "resolveJsonModule": true,
     "isolatedModules": false,
     "noEmit": true,
-    "baseUrl": "./src/",
+    "baseUrl": "./",
     "typeRoots": [
       "@types",
       "./node_modules/@types",
-      "../node_modules/gigachad-shareds"
+      "../shareds"
     ]
   },
   "include": [
     "src",
-    "../node_modules/gigachad-shareds/models.d.ts"
+    "../shareds"
   ],
   "files": [
     "./src/global.d.ts",
+    "./src/modelstype.d.ts"
   ],
   "ts-node": {
     "transpileOnly": true,
+    "cwd": "../"
     
   }
 }
