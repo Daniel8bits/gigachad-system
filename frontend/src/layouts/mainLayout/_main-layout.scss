@@ -1,0 +1,21 @@
+.main-layout {
+  @include screenSize();
+  @include flex();
+
+  background-image: 
+    linear-gradient(to left, $color-background 0%, $color-background 100%),
+    url('/images/background.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+
+  .content {
+    @include flex-left(flex-start);
+    width: $screen-width;
+    height: $content-height;
+
+    main {
+     flex-grow: 1;
+    }
+  }
+}

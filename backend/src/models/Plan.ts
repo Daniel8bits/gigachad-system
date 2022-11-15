@@ -1,21 +1,5 @@
-
 import Model, { DataType } from "../utils/Database/Model";
-
-export enum frequencyPlan {
-    montly = 'montly',
-    semmiannual = 'semmiannual',
-    quarterly = 'quarterly',
-    annual = 'annual'
-}
-
-export type IPlan = {
-    id: number
-    name: string
-    description: string
-    value: number
-    frequency: frequencyPlan
-    available: boolean
-}
+import {IPlan, FrequencyPlan} from 'gigachad-shareds/models'
 
 class Plan extends Model<IPlan> {
     @DataType("NUMBER")
@@ -26,8 +10,13 @@ class Plan extends Model<IPlan> {
     declare description: string
     @DataType("FLOAT")
     declare value: number
-    @DataType("ENUM", ["montly", "semmiannual", "quarterly", "annual"])
-    declare frequency: frequencyPlan
+    @DataType("ENUM", [
+        FrequencyPlan.montly, 
+        FrequencyPlan.quarterly, 
+        FrequencyPlan.semmiannual, 
+        FrequencyPlan.annual
+    ])
+    declare frequency: FrequencyPlan
     @DataType("BOOLEAN")
     declare available: boolean
 

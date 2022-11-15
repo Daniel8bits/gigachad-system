@@ -1,0 +1,9 @@
+
+.actions {
+  @include flex-left();
+  margin-top: 1rem;
+
+  > .ui-button {
+    margin-right: 1rem;
+  }
+}

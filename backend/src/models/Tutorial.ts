@@ -1,11 +1,5 @@
 import Model, { DataType } from "../utils/Database/Model";
-
-export type ITutorial = {
-    idExercise: number
-    video_url: string
-    image: JSON
-    explanation: string
-}
+import {ITutorial} from 'gigachad-shareds/models'
 
 class Tutorial extends Model<ITutorial>{
     @DataType("NUMBER")

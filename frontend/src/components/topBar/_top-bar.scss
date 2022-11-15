@@ -1,0 +1,38 @@
+
+.topbar {
+  z-index: 10;
+  width: 100vw;
+  height: 40px;
+  border-bottom: 2px solid $color-green;
+  @include theme($color-greenish-black);
+  @include flex-left();
+
+  @mixin iconButtonStyle() {
+    > button {
+      @include flex();
+      @include justContent();
+      height: 100%;
+      padding: 0 1rem;
+      font-size: 1.5rem;
+      color: white;
+      cursor: pointer;
+    }
+  }
+
+  @include iconButtonStyle();
+
+  > div {
+    @include flex();
+    margin-left: auto;
+
+    @include iconButtonStyle();
+
+    > img {
+      width: 2rem;
+      height: 2rem;
+      margin-right: 1rem;
+      border-radius: 9999px;
+      cursor: pointer;
+    }
+  }
+}

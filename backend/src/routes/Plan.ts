@@ -2,7 +2,7 @@ import Express from 'express';
 import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import PlanModel from '../models/Plan';
 import ValidData, { Rules } from '../utils/ValidData';
-import { UserType } from '../models/User';
+import { UserType } from 'gigachad-shareds/models'
 
 class Plan extends Route {
 

@@ -1,10 +1,11 @@
 import Express from 'express';
 import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import ValidData, { Rules } from '../utils/ValidData';
-import User, { UserType } from '../models/User';
+import User from '../models/User';
 import EmployeeModel from '../models/Employee';
 import Administrative from '../models/Administrative';
 import Trainer from '../models/Trainer';
+import { UserType } from 'gigachad-shareds/models'
 
 
 class Employee extends Route {

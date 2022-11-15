@@ -43,6 +43,10 @@ module.exports = {
         "component": false,
         "html": false
       }],
+      'no-restricted-globals': 'off',
+      'react-hooks/rules-of-hooks': 'off',
+      'react/no-array-index-key': 'off',
+      'react/jsx-props-no-spreading': 'off',
       'import/no-unresolved': 'off',
       'import/no-extraneous-dependencies': 'off',
       'import/prefer-default-export': 'off',
@@ -74,7 +78,8 @@ module.exports = {
       'jsx-a11y/no-noninteractive-element-interactions': 'off',
       'jsx-a11y/no-static-element-interactions': 'off',
       'jsx-a11y/label-has-associated-control': 'off',
-      'react/jsx-no-bind': 'off'
+      'react/jsx-no-bind': 'off',
+      'no-continue': 'off'
     },
     settings: {
       'import/parsers': {

@@ -1,0 +1,10 @@
+
+.square-button {
+  width: 8rem;
+  height: 8rem;
+  margin-right: 1rem;
+  @include inlineFlex();
+  @include theme($color-green, true);
+  @include shadow();
+  text-decoration: none;
+}

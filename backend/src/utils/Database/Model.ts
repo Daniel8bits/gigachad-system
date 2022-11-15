@@ -90,7 +90,7 @@ abstract class Model<A extends {} = any>{
     static decode(key: string, value: any, target: any): any {
         if (value == null) return null;
         const attribute = MetaData.database.get(target, "attributes")[key.toLocaleLowerCase()] as AttributeConfig;
-        if (!attribute) throw new Error("Column " + key + " not exists");
+        if (!attribute) return value;//throw new Error("Column " + key + " not exists");
         switch (attribute.type) {
             case "CPF":
                 return value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
@@ -115,7 +115,7 @@ abstract class Model<A extends {} = any>{
     static encode(key: string, value: any, target?: any): any {
         if (value == null) return null;
         const attribute = MetaData.database.get(target, "attributes")[key.toLocaleLowerCase()] as AttributeConfig;
-        if (!attribute) throw new Error("Column " + key + " not exists");
+        if (!attribute) return value;//throw new Error("Column " + key + " not exists");
 
         switch (attribute.type) {
             case "CPF":

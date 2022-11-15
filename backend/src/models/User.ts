@@ -5,24 +5,7 @@ import Model, { DataType, OptionsWhere, PrimarKey, TableName, Where } from "../u
 import Administrative from './Administrative';
 import Customer from './Customer';
 import Trainer from './Trainer';
-
-export enum UserType {
-    user = 0,
-    customer = 2,
-    employee = 4,
-    attendant = 8,
-    manager = 16,
-    financer = 32,
-    trainer = 64
-}
-
-export type IUser = {
-    cpf: string
-    name: string
-    password: string
-    email: string
-    phone: string
-}
+import {IUser, UserType} from 'gigachad-shareds/models'
 
 class Users<A extends IUser = IUser> extends Model<A> {
 

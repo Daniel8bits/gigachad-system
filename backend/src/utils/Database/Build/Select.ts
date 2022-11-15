@@ -26,6 +26,7 @@ class Select<M extends Model> extends Build<M>{
         const where: string[] = [];
         for (let field in wheres) {
             const value = wheres[field];
+            if(value == undefined) continue;
             if (field == "or" || field == "and") {
                 where.push("(" + this.buildWhere(value, tableName, field === "or") + ")");
             } else if (value) {
