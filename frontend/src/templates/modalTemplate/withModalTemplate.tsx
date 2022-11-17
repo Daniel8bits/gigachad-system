@@ -10,12 +10,12 @@ import { useLocation } from "react-router-dom";
 
 const MAIN_MODAL = 'MAIN_MODAL'
 
-export function useFilterTableTemplateModal<T>() {
+export function useModalTemplate<T>() {
   return useModal<ModalTemplateParamType<T>>(MAIN_MODAL)
 }
 
-const FilterTableTemplateModal: React.FC<JSX.IntrinsicAttributes> = () => {
-  const [modal, updateModal] = useFilterTableTemplateModal<unknown>()
+const withModalTemplate: React.FC<JSX.IntrinsicAttributes> = () => {
+  const [modal, updateModal] = useModalTemplate<unknown>()
   const location = useLocation()
   const role = useSelector(state => state.auth.role);
 
@@ -49,6 +49,7 @@ const FilterTableTemplateModal: React.FC<JSX.IntrinsicAttributes> = () => {
           endpoint: modal.params.endpoint
         }
       })
+
     }
   }, [modal?.open, modal?.params?.mode, location.pathname])
 
@@ -75,4 +76,4 @@ const FilterTableTemplateModal: React.FC<JSX.IntrinsicAttributes> = () => {
   )
 }
 
-export default FilterTableTemplateModal
+export default withModalTemplate

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import ModalTemplate from '@templates/modalTemplate/ModalTemplate'
-import { ICustomer } from 'gigachad-shareds'
+import { IInvoice } from 'gigachad-shareds/models'
 import Row from '@layouts/grid/Row'
 import Column from '@layouts/grid/Column'
 import UIButton from '@ui/button/UIButton'
@@ -11,7 +11,7 @@ import TemplateActions from '@templates/TemplateActions'
 import TemplateURLActions from '@templates/TemplateURLAction';
 
 
-export default ModalTemplate<ICustomer>({
+export default ModalTemplate<IInvoice>({
 
   title: 'Pagar fatura',
   actions: [TemplateActions.OPEN, TemplateActions.EDIT],

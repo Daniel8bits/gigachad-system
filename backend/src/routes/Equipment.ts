@@ -35,8 +35,19 @@ class Equipment extends Route {
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
         try {
+            const { qrCode, name, maintenanceDate } = await ValidData(req.body, Equipment.rules);
             const equipment = await EquipmentModel.findAll({
                 order: [["qrCode", "ASC"]]
+                ,where: {
+                    and: {
+                        name: {
+                            value: name ? `%${name}%` : undefined,
+                            op: "LIKE"
+                        },
+                        qrCode,
+                        maintenanceDate
+                    }
+                }
             })
             res.success(equipment);
         } catch (e: any) {

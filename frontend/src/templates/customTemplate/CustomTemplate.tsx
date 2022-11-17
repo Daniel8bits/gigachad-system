@@ -9,12 +9,14 @@ import { useSelector } from '@store/Root.store';
 import TemplateURLActions from '@templates/TemplateURLAction';
 import UITable, { RowDataType, UITableDocument } from '@ui/table/UITable';
 import getPageName from '@utils/algorithms/getPageName';
-import React, { useMemo, useEffect, useCallback } from 'react';
+import React, { useMemo, useEffect, useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TemplateActions from '../TemplateActions';
-import FilterTableTemplateModal, { useModalTemplate } from '../modalTemplate/withModalTemplate';
 
-
+interface CustomTemplateBodyProps<T> {
+  data: T[]
+  onDelete: (pk: () => string) => void
+}
 
 interface FilterConfig {
   layout: InputConfig[][]
@@ -22,22 +24,16 @@ interface FilterConfig {
   format: (data: FilterData) => Record<string, string|undefined>|null
 }
 
-interface TableConfig<T> {
-  columns: string[]
-  description: (data: T) => RowDataType
-  paging?: boolean
-}
-
 interface FilterTableTemplateConfig<T> {
   endpoint: string
   title: string
-  actions?: TemplateActions[]
-  filter: FilterConfig
-  table: TableConfig<T>
   preloaded?: boolean
+  actions?: TemplateActions[]
+  filter?: FilterConfig
+  body: React.FC<CustomTemplateBodyProps<T>>
 }
- 
-function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
+
+function CustomTemplate<T>(config: FilterTableTemplateConfig<T>) {
 
   config.preloaded ??= true
 /*
@@ -55,59 +51,31 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
       const template: React.FC<JSX.IntrinsicAttributes> = (props) => {
 
         //const [modal, updateModal] = useModal<ModalTemplateParamType<any>>(config.endpoint)
-        const [modal, updateModal] = useModalTemplate<T>()
         const [messageBox, updateMessageBox] = useMessageBox()
         const navigate = useNavigate()
         const location = useLocation()
-
-        /*============================== 
-                    TABLE
-        ==============================*/
-
-
-
-        const document = useMemo<UITableDocument<T>>(() => new UITableDocument<T>({
-          //data: endpoint.get(),
-          columns: config.table.columns,
-          description: config.table.description,
-          onRowDoubleClicked: data => {
-            actions.onOpen?.()
-          }
-        }), [])
+        const role = useSelector(state => state.auth.role);
+        const [data, setData] = useState<T[]>([])
 
         useEffect(() => {
-          (async () => {
-            document.setData(await endpoint.get())
-            document.on("page", async (page) => {
-              console.log("Event page",page);
-              document.setData(await endpoint.get({ page, ...document.getParams() }))
-            });
-            document.on("params", async (params) => {
-              console.log("Event Params",params);
-              try{
-
-                document.setData(await endpoint.get({ page: 1,...params }))
-              }catch(err){
-                console.log(err)
-                // tratar erro de permissão
-                // tratar demais erros
-              }
-            });
-          })();
-        }, [])
+          endpoint.get()
+            .then(setData)
+            .catch(console.log)
+        }, []);
 
         /*============================== 
                     FILTRO
         ==============================*/
 
         const search = useCallback((data: FilterData) => {
-          if (!config.filter.validate?.(data)) {
-            return
-          }
-          //document.setPageNumber(1);
-          const params = config.filter.format(data)
-          if(params) {
-            document.setParams(params);
+          if(config.filter) {
+            if (!config.filter.validate?.(data)) {
+              return
+            }
+            const params = config.filter.format(data)
+            if(params) {
+             // document.setParams(params);
+            }
           }
         }, [])
 
@@ -124,12 +92,12 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
           const actionsSet = new Set<TemplateActions>(config.actions)
 
           const actionsCallbacks: ActionsCallbacks = {}
-          const pageName = getPageName(location)
+          const pageName = `/${role}${getPageName(location)}`
 
           if (actionsSet.has(TemplateActions.OPEN)) {
             actionsCallbacks.onOpen = () => {
-              const selectedRow = document.getSelectedRow()
-              if (!selectedRow) {
+              /*
+              if (!document.getSelectedRow()) {
                 updateMessageBox({
                   open: true,
                   params: {
@@ -138,42 +106,16 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
                   }
                 })
                 return
-              }
-              if(!modal.params) return
-              updateModal({
-                open: modal.open,
-                params: {
-                  mode: modal.params.mode,
-                  data: selectedRow.data,
-                  endpoint: config.endpoint
-                }
-              })
+              }*/
               navigate(`${pageName}/${TemplateURLActions.OPEN}`)
             }
           }
 
           if (actionsSet.has(TemplateActions.EDIT)) {
             actionsCallbacks.onEdit = () => {
-              const selectedRow = document.getSelectedRow()
-              if (!selectedRow) {
-                updateMessageBox({
-                  open: true,
-                  params: {
-                    message: "Selecione uma linha antes para abrir.",
-                    type: DialogType.INFO
-                  }
-                })
+              /*if (!document.getSelectedRow()) {
                 return
-              }
-              if(!modal.params) return
-              updateModal({
-                open: modal.open,
-                params: {
-                  mode: modal.params.mode,
-                  data: selectedRow.data,
-                  endpoint: config.endpoint
-                }
-              })
+              }*/
               navigate(`${pageName}/${TemplateURLActions.EDIT}`)
             }
           }
@@ -186,34 +128,26 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
 
           if (actionsSet.has(TemplateActions.DELETE)) {
             actionsCallbacks.onDelete = () => {
-              const selectedRow = document.getSelectedRow()
-              if (!selectedRow) {
-                updateMessageBox({
-                  open: true,
-                  params: {
-                    message: "Selecione uma linha antes para abrir.",
-                    type: DialogType.INFO
-                  }
-                })
+              /*if (!document.getSelectedRow()) {
                 return
-              }
-              endpoint.delete(selectedRow.id)
+              }*/
+              console.log('here delete line')
             }
           }
 
           return actionsCallbacks
 
-        }, [])
+        }, [role])
 
         return (
           <ContentLayout title={config.title}>
             <Actions actionsCallbacks={actions} />
-            <Filter
+            {config.filter && <Filter
               inputs={config.filter.layout}
               onSearch={search}
               onClean={clean}
-            />
-            <UITable document={document} />
+            />}
+            {/*<config.body data={data}  />*/}
           </ContentLayout>
         )
 
@@ -229,4 +163,4 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
   })
 }
 
-export default FilterTableTemplate;
+export default CustomTemplate;

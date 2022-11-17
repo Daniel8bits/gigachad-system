@@ -3,9 +3,7 @@ import { UserType } from "gigachad-shareds/models";
 
 
 const withUser = (...types: UserType[]): Express.Handler => (req, res, next) => {
-    console.log("withUser")
     if (req.user) {
-        console.log("WithUser",types);
         if (types.includes(req.user.type)) {
             next()
             return;

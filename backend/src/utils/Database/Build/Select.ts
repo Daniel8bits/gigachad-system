@@ -26,15 +26,22 @@ class Select<M extends Model> extends Build<M>{
         const where: string[] = [];
         for (let field in wheres) {
             const value = wheres[field];
-            if(value == undefined) continue;
+            if (value == undefined) continue;
             if (field == "or" || field == "and") {
-                where.push("(" + this.buildWhere(value, tableName, field === "or") + ")");
+                const build = this.buildWhere(value, tableName, field === "or");
+                if (build) where.push("(" + build + ")");
             } else if (value) {
-                if (field == "isNull") {
-                    where.push(tableName + "." + value + " IS NULL")
+                if (typeof value == "object") {
+                    if(value.value == undefined) continue;
+                    const index = this._params.push(Model.encode(field, value.value, this.model));
+                    where.push(tableName + "." + field + " " + value.op + " $" + index);
                 } else {
-                    const index = this._params.push(Model.encode(field, value, this.model));
-                    where.push(tableName + "." + field + " = $" + index);
+                    if (field == "isNull") {
+                        where.push(tableName + "." + value + " IS NULL")
+                    } else {
+                        const index = this._params.push(Model.encode(field, value, this.model));
+                        where.push(tableName + "." + field + " = $" + index);
+                    }
                 }
             }
         }
@@ -104,7 +111,7 @@ class Select<M extends Model> extends Build<M>{
 
     get groupby(): string {
         if (this.options.groupby) {
-            return "GROUP BY " + this.options.groupby;
+            return "GROUP BY " + this.model.tableName+"."+this.options.groupby.join(","+this.model.tableName+".");
         }
         return "";
     }
@@ -135,12 +142,12 @@ class Select<M extends Model> extends Build<M>{
         sql.push(this.from)
         sql.push(this.join);
         sql.push(this.where)
+        
+        sql.push(this.groupby)
         sql.push(this.orberby)
 
-        sql.push(this.groupby)
-
         sql.push(this.limit)
-        //console.log(sql.join(" "))
+        if (this.options.debug) console.log(sql.join(" "),this.params)
         return sql.join(" ");
     }
 

@@ -1,7 +1,7 @@
 import LoadingScreen from "@components/loadingScreen/LoadingScreen";
 import MainLayout from "@layouts/mainLayout/MainLayout";
 import { useSelector } from "@store/Root.store";
-import FilterTableTemplateModal from "@templates/filterTableTemplate/FilterTableTemplateModal";
+import FilterTableTemplateModal from "@templates/modalTemplate/withModalTemplate";
 import getModalName from "@utils/algorithms/getModalName";
 import React, { lazy, Suspense, useMemo } from "react";
 import { useLocation } from "react-router-dom";
@@ -33,23 +33,23 @@ function usePage() {
       })
     }
 
-    if(path.match(/^\/([a-zA-Z]*)$/g)) {
-
-      return lazy(() => {
-        try {
-          return import(`../pages/${auth.role}${path}`)
-        } catch(e: unknown) {
-          return import(`../pages/404`)
-        }
-      })
-    }
-
     const [modalName, modalMode, pageName] = getModalName(location)
 
     if(modalName) {
       return lazy(() => {
         try {
           return import(`../pages/${auth.role}${pageName}`)
+        } catch(e: unknown) {
+          return import(`../pages/404`)
+        }
+      })
+    }
+
+    if(path.match(/^\/([a-zA-Z]*)$/g)) {
+
+      return lazy(() => {
+        try {
+          return import(`../pages/${auth.role}${path}`)
         } catch(e: unknown) {
           return import(`../pages/404`)
         }

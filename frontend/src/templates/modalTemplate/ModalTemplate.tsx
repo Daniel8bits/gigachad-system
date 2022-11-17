@@ -3,11 +3,11 @@ import { useDialogBox } from '@components/dialogBox/DialogBox';
 import { useMessageBox } from '@components/messageBox/MessageBox';
 import useModal from '@hooks/useModal';
 import { DialogType } from '@layouts/dialogLayout/DialogLayout';
-import FilterTableModalLayout from '@layouts/modalLayout/ModalLayout';
+import ModalLayout from '@layouts/modalLayout/ModalLayout';
 import Endpoint from '@middlewares/Endpoint';
 import Middleware from '@middlewares/Middleware';
 import { useSelector } from '@store/Root.store';
-import { useFilterTableTemplateModal } from '@templates/filterTableTemplate/FilterTableTemplateModal';
+import { useModalTemplate } from '@templates/modalTemplate/withModalTemplate';
 import UIModal from '@ui/modal/UIModal';
 import getPageName from '@utils/algorithms/getPageName';
 import React, { useCallback, useMemo, useRef } from 'react';
@@ -21,10 +21,11 @@ export interface ModalTemplateParamType<T> {
   endpoint: string|null
 }
 
-type DataGetter<T> = (() => T|string)
+type DataGetter<T> = (() => (T|string))
 
 interface ModalTemplateBodyProps<T> {
   mode: TemplateURLActions
+  allowEdit: boolean
   data?: T
   onSave: (data: DataGetter<T>) => void
   onNew: (callback: () => void) => void
@@ -52,13 +53,13 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
         const refOnNew = useRef<() => void>();
         const refOnDelete = useRef<() => string>();
 
-        const [modal, updateModal] = useFilterTableTemplateModal<T>()
+        const [modal, updateModal] = useModalTemplate<T>()
         const [, updateDialog] = useDialogBox()
         const [, updateMessageBox] = useMessageBox()
     
         const navigate = useNavigate()
         const location = useLocation()
-        const role = useSelector(state => state.auth.role);
+        //const role = useSelector(state => state.auth.role);
 
         const refDataBackup = useRef<T>(modal.params?.data as T)
 
@@ -98,7 +99,7 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
           const actionsSet = new Set<TemplateActions>(config.actions)
 
           const actionsCallbacks: ActionsCallbacks = {}
-          const pageName = `/${role}${getPageName(location)}`
+          const pageName = getPageName(location)
           
           if (
             modal?.params?.mode === TemplateURLActions.EDIT ||
@@ -182,15 +183,15 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
 
           return actionsCallbacks
 
-        }, [modal?.params?.mode, role])
+        }, [modal?.params?.mode])
     
         const onClose = useCallback(() => {
-          const pageName = `/${role}${getPageName(location)}`
+          const pageName = getPageName(location)
           navigate(pageName)
         }, []);
     
         return (
-          <FilterTableModalLayout 
+          <ModalLayout 
             title={config.title}
             onClose={onClose}
           >
@@ -198,11 +199,12 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
             <config.body 
               data={modal?.params?.data}
               mode={modal?.params?.mode ?? TemplateURLActions.CLOSED}
+              allowEdit={new Set([TemplateURLActions.NEW, TemplateURLActions.EDIT]).has(modal?.params?.mode ?? TemplateURLActions.CLOSED)}
               onSave={handleOnSave}
               onNew={handleOnNew}
               onDelete={handleOnDelete}
             />
-          </FilterTableModalLayout>
+          </ModalLayout>
         )
       }) as React.FC<JSX.IntrinsicAttributes>
 

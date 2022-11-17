@@ -19,7 +19,7 @@ abstract class Build<M extends Model> {
         for (const include of includes) {
             this._models[include.model.tableName] = include.model;
         }
-        console.log(this._models);
+        //console.log(this._models);
     }
 
     abstract toSQL(): string;

@@ -5,4 +5,9 @@
   @include border-rounded();
   @include padding();
   cursor: pointer;
+
+  &:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+  }
 }

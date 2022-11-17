@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import ModalTemplate from '@templates/modalTemplate/ModalTemplate'
-import { IAdministrative } from 'gigachad-shareds'
+import { IEquipment } from 'gigachad-shareds/models'
 import Row from '@layouts/grid/Row'
 import Column from '@layouts/grid/Column'
 import UIButton from '@ui/button/UIButton'
@@ -10,7 +10,7 @@ import UICheckBox from '@ui/checkbox/UICheckbox';
 import UIDatePicker, { UIDate } from '@ui/datepicker/UIDatePicker';
 import UIComboBox, { UIComboItemData } from '@ui/combobox/UIComboBox';
 
-export default ModalTemplate<IAdministrative>({
+export default ModalTemplate<IEquipment>({
 
   title: 'Equipamentos',
   actions: [TemplateActions.OPEN, TemplateActions.EDIT],

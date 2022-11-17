@@ -14,7 +14,7 @@ function getModalName(location: Location): [string, TemplateURLActions, string]|
   const modalRegex = `^(/[a-zA-Z]+)+/(${TemplateURLActions.OPEN}|${TemplateURLActions.NEW}|${TemplateURLActions.EDIT})$`
   
   //if(pagename.match(/^\/(customer|attendant|financier|manager|trainer)\/([a-zA-Z]*)$/g)) {
-  if (pagename.match(new RegExp(modalRegex))) {
+  if (pathname.match(new RegExp(modalRegex))) {
 
     const urlAction = pathname.substring(pathname.lastIndexOf('/')+1)
 

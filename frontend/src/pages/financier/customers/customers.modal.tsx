@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import ModalTemplate from '@templates/modalTemplate/ModalTemplate'
-import { ICustomer } from 'gigachad-shareds'
+import { ICustomer } from 'gigachad-shareds/models'
 import Row from '@layouts/grid/Row'
 import Column from '@layouts/grid/Column'
 import UIButton from '@ui/button/UIButton'

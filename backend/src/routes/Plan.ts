@@ -36,8 +36,28 @@ class Plan extends Route {
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
         try {
+            const query = req.query;
+            const name = query.name as string;
+            const description = query.description as string;
+            const value = Number(query.value as string);
+            const available = (query.available as string) === 'true';
             const plan = await PlanModel.findAll({
-                order: [["id", "ASC"]]
+                debug: true,
+                order: [["id", "ASC"]],
+                where: {
+                    and: {
+                        name: {
+                            value: name ? `%${name}%` : undefined,
+                            op: "LIKE"
+                        },
+                        description: {
+                            value: description ? `%${description}%` : undefined,
+                            op: "LIKE" // value LIKE $1
+                        },
+                        value,//value = $1
+                        available: available ? true : undefined
+                    }
+                }
             })
             res.success(plan);
         } catch (e: any) {
@@ -58,12 +78,13 @@ class Plan extends Route {
                 value,
                 frequency,
                 available
-            })              
+            })
             res.success(plan);
         } catch (e: any) {
             res.error(500, e.message);
         }
     }
+
 
     @withUser(UserType.manager)
     @withAuth
