@@ -1,10 +1,11 @@
 import Express from 'express';
 import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import ValidData, { Rules } from '../utils/ValidData';
-import User, { UserType } from '../models/User';
+import User from '../models/User';
 import CustomerModel from '../models/Customer';
 import PlanModel from '../models/Plan';
 import Invoice from '../models/Invoice';
+import { UserType } from 'gigachad-shareds/models'
 
 class Customer extends Route {
 
@@ -23,6 +24,54 @@ class Customer extends Route {
             message: "Plano não encontrado"
         }
     };
+
+    @Path("/plans")
+    async MyPlans(req: Express.Request, res: Express.Response) {
+        try {
+            const plans = await Invoice.findAll({
+                attributes: ["value", "payday"],
+                where: {
+                    cpfCustomer: req.user.cpf
+                },
+                include: [
+                    {
+                        model: PlanModel,
+                        on: "plan.id=invoice.idPlan",
+                        attributes: ["name"]
+                    }
+                ]
+            })
+            res.success(plans);
+        } catch (e: any) {
+            res.error(500, e.message);
+        }
+    }
+
+    //@withUser(UserType.manager, UserType.attendant)
+    @Path("/:id/plans")
+    async plans(req: Express.Request, res: Express.Response) {
+        try {
+            const plans = await Invoice.findAll({
+                debug: true,
+                attributes: ["value", "payday"],
+                where: {
+                    cpfCustomer: req.params.id
+                },
+                include: [
+                    {
+                        model: PlanModel,
+                        on: "plan.id=invoice.idPlan",
+                        attributes: ["id","name"]
+                    }
+                ],
+                order: [["payday", "DESC"]],
+               // groupby: ["idPlan","id"]
+            })
+            res.success(plans);
+        } catch (e: any) {
+            res.error(500, e.message);
+        }
+    }
 
     @withUser(UserType.manager, UserType.attendant)
     @withAuth
@@ -57,6 +106,7 @@ class Customer extends Route {
     @withAuth
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
+
         const { cpf, name } = req.query;
         try {
             const customer = await CustomerModel.findAll({
@@ -68,7 +118,13 @@ class Customer extends Route {
                             exclude: ["password"]
                         },
                         where: {
-                            name
+                            and: {
+                                name: {
+                                    value: name ? `%${name}%` : undefined,
+                                    op: "LIKE"
+                                },
+                                cpf
+                            }
                         }
                     },
                     /* ...(req.user.type === UserType.attendant && {

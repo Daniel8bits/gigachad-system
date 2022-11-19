@@ -1,8 +1,9 @@
 import Express from 'express';
 import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import ValidData, { Rules } from '../utils/ValidData';
-import User, { UserType } from '../models/User';
+import User from '../models/User';
 import EquipmentModel from '../models/Equipment';
+import { UserType } from 'gigachad-shareds/models'
 
 class Equipment extends Route {
 
@@ -34,8 +35,19 @@ class Equipment extends Route {
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
         try {
+            const { qrCode, name, maintenanceDate } = await ValidData(req.body, Equipment.rules);
             const equipment = await EquipmentModel.findAll({
                 order: [["qrCode", "ASC"]]
+                ,where: {
+                    and: {
+                        name: {
+                            value: name ? `%${name}%` : undefined,
+                            op: "LIKE"
+                        },
+                        qrCode,
+                        maintenanceDate
+                    }
+                }
             })
             res.success(equipment);
         } catch (e: any) {

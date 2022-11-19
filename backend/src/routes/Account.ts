@@ -1,7 +1,10 @@
 import Express from 'express';
 import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import ValidData, { Rules } from '../utils/ValidData';
-import User, { UserType, IUser } from '../models/User';
+import User from '../models/User';
+import Administrative from "../models/Administrative";
+import Customer from "../models/Customer";
+import Trainer from "../models/Trainer";
 
 class Account extends Route {
 
@@ -10,7 +13,6 @@ class Account extends Route {
     async login(req: Express.Request, res: Express.Response) {
         try {
             const { login, password } = req.body;
-            console.log(req.body);
             await ValidData({ login, password }, {
                 login: {
                     required: true
@@ -19,9 +21,24 @@ class Account extends Route {
                     required: true
                 }
             });
-            const user = await User.findEmailorCPF(login)
+            const user = await User.findEmailorCPF(login, undefined, {
+                include: [
+                    {
+                        model: Trainer,
+                        on: "trainer.cpf=users.cpf"
+                    },
+                    {
+                        model: Administrative,
+                        on: "administrative.cpf=users.cpf"
+                    },
+                    {
+                        model: Customer,
+                        on: "customer.cpf=users.cpf"
+                    }
+                ]
+            })
             if (user) {
-
+                
                 //console.log(await user.generatePassword("login123"));
                 if (user && await user.checkPassword(password)) {
                     const userReq = user.toJSON() as any;
@@ -38,6 +55,13 @@ class Account extends Route {
             console.log(e)
             res.error(400, e.message);
         }
+    }
+
+    @Path("/isAuth")
+    @withAuth
+    async isAuth(req: Express.Request, res: Express.Response) {
+        console.log(req.user);
+        res.success({ user: req.user });
     }
 }
 export default new Account;

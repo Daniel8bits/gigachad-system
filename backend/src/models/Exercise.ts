@@ -1,9 +1,5 @@
 import Model, { DataType } from "../utils/Database/Model";
-
-export type IExercise = {
-    id: number
-    name: string
-}
+import {IExercise} from 'gigachad-shareds/models'
 
 class Exercise extends Model<IExercise>{
     @DataType("NUMBER")

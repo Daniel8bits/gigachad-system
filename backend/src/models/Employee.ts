@@ -1,14 +1,7 @@
 import Model from "../utils/Database/Model";
 import { DataType, PrimarKey } from "../utils/Database/DataType";
 import User from "./User";
-
-export type IEmployee = {
-    cpf: string
-    administrative: string
-    ctps: string
-    admissionDate: Date
-    address: string
-}
+import {IEmployee} from 'gigachad-shareds/models'
 
 class Employee<A extends IEmployee = IEmployee> extends Model<A> {
     @PrimarKey
@@ -18,7 +11,7 @@ class Employee<A extends IEmployee = IEmployee> extends Model<A> {
     declare administrative: string
     @DataType("STRING")
     declare ctps: string
-    @DataType("STRING")
+    @DataType("DATE")
     declare admissionDate: Date
     @DataType("STRING")
     declare address: string

@@ -4,7 +4,6 @@ import SquareButton from '@components/squareButton/SquareButton'
 import Roles from '@utils/enums/Roles'
 
 interface EmployeesHomeConfig<T extends string> {
-  role: Roles,
   buttons: {
     to: T, 
     label: string
@@ -19,7 +18,7 @@ function EmployeesHomeTemplate<T extends string>(config: EmployeesHomeConfig<T>)
         {config.buttons.map(button => 
           <SquareButton 
             key={button.to} 
-            to={`/${config.role}${button.to}`}
+            to={`/${button.to}`}
             label={button.label}
           />)}
       </ContentLayout>

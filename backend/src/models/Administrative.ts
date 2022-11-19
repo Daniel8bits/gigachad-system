@@ -1,10 +1,6 @@
 import Model from "../utils/Database/Model";
 import { DataType } from "../utils/Database/DataType";
-
-export type IAdministrative = {
-    cpf: string
-    role: 'financer' | 'attendant' | 'manager'
-}
+import {IAdministrative} from 'gigachad-shareds/models'
 
 class Administrative extends Model<IAdministrative>{
     // Tem que ver isso depois

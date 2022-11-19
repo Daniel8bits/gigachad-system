@@ -16,27 +16,27 @@ export enum UserType {
 const menuConfig: Record<number, IMenuItem[]> = {
   [UserType.manager]: [
     {
-      to: "/manager/customers",
+      to: "/customers",
       text: "Clientes"
     },
     {
-      to: "/manager/plans",
+      to: "/plans",
       text: "Planos",
     },
     {
-      to: "/manager/employee",
+      to: "/employee",
       text: "Funcionários"
     },
     {
-      to: "/manager/equipments",
+      to: "/equipments",
       text: "Equipamentos"
     },
     {
-      to: "/manager/expenses",
+      to: "/expenses",
       text: "Gastos",
       submenu: [
         {
-          to: "/manager/expenses",
+          to: "/expenses",
           text: "Gastos"
         }
       ]

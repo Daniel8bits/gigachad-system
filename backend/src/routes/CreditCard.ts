@@ -1,11 +1,11 @@
 import Express from 'express';
 import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import ValidData, { Rules } from '../utils/ValidData';
-import User, { UserType } from '../models/User';
 import CreditCardModel from '../models/CreditCard';
 import CustomerCreditCardModel from '../models/CustomerCreditCard';
 import CustomerModel from '../models/Customer';
 import CustomerCreditCard from '../models/CustomerCreditCard';
+import { UserType } from 'gigachad-shareds/models'
 
 class CreditCard extends Route {
 

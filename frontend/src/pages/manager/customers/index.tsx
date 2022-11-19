@@ -1,22 +1,9 @@
 import { InputType } from '@components/filter/Filter'
 import FilterPageTemplate from '@templates/filterTableTemplate/FilterTableTemplate'
-//import {columns, APIType} from '@middlewares/Endpoint'
 import TemplateActions from '@templates/TemplateActions'
+import {ICustomer} from 'gigachad-shareds/models'
 
-interface APIType {
-  cpf: string
-  idcurrentplan: number
-  Users: {
-    cpf: string
-    name: string
-    email: number
-    phone: string
-  }
-}
-
-const columns = ["Nome", "CPF", "Email", "Telefone"]
-
-export default FilterPageTemplate<APIType>({
+export default FilterPageTemplate<ICustomer>({
   endpoint: '/customer',
   title: 'Clientes',
   actions: [TemplateActions.OPEN, TemplateActions.EDIT],
@@ -57,7 +44,7 @@ export default FilterPageTemplate<APIType>({
     }
   },
   table: {
-    columns,
+    columns: ["Nome", "CPF", "Email", "Telefone"],
     description: data => ({
       id: data.cpf,
       display: {

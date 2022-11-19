@@ -7,7 +7,7 @@
       color: $color-greenish-black;
       @if $hover {
         @include transition();
-        &:hover {
+        &:not(:disabled):hover {
           @if $color == $color-green {
             background-color: $color-dark-green;
           }
@@ -23,7 +23,7 @@
       color: white;
       @if $hover {
         @include transition();
-        &:hover {
+        &:not(:disabled):hover {
           @if $color == $color-greenish-black {
             background-color: $color-greenish-gray;
           }

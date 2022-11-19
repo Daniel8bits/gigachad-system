@@ -1,10 +1,11 @@
 import Express from 'express';
 import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import ValidData, { Rules } from '../utils/ValidData';
-import User, { UserType } from '../models/User';
+import User from '../models/User';
 import EmployeeModel from '../models/Employee';
 import Administrative from '../models/Administrative';
 import Trainer from '../models/Trainer';
+import { UserType } from 'gigachad-shareds/models'
 
 
 class Employee extends Route {
@@ -16,14 +17,25 @@ class Employee extends Route {
     @withAuth
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
+        const {cpf, name, address, ctps, admissionDate} = req.query;
         try {
             const employee = await EmployeeModel.findAll({
+                debug: true,
                 include: [
                     {
                         model: User,
                         on: "employee.cpf=users.cpf",
                         attributes: {
                             exclude: ["password"]
+                        },
+                        where: {
+                            and: {
+                                name: {
+                                    value: name ? `%${name}%` : undefined,
+                                    op: "LIKE"
+                                },
+                                cpf
+                            }
                         }
                     },
                     {
@@ -34,7 +46,15 @@ class Employee extends Route {
                         model: Trainer,
                         on: "trainer.cpf=users.cpf"
                     }
-                ]
+                ],
+                where: {
+                    address: {
+                        value: address ? `%${address}%` : undefined,
+                        op: "LIKE"
+                    },
+                    ctps,
+                    admissionDate
+                }
             })
             res.success(employee);
         } catch (e: any) {

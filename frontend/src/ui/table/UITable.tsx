@@ -90,8 +90,12 @@ export class UITableDocument<T> extends EventEmitter {
     }
 
     public setParams(params: Record<string, string | number | undefined>) {
-        this._params = params;
-        this.emit("params", params);
+        const data : Record<string, string | number | undefined> = {};
+        Object.entries(params).forEach(([k,v]) => {
+            if(String(v).length > 0) data[k] = v;
+        });
+        this._params = data;
+        this.emit("params", this._params);
     }
 
     public getParams() : Record<string, string | number | undefined>{

@@ -7,13 +7,13 @@ import {
 
 import ModalReducer from '@store/components/ModalStore'
 import PopOverReducer from '@store/components/PopOverStore'
-import CustomTagReducer from '@store/components/CustomTagStore'
+import AuthReducer from '@store/AuthStore'
 
 const RootStore = configureStore({
     reducer: {
         modal: ModalReducer,
         popOver: PopOverReducer,
-        customTag: CustomTagReducer
+        auth: AuthReducer
     }
 })
 

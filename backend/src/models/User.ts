@@ -5,24 +5,7 @@ import Model, { DataType, OptionsWhere, PrimarKey, TableName, Where } from "../u
 import Administrative from './Administrative';
 import Customer from './Customer';
 import Trainer from './Trainer';
-
-export enum UserType {
-    user = 0,
-    customer = 2,
-    employee = 4,
-    attendant = 8,
-    manager = 16,
-    financer = 32,
-    trainer = 64
-}
-
-export type IUser = {
-    cpf: string
-    name: string
-    password: string
-    email: string
-    phone: string
-}
+import { IUser, UserType } from 'gigachad-shareds/models'
 
 class Users<A extends IUser = IUser> extends Model<A> {
 
@@ -37,6 +20,7 @@ class Users<A extends IUser = IUser> extends Model<A> {
     declare email: string;
     @DataType("PHONE")
     declare phone: string;
+    @DataType("STRING", {virtual: true})
     declare type: UserType;
     @DataType("CLASS", { virtual: true })
     declare Administrative: Administrative;
@@ -45,6 +29,29 @@ class Users<A extends IUser = IUser> extends Model<A> {
     @DataType("CLASS", { virtual: true })
     declare Trainer: Trainer;
 
+    init() {
+        this.type = UserType.user;        
+        if (this.Trainer) {
+            this.type = UserType.trainer;
+        } else
+            if (this.Administrative) {
+                switch (this.Administrative.role) {
+                    case "financer":
+                        this.type = UserType.financer;
+                        break;
+                    case "attendant":
+                        this.type = UserType.attendant;
+                        break;
+                    case "manager":
+                        this.type = UserType.manager;
+                        break;
+                }
+            } else
+                if (this.Customer) {
+                    this.type = UserType.customer;
+                }
+    }
+
     async checkPassword(password: string) {
         return await bcrypt.compare(password, this.password);
     }
@@ -52,6 +59,7 @@ class Users<A extends IUser = IUser> extends Model<A> {
     async generatePassword(password: string) {
         return this.password = await bcrypt.hash(password, 10);
     }
+
 
     getToken() {
         return jwt.sign({

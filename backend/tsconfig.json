@@ -15,19 +15,23 @@
     "resolveJsonModule": true,
     "isolatedModules": false,
     "noEmit": true,
-    "baseUrl": "./src/",
+    "baseUrl": "./",
     "typeRoots": [
       "@types",
-      "./node_modules/@types"
+      "./node_modules/@types",
+      "../shareds"
     ]
   },
   "include": [
-    "src"
+    "src",
+    "../shareds"
+  ],
+  "files": [
+    "./src/global.d.ts"
   ],
   "ts-node": {
-    "files": true
-  },
-  "files": [
-    "src/global.d.ts"
-  ]
+    "transpileOnly": true,
+    "cwd": "../"
+    
+  }
 }

@@ -1,11 +1,8 @@
 import Model, { DataType } from "../utils/Database/Model";
 import CreditCard from "./CreditCard";
 import Customer from "./Customer";
+import {ICustomerCreditCard} from 'gigachad-shareds/models'
 
-export type ICustomerCreditCard = {
-    cpfCustomer: string
-    numbersCreditCard: string
-}
 
 class CustomerCreditCard extends Model<ICustomerCreditCard>{
     @DataType("CPF")
