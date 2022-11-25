@@ -70,6 +70,6 @@ export default FilterPageTemplate<APIType>({
         maintenancedate: new Date(data.maintenancedate).toLocaleDateString() 
       }
     }),
-    paging: true,
+    paging: true, 
   }
 })

@@ -65,6 +65,7 @@ export default FilterPageTemplate<IEmployee>({
       const admissionDate = data.dateValues.get('5')
       //const administrative = data.checkValues.get('6')
 
+      //console.log(admissionDate?.toString())
       return {
         cpfEmployee,
         name,
@@ -84,8 +85,8 @@ export default FilterPageTemplate<IEmployee>({
         address: data.address,
         cpfEmployee: data.cpf,
         ctps: data.ctps,
-        admissionDate: new Date(data.admissiondate).toLocaleString("pt-BR", { day: 'numeric', month: 'numeric', year: 'numeric' })
-      }
+        admissiondate: new Date(data.admissiondate).toLocaleString("pt-BR", { day: 'numeric', month: 'numeric', year: 'numeric' })
+      } 
     })
   }
 })
