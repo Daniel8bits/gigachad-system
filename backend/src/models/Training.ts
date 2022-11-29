@@ -1,5 +1,5 @@
 import Model, { DataType } from "../utils/Database/Model";
-import {ITraining} from 'gigachad-shareds/models'
+import {ITraining, IUser} from 'gigachad-shareds/models'
 
 class Training extends Model<ITraining>{
     @DataType("NUMBER")
@@ -8,6 +8,8 @@ class Training extends Model<ITraining>{
     declare cpfCustomer: string
     @DataType("CPF")
     declare cpfTrainer?: string | null
+    declare Users?: IUser
+    declare owner?: string
     @DataType("STRING")
     declare name: string
     @DataType("DATE")

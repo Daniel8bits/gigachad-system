@@ -1,6 +1,8 @@
 import Express from 'express';
 import Route, { Path, Request, withUser, withAuth } from "../utils/Route";
 import TrainingModel from '../models/Training';
+import TrainerModel from '../models/Trainer';
+import UsersModel from '../models/User';
 import { UserType } from 'gigachad-shareds/models'
 
 class Training extends Route {
@@ -8,11 +10,31 @@ class Training extends Route {
     @withAuth
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
-        const trainings = await TrainingModel.findAll({
+        const trainings = (await TrainingModel.findAll({
             where: {
                 cpfCustomer: req.user.cpf
             },
+            include: [
+                {
+                    model: TrainerModel,
+                    on: "training.cpfTrainer=trainer.cpf"
+                },
+                {
+                    model: UsersModel,
+                    on: "trainer.cpf=users.cpf",
+                    attributes:["name"]
+                }
+            ],
             order: [["id", "ASC"]]
+        })).map((item) => {
+            if(item.Users){
+                item.owner = item.Users.name;
+            }
+            delete item.cpfTrainer;
+            delete item.Users;
+
+
+            return item;
         })
         res.success(trainings);
     }

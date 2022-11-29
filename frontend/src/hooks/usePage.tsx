@@ -58,7 +58,7 @@ function usePage() {
 
     return lazy(() => import(`../pages/404`))
   }, [location.pathname, path, auth.signedIn, auth.role])
-
+  console.log(Page);
   if(!auth.signedIn) {
     return (
       <Suspense fallback={<LoadingScreen  />}>
