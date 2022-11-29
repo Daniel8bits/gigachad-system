@@ -8,7 +8,8 @@ import axios from '@utils/axios';
 type ITraining = {
     name: string
     creationDate: string
-    trainer?: string 
+    owner?: string 
+    numExercise: number
 }
 
 const Training = () => {
@@ -26,12 +27,12 @@ const Training = () => {
     },[]);
 
     return (
-        <ContentLayout title="Novo Treino">
+        <ContentLayout title="Meus Treinos">
             <br />
             <Button>Novo Treino</Button>
             <br />
             <br />
-            {loading && <LoadingScreen />  || trainings?.map((item) => (<TrainingItem name={item.name} date={item.creationDate} owner={item.trainer} />))}
+            {loading && <LoadingScreen />  || trainings?.map((item) => (<TrainingItem name={item.name} date={item.creationDate} owner={item.owner} numExercise={item.numExercise} />))}
         </ContentLayout>
     )
 }

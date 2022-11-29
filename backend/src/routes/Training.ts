@@ -4,6 +4,7 @@ import TrainingModel from '../models/Training';
 import TrainerModel from '../models/Trainer';
 import UsersModel from '../models/User';
 import { UserType } from 'gigachad-shareds/models'
+import ExerciseItem from '../models/ExerciseItem';
 
 class Training extends Route {
 
@@ -26,17 +27,23 @@ class Training extends Route {
                 }
             ],
             order: [["id", "ASC"]]
-        })).map((item) => {
+        })).map(async(item) => {
             if(item.Users){
                 item.owner = item.Users.name;
             }
             delete item.cpfTrainer;
             delete item.Users;
 
+            item.numExercise = await ExerciseItem.count({
+                where:{
+                    idTraining: item.id,
+                    cpfCustomer: item.cpfCustomer
+                }
+            });
 
             return item;
         })
-        res.success(trainings);
+        res.success(await Promise.all(trainings));
     }
 
 

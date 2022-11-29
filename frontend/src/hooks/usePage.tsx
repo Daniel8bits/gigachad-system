@@ -28,6 +28,7 @@ function usePage() {
         try {
           return import(`../pages/${auth.role}${path}`)
         } catch(e: unknown) {
+          console.log(e)
           return import(`../pages/404`)
         }
       })
@@ -40,25 +41,27 @@ function usePage() {
         try {
           return import(`../pages/${auth.role}${pageName}`)
         } catch(e: unknown) {
+          console.log(e)
           return import(`../pages/404`)
         }
       })
     }
 
-    if(path.match(/^\/([a-zA-Z]*)$/g)) {
+    if(path.match(/^(\/([a-zA-Z]*))*$/g)) {
 
       return lazy(() => {
         try {
           return import(`../pages/${auth.role}${path}`)
         } catch(e: unknown) {
+          console.log(e)
           return import(`../pages/404`)
         }
       })
     }
-
+    console.log(path);
     return lazy(() => import(`../pages/404`))
   }, [location.pathname, path, auth.signedIn, auth.role])
-  console.log(Page);
+
   if(!auth.signedIn) {
     return (
       <Suspense fallback={<LoadingScreen  />}>

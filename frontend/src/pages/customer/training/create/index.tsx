@@ -4,18 +4,20 @@ import Button from "@ui/button/UIButton";
 import TrainingItem from "@ui/trainingItem/UITrainingItem";
 import LoadingScreen  from "@components/loadingScreen/LoadingScreen";
 import axios from '@utils/axios';
-import {ITraining} from 'gigachad-shareds/models';
+
+type IExercises = {
+    id: number
+}
 
 const Create = () => {
     /* Os <br /> São temporários */
 
     const [loading,setLoading] = useState(true);
-    const [trainings,setTrainings] = useState<ITraining[]>();
+    const [exercises,setExercises] = useState<IExercises[]>();
 
     useEffect(() => {
-        axios.get("/training").then(({ data }) => data).then(({data}) => {
-            console.log(data)
-            setTrainings(data);
+        axios.get("/exercises").then(({ data }) => data).then(({data}) => {
+            setExercises(data);
             setLoading(false);
         })
     },[]);
