@@ -17,7 +17,9 @@ class Employee extends Route {
     @withAuth
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
-        const {cpf, name, address, ctps, admissionDate} = req.query;
+        const {cpfEmployee, name, address, ctps} = req.query;
+        const query = req.query;
+        const admissionDate = query.admissionDate as string
         try {
             const employee = await EmployeeModel.findAll({
                 debug: true,
@@ -34,7 +36,7 @@ class Employee extends Route {
                                     value: name ? `%${name}%` : undefined,
                                     op: "LIKE"
                                 },
-                                cpf
+                                cpf: cpfEmployee 
                             }
                         }
                     },
@@ -53,7 +55,7 @@ class Employee extends Route {
                         op: "LIKE"
                     },
                     ctps,
-                    admissionDate
+                    //admissionDate
                 }
             })
             res.success(employee);

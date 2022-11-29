@@ -116,7 +116,7 @@ export interface IExpense {
     date: Date
     totalValue: number
     description: string
-    typeExpense: TypeExpense
+    type: TypeExpense
 }
 
 export interface IInvoice {

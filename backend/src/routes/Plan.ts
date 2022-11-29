@@ -39,8 +39,10 @@ class Plan extends Route {
             const query = req.query;
             const name = query.name as string;
             const description = query.description as string;
+            const frequency = query.frequency as string;
             const value = Number(query.value as string);
             const available = (query.available as string) === 'true';
+
             const plan = await PlanModel.findAll({
                 debug: true,
                 order: [["id", "ASC"]],
@@ -54,6 +56,7 @@ class Plan extends Route {
                             value: description ? `%${description}%` : undefined,
                             op: "LIKE" // value LIKE $1
                         },
+                        frequency,
                         value,//value = $1
                         available: available ? true : undefined
                     }

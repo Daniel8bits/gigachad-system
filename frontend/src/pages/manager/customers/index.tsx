@@ -29,7 +29,7 @@ export default FilterPageTemplate<ICustomer>({
       const cpf = data.textfieldValues.get('1')
       const name = data.textfieldValues.get('2')
       
-      if(!cpf && !name) return false;
+      //if(!cpf && !name) return false;
 
       return true
     },

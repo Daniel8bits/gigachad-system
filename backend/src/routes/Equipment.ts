@@ -35,7 +35,8 @@ class Equipment extends Route {
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
         try {
-            const { qrCode, name, maintenanceDate } = await ValidData(req.body, Equipment.rules);
+            const { qrcode, name, maintenancedate } = await ValidData(req.query, Equipment.rules);
+            
             const equipment = await EquipmentModel.findAll({
                 order: [["qrCode", "ASC"]]
                 ,where: {
@@ -44,9 +45,9 @@ class Equipment extends Route {
                             value: name ? `%${name}%` : undefined,
                             op: "LIKE"
                         },
-                        qrCode,
-                        maintenanceDate
-                    }
+                        qrCode: qrcode,
+                        //maintenanceDate: maintenancedate
+                    }  
                 }
             })
             res.success(equipment);

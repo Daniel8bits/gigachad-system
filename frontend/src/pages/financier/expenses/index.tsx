@@ -77,7 +77,7 @@ export default FilterPageTemplate<IExpense>({
       display: {
         description: data.description,
         date: new Date(data.date).toLocaleDateString(),
-        typeExpense: stringType(data.typeExpense),   
+        type: stringType(data.type),
         totalValue: data.totalValue
       }
     }),

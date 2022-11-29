@@ -35,9 +35,22 @@ class Expense extends Route {
     @withAuth
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
+        const { date, totalValue, description, type } = await ValidData(req.query, Expense.rules);
+
         try {
             const expenses = await ExpenseModel.findAll({
-                order: [["id", "ASC"]]
+                order: [["id", "ASC"]],
+                where: {
+                    and: {
+                        description: {
+                            value: description ? `%${description}%` : undefined,
+                            op: "LIKE"
+                        }, 
+                        type,
+                        totalValue,
+                        //date 
+                    }
+                }
             })
             res.success(expenses);
         } catch (e: any) {
