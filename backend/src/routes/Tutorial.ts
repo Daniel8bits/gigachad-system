@@ -3,6 +3,7 @@ import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import ValidData, { Rules } from '../utils/ValidData';
 import TutorialModel from '../models/Tutorial';
 import { UserType } from 'gigachad-shareds/models'
+import Exercise from '../models/Exercise';
 
 class Tutorial extends Route {
 
@@ -31,13 +32,19 @@ class Tutorial extends Route {
         }
     }
 
-    @withUser(UserType.manager)
+    //@withUser(UserType.manager)
     @withAuth
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
         try {
             const tutorial = await TutorialModel.findAll({
-                order: [["idExercise", "ASC"]]
+                order: [["idExercise", "ASC"]],
+                include:[
+                    {
+                        model: Exercise,
+                        on: "tutorial.idExercise=exercise.id"
+                    }
+                ]
             })
             res.success(tutorial);
         } catch (e: any) {
@@ -45,7 +52,7 @@ class Tutorial extends Route {
         }
     }
 
-    @withUser(UserType.manager)
+   // @withUser(UserType.manager)
     @withAuth
     @Path("/:id")
     async findOne(req: Express.Request, res: Express.Response) {

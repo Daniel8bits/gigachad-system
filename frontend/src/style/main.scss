@@ -5,6 +5,7 @@
 
 @import 'global';
 
+
 @import '@ui/button/ui-button';
 @import '@ui/textfield/ui-textfield';
 @import '@ui/checkbox/ui-checkbox';
@@ -14,6 +15,7 @@
 @import '@ui/table/ui-table';
 @import '@ui/modal/ui-modal';
 @import '@ui/card/ui-card';
+@import '@ui/box/ui-box';
 @import '@ui/trainingItem/ui-trainingItem';
 
 @import '@components/sideMenu/side-menu';
@@ -29,3 +31,5 @@
 @import '@layouts/modalLayout/modal-layout';
 @import '@layouts/dialogLayout/dialog-layout';
 @import '@layouts/loginLayout/login-layout';
+
+@import '@pages/customer/plans/ui-plans';

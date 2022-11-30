@@ -1,5 +1,5 @@
 import Model, { DataType } from "../utils/Database/Model";
-import {ITutorial} from 'gigachad-shareds/models'
+import { ITutorial } from 'gigachad-shareds/models'
 
 class Tutorial extends Model<ITutorial>{
     @DataType("NUMBER")
@@ -10,6 +10,9 @@ class Tutorial extends Model<ITutorial>{
     declare image: JSON
     @DataType("STRING")
     declare explanation: string
+
+    @DataType("CLASS", { virtual: true })
+    declare ExerciseItem: string
 
     validate<T extends any>(field: string, value: T): T {
         return value;

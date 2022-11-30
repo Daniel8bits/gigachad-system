@@ -15,6 +15,10 @@ enum UserType {
 
 interface IUserAuth extends IUser{
     type: UserType
+    Customer:{
+        cpf: string
+        idcurrentplan: number
+    }
 }
 
 export interface AuthAccount {

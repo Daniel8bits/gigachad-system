@@ -1,25 +1,13 @@
-.ui-card{
+.ui-box{
     display: flex;
-    flex-direction: column;
     background-color: $color-greenish-gray;
     color:#f1f1f1;
+    padding: 0.5rem 1.5rem;
     margin-bottom: 1.5rem;
     box-shadow: 0 0 8px #000;
     text-decoration: none;
     &:hover{
         background-color: $color-greenish-black;
-    }
-    &>img{
-        display: block;
-        max-width: 100%;
-        height: auto;
-    }
-    &>.card-content{
-        padding: 0.5rem;
-        &>.title{
-            font-weight: bold;
-            font-size: 18px;
-        }
     }
     &>div{
         flex:1;

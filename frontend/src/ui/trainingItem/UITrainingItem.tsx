@@ -1,5 +1,5 @@
 import React from 'react';
-import Card from '../card/UICard'
+import Box from '../box/UIBox'
 
 type UITrainingItemProps = {
     name: string
@@ -9,7 +9,7 @@ type UITrainingItemProps = {
 }
 const UITrainingItem = ({ name,date,owner, numExercise }: UITrainingItemProps) => {
     return (
-        <Card className='ui-trainingItem'>
+        <Box className='ui-trainingItem'>
             <div className='info'>
                 <span className='name'>{name}</span>
                 <small>Criado por: {owner ?? "Você"}</small>
@@ -19,7 +19,7 @@ const UITrainingItem = ({ name,date,owner, numExercise }: UITrainingItemProps) =
                 <small>Data de Criação</small>
             </div>
             <div className='quantity'>{numExercise} Exercicios</div>
-        </Card>
+        </Box>
     )
 }
 export default UITrainingItem;
