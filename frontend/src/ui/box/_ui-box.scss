@@ -6,10 +6,10 @@
     margin-bottom: 1.5rem;
     box-shadow: 0 0 8px #000;
     text-decoration: none;
-    &:hover{
-        background-color: $color-greenish-black;
-    }
     &>div{
         flex:1;
     }
+}
+a.ui-box:hover{
+    background-color: $color-greenish-black;
 }

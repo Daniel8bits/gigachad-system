@@ -102,12 +102,11 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
   }
 
   function getOptions(): JSX.Element {
-    
     if (props.items instanceof Array) {
       const propsItems = props.items
       return (
         <div className='combobox-items'>
-          {(items as UIComboItemData[]).map((item, key) => {
+          {(propsItems as UIComboItemData[]).map((item, key) => {
             return (
               <UIComboBoxItem
                 key={key}

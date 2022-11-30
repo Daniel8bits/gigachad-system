@@ -27,7 +27,7 @@ class Exercise extends Route {
         }
     }
 
-    @withUser(UserType.manager)
+    //@withUser(UserType.manager)
     @withAuth
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {

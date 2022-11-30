@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 type UIBoxProps = {
     className?: string
+    to?: string
 }
-const UIBox = ({ children, className }: React.PropsWithChildren<UIBoxProps>) => {
+const UIBox = ({ children, className, to }: React.PropsWithChildren<UIBoxProps>) => {
+
+    const Element = useMemo(() => {
+        if (to) return "a";
+        return "div";
+    }, [to]);
+
     return (
-        <a href='/' className={`ui-box ${className}`}>
+        <Element href={to} className={`ui-box ${className ?? ""}`}>
             {children}
-        </a>
+        </Element>
     )
 }
 export default UIBox;

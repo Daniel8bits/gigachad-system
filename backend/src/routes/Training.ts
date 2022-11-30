@@ -23,19 +23,19 @@ class Training extends Route {
                 {
                     model: UsersModel,
                     on: "trainer.cpf=users.cpf",
-                    attributes:["name"]
+                    attributes: ["name"]
                 }
             ],
             order: [["id", "ASC"]]
-        })).map(async(item) => {
-            if(item.Users){
+        })).map(async (item) => {
+            if (item.Users) {
                 item.owner = item.Users.name;
             }
             delete item.cpfTrainer;
             delete item.Users;
 
             item.numExercise = await ExerciseItem.count({
-                where:{
+                where: {
                     idTraining: item.id,
                     cpfCustomer: item.cpfCustomer
                 }
@@ -51,7 +51,7 @@ class Training extends Route {
     @Request("POST")
     @Path("/")
     async create(req: Express.Request, res: Express.Response) {
-        if(req.user.type == UserType.trainer){
+        if (req.user.type == UserType.trainer) {
             const { name, cpfCustomer } = req.body;
             const lastID = await TrainingModel.getLastID(cpfCustomer);
             const result = await TrainingModel.create({
@@ -62,7 +62,7 @@ class Training extends Route {
                 creationDate: new Date()
             })
             res.success(result);
-        }else{
+        } else {
             const { name } = req.body;
             const lastID = await TrainingModel.getLastID(req.user.cpf);
             const result = await TrainingModel.create({
@@ -84,7 +84,7 @@ class Training extends Route {
         const training = await TrainingModel.findOne({
             where: {
                 id: parseInt(id),
-                or:{
+                or: {
                     cpfCustomer,
                     cpfTrainer: req.user.cpf
                 }
@@ -101,21 +101,35 @@ class Training extends Route {
     @withAuth
     @Path("/:id")
     async findOne(req: Express.Request, res: Express.Response) {
+        console.log("findOne")
         const id = req.params.id;
         const training = await TrainingModel.findOne({
             where: {
                 id: parseInt(id),
                 cpfCustomer: req.user.cpf
-            }
+            }/*
+            include: [
+                {
+                    model: ExerciseItem,
+                    on: "training.id=ExerciseItem.idTraining AND training.cpfCustomer=ExerciseItem.cpfCustomer"
+                }
+            ]*/
         })
         if (training) {
+            //const tmp = training.toJSON() as any;
+            training.exercises = await ExerciseItem.findAll({
+                where: {
+                    idTraining: id,
+                    cpfCustomer: req.user.cpf
+                }
+            });
             res.success(training);
         } else {
             res.error(404, "Treinamento não encontrado");
         }
 
     }
-    
+
     @withAuth
     @Request("PUT")
     @Path("/:id")
