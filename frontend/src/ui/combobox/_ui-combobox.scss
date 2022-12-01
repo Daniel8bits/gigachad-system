@@ -3,6 +3,7 @@
 
   > label {
     color: $color-green;
+    margin-bottom: .5rem;
   }
 
   &:not(.allow-search) > .combobox-input > input {
