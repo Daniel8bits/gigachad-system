@@ -180,6 +180,15 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
 
           if (actionsSet.has(TemplateActions.NEW)) {
             actionsCallbacks.onNew = () => {
+              if(!modal.params) return
+              updateModal({
+                open: modal.open,
+                params: {
+                  mode: modal.params.mode,
+                  data: modal.params.data,
+                  endpoint: config.endpoint
+                }
+              })
               navigate(`${pageName}/${TemplateURLActions.NEW}`)
             }
           }

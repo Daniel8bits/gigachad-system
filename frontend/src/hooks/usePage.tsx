@@ -47,7 +47,7 @@ function usePage() {
       })
     }
 
-    if(path.match(/^(\/([a-zA-Z]*))*$/g)) {
+    if(path.match(/^(\/(([a-zA-Z]|-)*))*$/g)) {
 
       return lazy(() => {
         try {
@@ -58,7 +58,7 @@ function usePage() {
         }
       })
     }
-    console.log(path);
+    
     return lazy(() => import(`../pages/404`))
   }, [location.pathname, path, auth.signedIn, auth.role])
 

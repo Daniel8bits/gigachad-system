@@ -7,7 +7,7 @@ function getPageName(location: Location) {
   location.pathname.substring(0, location.pathname.length-1) :
   location.pathname
 
-  const modalRegex = `^(/[a-zA-Z]+)+/(${TemplateURLActions.OPEN}|${TemplateURLActions.NEW}|${TemplateURLActions.EDIT})$`
+  const modalRegex = `^(/([a-zA-Z]|-)+)+/(${TemplateURLActions.OPEN}|${TemplateURLActions.NEW}|${TemplateURLActions.EDIT})$`
 
   if(pathname.match(new RegExp(modalRegex))) {
     return pathname.substring(0, pathname.lastIndexOf('/'))

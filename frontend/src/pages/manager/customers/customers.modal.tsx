@@ -110,10 +110,21 @@ export default ModalTemplate<ICustomer>({
       <>
         <Row>
           <Column lg={5} xl={5}>
-            <UITextField ref={nameRef} id="name" label="Nome" disabled={!props.allowEdit}  />
+            <UITextField 
+              ref={nameRef} 
+              id="name" 
+              label="Nome" 
+              disabled={!props.allowEdit}  
+            />
           </Column>
           <Column lg={5} xl={5}>
-            <UITextField ref={cpfRef} id="cpf" label="CPF" disabled={props.mode !== TemplateURLActions.NEW}  />
+            <UITextField 
+              ref={cpfRef} 
+              id="cpf" 
+              label="CPF" 
+              mask='{ddd.ddd.ddd-dd}'
+              disabled={props.mode !== TemplateURLActions.NEW}  
+            />
           </Column>
         </Row>
         

@@ -53,7 +53,7 @@ const menuConfig: Record<number, IMenuItem[]> = {
       ]
     },
     {
-      to: "/cards",
+      to: "/credit-cards",
       text: "Gerenciar Cartões"
     }
   ],

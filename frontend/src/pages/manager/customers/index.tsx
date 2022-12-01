@@ -6,7 +6,7 @@ import {ICustomer} from 'gigachad-shareds/models'
 export default FilterPageTemplate<ICustomer>({
   endpoint: '/customer',
   title: 'Clientes',
-  actions: [TemplateActions.OPEN, TemplateActions.EDIT],
+  actions: [TemplateActions.NEW, TemplateActions.OPEN, TemplateActions.EDIT],
   filter: {
     layout: [
       [

@@ -6,6 +6,7 @@ import { DialogType } from '@layouts/dialogLayout/DialogLayout';
 import Endpoint from '@middlewares/Endpoint';
 import Middleware from '@middlewares/Middleware';
 import { useSelector } from '@store/Root.store';
+import { useModalTemplate } from '@templates/modalTemplate/withModalTemplate';
 import TemplateURLActions from '@templates/TemplateURLAction';
 import UITable, { RowDataType, UITableDocument } from '@ui/table/UITable';
 import getPageName from '@utils/algorithms/getPageName';
@@ -15,7 +16,7 @@ import TemplateActions from '../TemplateActions';
 
 interface CustomTemplateBodyProps<T> {
   data: T[]
-  onDelete: (pk: () => string) => void
+  handleDelete: (pk: string) => void
 }
 
 interface FilterConfig {
@@ -51,6 +52,7 @@ function CustomTemplate<T>(config: FilterTableTemplateConfig<T>) {
       const template: React.FC<JSX.IntrinsicAttributes> = (props) => {
 
         //const [modal, updateModal] = useModal<ModalTemplateParamType<any>>(config.endpoint)
+        const [modal, updateModal] = useModalTemplate<T>()
         const [messageBox, updateMessageBox] = useMessageBox()
         const navigate = useNavigate()
         const location = useLocation()
@@ -92,7 +94,7 @@ function CustomTemplate<T>(config: FilterTableTemplateConfig<T>) {
           const actionsSet = new Set<TemplateActions>(config.actions)
 
           const actionsCallbacks: ActionsCallbacks = {}
-          const pageName = `/${role}${getPageName(location)}`
+          const pageName = getPageName(location)
 
           if (actionsSet.has(TemplateActions.OPEN)) {
             actionsCallbacks.onOpen = () => {
@@ -122,6 +124,15 @@ function CustomTemplate<T>(config: FilterTableTemplateConfig<T>) {
 
           if (actionsSet.has(TemplateActions.NEW)) {
             actionsCallbacks.onNew = () => {
+              if(!modal.params) return
+              updateModal({
+                open: modal.open,
+                params: {
+                  mode: modal.params.mode,
+                  data: modal.params.data,
+                  endpoint: config.endpoint
+                }
+              })
               navigate(`${pageName}/${TemplateURLActions.NEW}`)
             }
           }
@@ -139,6 +150,10 @@ function CustomTemplate<T>(config: FilterTableTemplateConfig<T>) {
 
         }, [role])
 
+        const handleDelete = useCallback((pk: string) => {
+
+        }, [])
+
         return (
           <ContentLayout title={config.title}>
             <Actions actionsCallbacks={actions} />
@@ -147,7 +162,7 @@ function CustomTemplate<T>(config: FilterTableTemplateConfig<T>) {
               onSearch={search}
               onClean={clean}
             />}
-            {/*<config.body data={data}  />*/}
+            <config.body data={data} handleDelete={handleDelete}  />
           </ContentLayout>
         )
 

@@ -18,7 +18,7 @@ function EmployeesHomeTemplate<T extends string>(config: EmployeesHomeConfig<T>)
         {config.buttons.map(button => 
           <SquareButton 
             key={button.to} 
-            to={`/${button.to}`}
+            to={button.to}
             label={button.label}
           />)}
       </ContentLayout>
