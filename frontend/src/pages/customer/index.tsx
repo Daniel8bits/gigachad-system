@@ -7,7 +7,7 @@ export default EmployeesHomeTemplate<CustomerPages>({
     {to: CustomerPages.TRAININGS,         label: 'Treinamentos'},
     {to: CustomerPages.PLANS,             label: 'Planos'},
     {to: CustomerPages.PAYMENTS,          label: 'Pagamentos'},
-    {to: CustomerPages.CREDIT_CARDS,      label: 'Cartões de Crédito'},
+    {to: CustomerPages.CREDIT_CARDS,      label: 'Cartões'},
     {to: CustomerPages.TUTORIALS,         label: 'Tutoriais'},
   ]
 })

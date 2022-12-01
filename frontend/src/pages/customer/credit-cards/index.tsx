@@ -3,6 +3,7 @@ import CustomTemplate from "@templates/customTemplate/CustomTemplate";
 import { ICreditCard } from 'gigachad-shareds/models';
 import TemplateActions from '@templates/TemplateActions';
 import Cards from 'react-credit-cards';
+import Placeholder from '@components/placeholder/Placeholder';
 
 export default CustomTemplate<ICreditCard>({
   endpoint: '/creditcard',
@@ -26,6 +27,9 @@ export default CustomTemplate<ICreditCard>({
             />
           )
         })}
+        {props.data.length === 0 && (
+          <Placeholder message='Parece que você ainda não possui nenhum cartão cadastrado'  />
+        )}
       </>
     )
   }
