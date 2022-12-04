@@ -1,6 +1,7 @@
 import usePopOver from '@hooks/usePopOver';
 import UIPopOver from '@ui/popover/UIPopOver';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const DROPDOWN_ID = 'DROPDOWN_ID'
 
@@ -15,6 +16,7 @@ interface DropDownProps {
 const DropDown: React.FC<DropDownProps> = (props) => {
 
   const [width, setWidth] = useState<number>(window.innerWidth*0.1);
+  const navigate = useNavigate()
 
   useEffect(() => {
     window.onresize = () => setWidth(window.innerWidth*0.1)
@@ -22,6 +24,7 @@ const DropDown: React.FC<DropDownProps> = (props) => {
 
   const signout = useCallback(() => {
     localStorage.removeItem("Token_Auth")
+    navigate('/')
     document.location.reload()
   }, []);
 

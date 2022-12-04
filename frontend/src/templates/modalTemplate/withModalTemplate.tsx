@@ -1,12 +1,19 @@
 import LoadingScreen from "@components/loadingScreen/LoadingScreen";
 import useModal from "@hooks/useModal";
 import { useSelector } from "@store/Root.store";
-import { ModalTemplateComponentProps, ModalTemplateParamType } from "@templates/modalTemplate/ModalTemplate";
+import { ModalTemplateComponentProps } from "@templates/modalTemplate/ModalTemplate";
 import TemplateURLActions from "@templates/TemplateURLAction";
 import UIModal from "@ui/modal/UIModal";
 import getModalName from "@utils/algorithms/getModalName";
 import React, { lazy, Suspense, useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
+
+export interface ModalTemplateParamType<T> {
+  mode: TemplateURLActions
+  data: T
+  endpoint: string|null
+  name?: string
+}
 
 const MAIN_MODAL = 'MAIN_MODAL'
 
@@ -31,9 +38,8 @@ const withModalTemplate: React.FC<JSX.IntrinsicAttributes> = () => {
         updateModal({
           open: true,
           params: {
-            mode: modalMode,
-            data: modal.params.data,
-            endpoint: modal.params.endpoint
+            ...modal.params,
+            mode: modalMode
           }
         })
       }
@@ -44,9 +50,8 @@ const withModalTemplate: React.FC<JSX.IntrinsicAttributes> = () => {
       updateModal({
         open: modalMode !== TemplateURLActions.CLOSED,
         params: {
+          ...modal.params,
           mode: modalMode,
-          data: modal.params.data,
-          endpoint: modal.params.endpoint
         }
       })
 
@@ -55,12 +60,28 @@ const withModalTemplate: React.FC<JSX.IntrinsicAttributes> = () => {
 
   const ModalContent = useMemo(() => {
 
-    const [modalName] = getModalName(location)
-    if(modalName) {
-      return lazy<React.ComponentType<ModalTemplateComponentProps>>(() => import(`/src/pages/${role}${modalName}`))
+    if(!modal) return null
+
+    if(!modal.params?.name) {
+      const [modalName] = getModalName(location)
+      if(modalName) {
+        return lazy<React.ComponentType<ModalTemplateComponentProps>>(() => import(`/src/pages/${role}${modalName}`))
+      }
     }
+
+    if(modal.params?.name) {
+      return lazy(() => {
+        try {
+          return import(`/src/pages/${modal.params?.name}.modal`);
+        } catch(e: unknown) {
+          return import('../../pages/404')
+        }
+      })
+    }
+
     return null
-  }, [location.pathname, role])
+
+  }, [location.pathname, role, modal?.params?.name])
 
   return (
     <UIModal<ModalTemplateParamType<unknown>> 

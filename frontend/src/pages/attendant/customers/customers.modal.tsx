@@ -33,17 +33,15 @@ export default ModalTemplate<ICustomer>({
     useEffect(() => {
       
       props.onNew(() => {
-
+        
       })
 
       props.onSave(() => {
-
-        
-        return 'lorem ipsum'
+        return 'return actual id'
       })
 
       props.onDelete(() => {
-        return 'primary key'
+        return 'return primary key'
       })
 
     }, []);

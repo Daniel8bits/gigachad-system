@@ -1,9 +1,10 @@
-import React from 'react'
-import CustomTemplate from "@templates/customTemplate/CustomTemplate";
+import React, { useContext } from 'react'
+import CustomTemplate, { getCustomTemplateContext } from "@templates/customTemplate/CustomTemplate";
 import { ICreditCard } from 'gigachad-shareds/models';
 import TemplateActions from '@templates/TemplateActions';
 import Cards from 'react-credit-cards';
 import Placeholder from '@components/placeholder/Placeholder';
+import CreditCard from '@components/creditCard/CreditCard';
 
 export default CustomTemplate<ICreditCard>({
   endpoint: '/creditcard',
@@ -15,15 +16,16 @@ export default CustomTemplate<ICreditCard>({
     TemplateActions.DELETE
   ],
   body: props => {
+    const { actions } = useContext(getCustomTemplateContext<ICreditCard>())
     return (
       <>
         {props.data.map((data) => {
           return (
-            <Cards  
-              cvc={data.cvv}
-              expiry={data.expirationDate}
-              name={data.holder}
-              number={data.numbers}
+            <CreditCard 
+              key={data.numbers} 
+              data={data}  
+              onEdit={() => actions.edit(data)}
+              onDelete={() => actions.delete(String(data.numbers))}
             />
           )
         })}

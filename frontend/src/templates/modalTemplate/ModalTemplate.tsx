@@ -15,12 +15,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import TemplateActions from '../TemplateActions';
 import TemplateURLActions from '../TemplateURLAction';
 
-export interface ModalTemplateParamType<T> {
-  mode: TemplateURLActions
-  data: T
-  endpoint: string|null
-}
-
 type DataGetter<T> = (() => (T|string))
 
 interface ModalTemplateBodyProps<T> {
@@ -59,24 +53,8 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
     
         const navigate = useNavigate()
         const location = useLocation()
-        //const role = useSelector(state => state.auth.role);
 
         const refDataBackup = useRef<T>(modal.params?.data as T)
-
-        /*
-        
-
-          TODOs demais:
-
-          - criar template de tela home dos funcionários
-          - criar template de tela livre para as telas dos cartões, treinos e calendário
-          - criar template de tela para os tutoriais
-          - criar home do usuário
-          - criar tela de login
-          - criar tela do profile
-          - chorar
-        
-        */
 
         const handleOnSave = useCallback((data: DataGetter<T>) => {
           refOnSave.current = data
@@ -100,16 +78,18 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
 
           const actionsCallbacks: ActionsCallbacks = {}
           const pageName = getPageName(location)
+
+          
           
           if (
             modal?.params?.mode === TemplateURLActions.EDIT ||
             modal?.params?.mode === TemplateURLActions.NEW
           ) {
-
-            actionsCallbacks.onSave = async () => {
-
+            
+            actionsCallbacks.onSave = async () => { 
+              
               if(refOnSave.current) {
-
+                
                 const data = refOnSave.current()
                 if(typeof data === 'string') {
                   updateMessageBox({
@@ -127,16 +107,14 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
                   params: {
                     message: "Deseja salvar as alterações?",
                     type: DialogType.WARNING,
-                    onConfirm: async () => {
-                      await endpoint.post(data)
+                    onConfirm: () => {
+                      endpoint.post(data)
                         .then(value => {
                           navigate(`${pageName}/${TemplateURLActions.OPEN}`)
                         })
-                    }
-                  }
-                })
+                }}})
+
               }
-              
             }
 
             actionsCallbacks.onCancel = () => {
@@ -172,12 +150,8 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
                           .then(value => {
                             navigate(pageName)
                           })
-                      }
-                    }
-                  }
-                })
+                }}}})}
 
-              }
             }
           }
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import ModalTemplate from "@templates/modalTemplate/ModalTemplate";
 import TemplateActions from "@templates/TemplateActions";
 import { ICreditCard } from "gigachad-shareds/models";
@@ -7,6 +7,7 @@ import Column from '@layouts/grid/Column';
 import UITextField from '@ui/textfield/UITextField';
 import UIDatePicker, { UIDate } from '@ui/datepicker/UIDatePicker';
 import Cards, { Focused } from 'react-credit-cards'
+import TemplateURLActions from '@templates/TemplateURLAction';
 
 
 export default ModalTemplate<ICreditCard>({
@@ -18,21 +19,77 @@ export default ModalTemplate<ICreditCard>({
   ],
   body: (props) => {
 
-    //const [updater, setUpdater] = useState<boolean>(false);
-
     const [name, setName] = useState<string>('');
     const [number, setNumber] = useState<string>('');
     const [cvv, setCvv] = useState<string>('');
+    const [expiry, setExpiry] = useState<string>('');
     const [focus, setFocus] = useState<Focused>();
 
     const nameRef = useRef<HTMLInputElement>(null);
     const numberRef = useRef<HTMLInputElement>(null);
     const cvvRef = useRef<HTMLInputElement>(null);
-
-    const [expiry, setExpiry] = useState<string>('');
+    const expiryRef = useRef<HTMLInputElement>(null);
 
     const handleFocus = useCallback((e: React.FocusEvent) => {
       setFocus(e.target.id as Focused)
+    }, []);
+
+    function setData(name='', number='', cvv='', expiry='') {
+      setName(name)
+      setNumber(number)
+      setCvv(cvv)
+      setExpiry(expiry)
+    }
+
+    useEffect(() => {
+      if(nameRef.current)   nameRef.current.value   = name
+      if(numberRef.current) numberRef.current.value = number
+      if(cvvRef.current)    cvvRef.current.value    = cvv
+      if(expiryRef.current) expiryRef.current.value = expiry
+    }, [name, number, cvv, expiry]);
+
+    useEffect(() => {
+
+      if(props.data && new Set([TemplateURLActions.OPEN, TemplateURLActions.EDIT]).has(props.mode)) {
+        setData(
+          props.data.holder,
+          props.data.numbers,
+          props.data.cvv,
+          props.data.expirationDate
+        )
+      } else {
+        setData()
+      }
+
+    }, [props.data, props.mode]);
+
+    useEffect(() => {
+      
+      props.onNew(() => setData())
+
+      props.onSave(() => {
+
+        if(
+          !nameRef.current || 
+          !numberRef.current || 
+          !cvvRef.current || 
+          !expiryRef.current
+        ) return 'Alguma coisa deu errado!'
+
+        
+        return {
+          holder: nameRef.current.value,
+          numbers: numberRef.current.value,
+          cvv: cvvRef.current.value,
+          expirationDate: expiryRef.current.value
+        }
+
+      })
+
+      props.onDelete(() => {
+        return numberRef.current ? numberRef.current.value : ''
+      })
+
     }, []);
 
     return (

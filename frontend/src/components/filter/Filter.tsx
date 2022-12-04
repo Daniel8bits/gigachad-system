@@ -184,7 +184,7 @@ const Filter: React.FC<FilterProps> = (props) => {
         height += 56
         return
       }
-      height += 86
+      height += 94
     })
     return height
   }, [props.inputs.length])

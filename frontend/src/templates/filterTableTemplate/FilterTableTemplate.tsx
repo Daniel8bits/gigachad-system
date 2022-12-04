@@ -112,7 +112,9 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
         }, [])
 
         const clean = useCallback(() => {
-
+          endpoint.get()
+            .then(document.setData)
+            .catch(console.log)
         }, [])
 
         /*============================== 
@@ -143,7 +145,7 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
               updateModal({
                 open: modal.open,
                 params: {
-                  mode: modal.params.mode,
+                  ...modal.params,
                   data: selectedRow.data,
                   endpoint: config.endpoint
                 }
@@ -169,7 +171,7 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
               updateModal({
                 open: modal.open,
                 params: {
-                  mode: modal.params.mode,
+                  ...modal.params,
                   data: selectedRow.data,
                   endpoint: config.endpoint
                 }
@@ -184,8 +186,7 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
               updateModal({
                 open: modal.open,
                 params: {
-                  mode: modal.params.mode,
-                  data: modal.params.data,
+                  ...modal.params,
                   endpoint: config.endpoint
                 }
               })
@@ -207,6 +208,7 @@ function FilterTableTemplate<T>(config: FilterTableTemplateConfig<T>) {
                 return
               }
               endpoint.delete(selectedRow.id)
+                .catch(console.log)
             }
           }
 
