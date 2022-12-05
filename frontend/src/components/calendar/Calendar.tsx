@@ -1,7 +1,8 @@
 import React, {
 	useState,
 	useMemo,
-	useRef
+	useRef,
+	useEffect
 } from 'react';
 import UIButton from '@ui/button/UIButton'
 
@@ -18,8 +19,15 @@ interface CalendarProps {
 
 const Calendar: React.FC<CalendarProps> = (props) => {
 	const [date, setDate] = useState<UIDate>(UIDate.now());
-
+	const [width, setWidth] = useState<number>(0);
 	const containerRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if(containerRef.current) {
+			setWidth((containerRef.current.offsetWidth - containerRef.current.offsetLeft) / 7)
+		}
+	}, []);
+
 	//const [day, setDay] = useState<number>(new Date().getDate())
 	const monthDays = useMemo<number[][]>(() => {
 		const weeks = []
@@ -97,10 +105,6 @@ const Calendar: React.FC<CalendarProps> = (props) => {
 		))
 	}
 
-	const width = containerRef.current ? 
-		(containerRef.current.offsetWidth - containerRef.current.offsetLeft) * 0.7 :
-		0
-
 	return (
 		<div className='calendar' ref={containerRef}>
 			<div className="month-control">
@@ -118,45 +122,47 @@ const Calendar: React.FC<CalendarProps> = (props) => {
 					<FaCaretRight />
 				</UIButton>
 			</div>
-			<div className="days-of-week">
-				{['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((value, key) => {
+			<div className='container'>
+				<div className="days-of-week">
+					{['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((value, key) => {
+						return (
+							<div
+								key={`${value}${key}`}
+								className="font-bebas grow"
+								style={{ width }}
+							>
+								{value}
+							</div>
+						)
+					})}
+				</div>
+				{monthDays.map((week, weekKey) => {
 					return (
-						<div
-							key={`${value}${key}`}
-							className="font-bebas grow"
-							style={{ width }}
-						>
-							{value}
+						<div className="week" key={['D0', 'S1', 'T2', 'Q3', 'Q4', 'S5', 'S6'][weekKey]}>
+							{week.map((day, dayKey) => {
+								let value = day
+								if (day < 0) {
+									value = Math.abs(value)
+								}
+								else if (day > 100) {
+									value -= 100
+								}
+								return (
+									<button
+										type='button'
+										key={day}
+										className={`${date.getDay() === day ? 'active' : ''} ${day < 0 || day > 100 ? 'from-other-month' : ''}`}
+										onClick={() => updateDate(weekKey, dayKey)}
+										style={{ width }}
+									>
+										{value}
+									</button>
+								)
+							})}
 						</div>
 					)
 				})}
 			</div>
-			{monthDays.map((week, weekKey) => {
-				return (
-					<div className="week" key={['D0', 'S1', 'T2', 'Q3', 'Q4', 'S5', 'S6'][weekKey]}>
-						{week.map((day, dayKey) => {
-							let value = day
-							if (day < 0) {
-								value = Math.abs(value)
-							}
-							else if (day > 100) {
-								value -= 100
-							}
-							return (
-								<button
-									type='button'
-									key={day}
-									className={`${date.getDay() === day ? 'active' : ''} ${day < 0 || day > 100 ? 'from-other-month' : ''}`}
-									onClick={() => updateDate(weekKey, dayKey)}
-									style={{ width }}
-								>
-									{value}
-								</button>
-							)
-						})}
-					</div>
-				)
-			})}
 		</div>
 	);
 };

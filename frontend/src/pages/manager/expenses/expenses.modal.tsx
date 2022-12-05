@@ -18,12 +18,8 @@ export default ModalTemplate<IExpense>({
 
     const [date, setDate] = useState<UIDate>(UIDate.now());
     const [comboValue, setComboValue] = useState<UIComboItemData | null>({ value: "0", label: 'Compra de equipamento' });
-<<<<<<< HEAD
     const [dateRef, setdateRef] = useState<UIDate>(UIDate.now()); // temp
 
-=======
-    
->>>>>>> 1e878076abda2a985f17c4414a1b93ec2878d6e7
     const idRef = useRef<HTMLInputElement>(null);
     const qrCodeRef = useRef<HTMLInputElement>(null);
     const totalValueRef = useRef<HTMLInputElement>(null);

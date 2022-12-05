@@ -25,24 +25,9 @@ export default ModalTemplate<IEquipment>({
 
     useEffect(() => {
 
-<<<<<<< HEAD
       if(props.data && new Set([TemplateURLActions.OPEN, TemplateURLActions.EDIT]).has(props.mode)) {
         if(nameRef.current) nameRef.current.value = props.data.name
         if(qrCodeRef.current) qrCodeRef.current.value = props.data.qrCode
-=======
-      if (props.data && new Set([TemplateURLActions.OPEN, TemplateURLActions.EDIT]).has(props.mode)) {
-        if (nameRef.current) nameRef.current.value = props.data.name
-        if (qrCodeRef.current) qrCodeRef.current.value = props.data.qrCode
-        if (date)
-          setDate(new UIDate(
-            props.data.maintenanceDate.getDay(),
-            props.data.maintenanceDate.getMonth(),
-            props.data.maintenanceDate.getFullYear()
-          )
-          )
-
-        throw new Error("TEm que ver isso \\/")
->>>>>>> 1e878076abda2a985f17c4414a1b93ec2878d6e7
       }
 
     }, [props.data]);
@@ -62,15 +47,9 @@ export default ModalTemplate<IEquipment>({
         ) return 'Alguma coisa deu errado!'
 
         return {
-<<<<<<< HEAD
           qrCode: qrCodeRef.current.value, 
           name: nameRef.current.value,
           maintenanceDate: new Date()
-=======
-          qrCode: qrCodeRef.current.value,
-          name: nameRef.current.value,
-          maintenanceDate: new Date(date.getDay(), date.getMonth(), date.getYear())
->>>>>>> 1e878076abda2a985f17c4414a1b93ec2878d6e7
         }
 
       })  
