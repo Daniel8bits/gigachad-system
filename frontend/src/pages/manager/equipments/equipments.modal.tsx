@@ -22,38 +22,43 @@ export default ModalTemplate<IEquipment>({
 
     const nameRef = useRef<HTMLInputElement>(null);
     const qrCodeRef = useRef<HTMLInputElement>(null);
-    //const maintenanceDate = useRef<HTMLInputElement>(null);
-    //const Lastmaintenance = useRef<HTMLInputElement>(null);
-    //const acquisition = useRef<HTMLInputElement>(null);
-    //const status = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
 
-      if(props.data && new Set([TemplateURLActions.OPEN, TemplateURLActions.EDIT]).has(props.mode)) {
-        if(nameRef.current) nameRef.current.value = props.data.name
-        if(qrCodeRef.current) qrCodeRef.current.value = props.data.qrCode
-        
+      if (props.data && new Set([TemplateURLActions.OPEN, TemplateURLActions.EDIT]).has(props.mode)) {
+        if (nameRef.current) nameRef.current.value = props.data.name
+        if (qrCodeRef.current) qrCodeRef.current.value = props.data.qrCode
+        if (date)
+          setDate(new UIDate(
+            props.data.maintenanceDate.getDay(),
+            props.data.maintenanceDate.getMonth(),
+            props.data.maintenanceDate.getFullYear()
+          )
+          )
+
         throw new Error("TEm que ver isso \\/")
       }
 
     }, [props.data]);
 
     useEffect(() => {
-      
+
       props.onNew(() => {
-        if(nameRef.current) nameRef.current.value = ''
-        if(qrCodeRef.current) qrCodeRef.current.value = ''
+        if (nameRef.current) nameRef.current.value = ''
+        if (qrCodeRef.current) qrCodeRef.current.value = ''
       })
 
       props.onSave(() => {
-        if(
+        if (
           !nameRef.current ||
-          !qrCodeRef.current
+          !qrCodeRef.current ||
+          !date
         ) return 'Alguma coisa deu errado!'
 
         return {
-          qrCode: qrCodeRef.current.value, 
-          name: nameRef.current.value
+          qrCode: qrCodeRef.current.value,
+          name: nameRef.current.value,
+          maintenanceDate: new Date(date.getDay(), date.getMonth(), date.getYear())
         }
 
       })
@@ -68,20 +73,26 @@ export default ModalTemplate<IEquipment>({
       <>
         <Row>
           <Column sm={2} md={2} lg={2} xl={2}>
-            <UITextField id="name" label="Nome"/>
+          <UITextField 
+              ref={nameRef} 
+              id="name" 
+              label="Nome" 
+              disabled={!props.allowEdit}
+            />
           </Column>
           <Column sm={2} md={2} lg={2} xl={2}>
-            <UITextField id="qrCode" label="QRCode"/>
+            <UITextField
+              ref={qrCodeRef}
+              id="qrCode" 
+              label="QRCode" 
+            />
           </Column>
         </Row>
-        
-        
+
+
         <Row>
           <Column sm={2} md={2} lg={2} xl={2}>
-          <UIDatePicker id='expirationDate' label='Data de expiração' value={date} onAction={setDate} />
-          </Column>
-          <Column sm={2} md={2} lg={2} xl={2}>
-          <UIDatePicker id='payDate' label='Data de pagamento' value={date} onAction={setDate} />
+            <UIDatePicker id='payDate' label='Última manutenção' value={date} onAction={setDate} />
           </Column>
         </Row>
 
@@ -89,7 +100,7 @@ export default ModalTemplate<IEquipment>({
       </>
     )
   }
-  
+
 })
 
 //

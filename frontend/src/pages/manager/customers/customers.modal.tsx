@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, {useEffect, useMemo, useRef, useState } from 'react'
 import ModalTemplate from '@templates/modalTemplate/ModalTemplate'
 import TemplateActions from '@templates/TemplateActions'
 import UIButton from '@ui/button/UIButton';
@@ -17,7 +17,8 @@ export default ModalTemplate<ICustomer>({
   actions: [
     TemplateActions.NEW,
     TemplateActions.EDIT, 
-    TemplateActions.DELETE
+    TemplateActions.DELETE,
+    TemplateActions.OPEN
   ],
   body: (props) => {
 
@@ -25,6 +26,7 @@ export default ModalTemplate<ICustomer>({
     const cpfRef = useRef<HTMLInputElement>(null);
     const emailRef = useRef<HTMLInputElement>(null);
     const phoneRef = useRef<HTMLInputElement>(null);
+    const [idCurrentPlan, setIdCurrentPlan] = useState<number>(-1)
 
     useEffect(() => {
 
@@ -33,6 +35,7 @@ export default ModalTemplate<ICustomer>({
         if(cpfRef.current) cpfRef.current.value = props.data.cpf
         if(emailRef.current) emailRef.current.value = props.data.Users.email
         if(phoneRef.current) phoneRef.current.value = props.data.Users.phone
+        if(idCurrentPlan) setIdCurrentPlan(props.data.idCurrentPlan)
       }
 
     }, [props.data]);
@@ -58,7 +61,7 @@ export default ModalTemplate<ICustomer>({
         
         return {
           cpf: cpfRef.current.value,
-          idCurrentPlan: -1,
+          idCurrentPlan,
           Users: {
             cpf: cpfRef.current.value,
             name: nameRef.current.value,

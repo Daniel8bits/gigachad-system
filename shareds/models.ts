@@ -112,7 +112,7 @@ export interface IExerciseItem {
 
 export interface IExpense {
     id: number
-    qrCodeEquipmen: string
+    qrCodeEquipment: string
     date: Date
     totalValue: number
     description: string
@@ -128,7 +128,7 @@ export interface IInvoice {
     status: string
     payday: string
     payMethod: string
-    Plan: IPlan
+    Plan: IPlan 
 }
 
 export interface IPlan {

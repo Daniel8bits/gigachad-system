@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ModalTemplate from '@templates/modalTemplate/ModalTemplate'
-import { IExpense, IEquipment } from 'gigachad-shareds/models'
+import { IExpense, TypeExpense } from 'gigachad-shareds/models'
 import Row from '@layouts/grid/Row'
 import Column from '@layouts/grid/Column'
 import UIButton from '@ui/button/UIButton'
@@ -18,8 +18,7 @@ export default ModalTemplate<IExpense>({
 
     const [date, setDate] = useState<UIDate>(UIDate.now());
     const [comboValue, setComboValue] = useState<UIComboItemData | null>({ value: "0", label: 'Compra de equipamento' });
-    const [dateRef, setdateRef] = useState<UIDate>(props.data?.Expense.date);
-
+    
     const idRef = useRef<HTMLInputElement>(null);
     const qrCodeRef = useRef<HTMLInputElement>(null);
     const totalValueRef = useRef<HTMLInputElement>(null);
@@ -44,8 +43,14 @@ export default ModalTemplate<IExpense>({
         if(descriptionRef.current) descriptionRef.current.value = props.data.description
         if(idRef.current) idRef.current.value = props.data.id.toString()
         if(expenseTypeRef.current) expenseTypeRef.current.value = props.data.type
-        if(qrCodeRef.current) qrCodeRef.current.value = props.data.qrCodeEquipmen
+        if(qrCodeRef.current) qrCodeRef.current.value = props.data.qrCodeEquipment
         if(totalValueRef.current) totalValueRef.current.value = props.data.totalValue.toString()
+        if(date)
+          setDate(new UIDate(
+            props.data.date.getDay(),
+            props.data.date.getMonth(),
+            props.data.date.getFullYear()
+          ))
         throw new Error("TEm que ver isso \\/")
       }
     }, [props.data])
@@ -63,7 +68,7 @@ export default ModalTemplate<IExpense>({
       props.onSave(() => {
         if(
           !idRef.current ||
-          !dateRef ||
+          !date ||
           !descriptionRef.current || 
           !expenseTypeRef.current || 
           !descriptionRef.current || 
@@ -72,15 +77,12 @@ export default ModalTemplate<IExpense>({
         ) return 'Alguma coisa deu errado!'
 
         return {
-          id: idRef.current.value, 
-          typeExpense: expenseTypeRef.current.value,
-          description: descriptionRef.current.value,
+          id: Number(idRef.current.value), 
           qrCodeEquipment: qrCodeRef.current.value,
-          totalValue: totalValueRef.current.value,
-          date: dateRef,
-          Equipament: {
-            qrCode: qrCodeRef.current.value,
-          }
+          date: new Date(date.getDay(), date.getMonth(), date.getYear()),
+          totalValue: Number(totalValueRef.current.value),
+          description: descriptionRef.current.value,
+          type: expenseTypeRef.current.value as TypeExpense,
         }
 
       })
