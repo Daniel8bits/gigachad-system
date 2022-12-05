@@ -29,7 +29,7 @@
 
       > div {
 
-        @include flex();
+        @include flex(center, center, nowrap);
         @include theme($color-greenish-gray);
         @include border();
 

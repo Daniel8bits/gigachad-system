@@ -1,6 +1,14 @@
 
 .ui-combobox {
 
+  
+  @include flex-left;
+/*
+  > * {
+    width: 100%;
+  }
+  */
+
   > label {
     color: $color-green;
     margin-bottom: .5rem;
@@ -15,7 +23,7 @@
     @include theme($color-greenish-gray, true);
     @include transition();
     @include border();
-    @include flex();
+    @include flex-left(center, nowrap);
 
     > input {
       @include theme($color-greenish-gray);
