@@ -3,6 +3,7 @@ import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import ValidData, { Rules } from '../utils/ValidData';
 import InvoiceModel from '../models/Invoice';
 import { UserType } from 'gigachad-shareds/models'
+import * as IInvoice from 'gigachad-shareds/endpoint/Invoice'
 
 class Invoice extends Route {
 
@@ -14,7 +15,7 @@ class Invoice extends Route {
     @withAuth
     @Request("POST")
     @Path("/")
-    async create(req: Express.Request, res: Express.Response) {
+    async create(req: EndPoint.Request<IInvoice.create.Request>, res: Express.Response<IInvoice.create.Response>) {
         try {
             const { idPlan, cardNumbers, value, status, payday, payMethod } = req.body
 
@@ -55,7 +56,7 @@ class Invoice extends Route {
     //@withUser(UserType.)
     @withAuth
     @Path("/")
-    async findAll(req: Express.Request, res: Express.Response) {
+    async findAll(req: EndPoint.Request, res: Express.Response<IInvoice.findAll.Response>) {
         try {
 
             const invoices = await InvoiceModel.findAll({
@@ -74,7 +75,7 @@ class Invoice extends Route {
     @withAuth
     @Request("PUT")
     @Path("/:id")
-    async update(req: Express.Request, res: Express.Response) {
+    async update(req: EndPoint.Request<IInvoice.update.Request>, res: Express.Response<IInvoice.update.Response>) {
         try {
             const { cpfCustomer, idPlan, cardNumbers, value, status, payday, payMethod } = req.body
             const id = req.params.id
@@ -83,7 +84,7 @@ class Invoice extends Route {
                 where: {
                     cpfCustomer,
                     idPlan,
-                    id: parseInt(id)
+                    id: id
                 }
             })
         } catch (e: any) {

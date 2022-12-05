@@ -4,6 +4,7 @@ import ValidData, { Rules } from '../utils/ValidData';
 import User from '../models/User';
 import EquipmentModel from '../models/Equipment';
 import { UserType } from 'gigachad-shareds/models'
+import type * as IEquipment from 'gigachad-shareds/endpoint/Equipment'
 
 class Equipment extends Route {
 
@@ -15,7 +16,7 @@ class Equipment extends Route {
     @withAuth
     @Request("POST")
     @Path("/")
-    async create(req: Express.Request, res: Express.Response) {
+    async create(req: EndPoint.Request<IEquipment.create.Request>, res: Express.Response<IEquipment.create.Response>) {
         try {
             const { qrCode, name, maintenanceDate } = await ValidData(req.body, Equipment.rules);
             const equipment = await EquipmentModel.create({
@@ -33,13 +34,13 @@ class Equipment extends Route {
     @withUser(UserType.manager)
     @withAuth
     @Path("/")
-    async findAll(req: Express.Request, res: Express.Response) {
+    async findAll(req: EndPoint.Request<IEquipment.findAll.Request>, res: Express.Response<IEquipment.findAll.Response>) {
         try {
             const { qrcode, name, maintenancedate } = await ValidData(req.query, Equipment.rules);
-            
+
             const equipment = await EquipmentModel.findAll({
-                order: [["qrCode", "ASC"]]
-                ,where: {
+                order: [["qrCode", "ASC"]],
+                where: {
                     and: {
                         name: {
                             value: name ? `%${name}%` : undefined,
@@ -47,7 +48,7 @@ class Equipment extends Route {
                         },
                         qrCode: qrcode,
                         //maintenanceDate: maintenancedate
-                    }  
+                    }
                 }
             })
             res.success(equipment);
@@ -59,10 +60,10 @@ class Equipment extends Route {
     @withUser(UserType.manager)
     @withAuth
     @Path("/:qrCode")
-    async findOne(req: Express.Request, res: Express.Response) {
+    async findOne(req: EndPoint.Request<IEquipment.findOne.Request>, res: Express.Response<IEquipment.findOne.Response>) {
         try {
             const expenses = await EquipmentModel.findOne({
-                where:{
+                where: {
                     qrCode: req.params.qrCode
                 },
                 order: [["qrCode", "ASC"]]
@@ -77,7 +78,7 @@ class Equipment extends Route {
     @withAuth
     @Request("PUT")
     @Path("/:qrCode")
-    async update(req: Express.Request, res: Express.Response) {
+    async update(req: EndPoint.Request<IEquipment.update.Request>, res: Express.Response<IEquipment.update.Response>) {
         try {
             const qrCode = req.params.qrCode;
             const { name, maintenanceDate } = await ValidData(req.body, Equipment.rules);
@@ -100,7 +101,7 @@ class Equipment extends Route {
     @withAuth
     @Request("DELETE")
     @Path("/:qrCode")
-    async delete(req: Express.Request, res: Express.Response) {
+    async delete(req: EndPoint.Request<IEquipment.del.Request>, res: Express.Response<IEquipment.del.Response>) {
         try {
             const qrCode = req.params.qrCode;
             const result = await EquipmentModel.delete({

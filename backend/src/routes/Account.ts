@@ -5,16 +5,13 @@ import User from '../models/User';
 import Administrative from "../models/Administrative";
 import Customer from "../models/Customer";
 import Trainer from "../models/Trainer";
-//import { IAccount } from 'gigachad-shareds/endpoint';
-
-
-type Request = Omit<Express.Request,''>;// & IAccount['request'];
+import type { ILogin, IisAuth } from 'gigachad-shareds/endpoint/Account';
 
 class Account extends Route {
 
     @Request("POST")
     @Path("/login")
-    async login(req: Request, res: Express.Response) {
+    async login(req: Express.Request<any, any, ILogin.Request['body']>, res: Express.Response<ILogin.Response>) {
         try {
             const { login, password } = req.body;
             await ValidData({ login, password }, {
@@ -63,7 +60,7 @@ class Account extends Route {
 
     @Path("/isAuth")
     @withAuth
-    async isAuth(req: Express.Request, res: Express.Response) {
+    async isAuth(req: Express.Request, res: Express.Response<IisAuth.Response>) {
         console.log(req.user);
         res.success({ user: req.user });
     }

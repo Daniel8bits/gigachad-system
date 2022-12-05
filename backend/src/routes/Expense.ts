@@ -3,6 +3,7 @@ import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import ValidData, { Rules } from '../utils/ValidData';
 import ExpenseModel from '../models/Expense';
 import { UserType } from 'gigachad-shareds/models'
+import type * as IExpense from 'gigachad-shareds/endpoint/Expense';
 
 class Expense extends Route {
 
@@ -14,7 +15,7 @@ class Expense extends Route {
     @withAuth
     @Request("POST")
     @Path("/")
-    async create(req: Express.Request, res: Express.Response) {
+    async create(req: EndPoint.Request<IExpense.create.Request>, res: Express.Response<IExpense.create.Response>) {
         try {
             const { qrCodeEquipment, date, totalValue, description, type } = await ValidData(req.body, Expense.rules);
             const expanse = await ExpenseModel.create({
@@ -34,8 +35,8 @@ class Expense extends Route {
     @withUser(UserType.manager, UserType.financer)
     @withAuth
     @Path("/")
-    async findAll(req: Express.Request, res: Express.Response) {
-        const { date, totalValue, description, type } = await ValidData(req.query, Expense.rules);
+    async findAll(req: EndPoint.Request<IExpense.findAll.Request>, res: Express.Response<IExpense.findAll.Response>) {
+        const { totalValue, description, type } = await ValidData(req.query, Expense.rules);
 
         try {
             const expenses = await ExpenseModel.findAll({
@@ -45,7 +46,7 @@ class Expense extends Route {
                         description: {
                             value: description ? `%${description}%` : undefined,
                             op: "LIKE"
-                        }, 
+                        },
                         type,
                         totalValue,
                         //date 
@@ -61,11 +62,11 @@ class Expense extends Route {
     @withUser(UserType.manager, UserType.financer)
     @withAuth
     @Path("/:id")
-    async findOne(req: Express.Request, res: Express.Response) {
+    async findOne(req: EndPoint.Request<IExpense.update.Request>, res: Express.Response<IExpense.update.Response>) {
         try {
             const expenses = await ExpenseModel.findAll({
-                where:{
-                    id: parseInt(req.params.id)
+                where: {
+                    id: req.params.id
                 },
                 order: [["id", "ASC"]]
             })
@@ -79,13 +80,13 @@ class Expense extends Route {
     @withAuth
     @Request("PUT")
     @Path("/:id")
-    async update(req: Express.Request, res: Express.Response) {
+    async update(req: EndPoint.Request<IExpense.update.Request>, res: Express.Response<IExpense.update.Response>) {
         try {
             const id = req.params.id;
             const { qrCodeEquipment, date, totalValue, description, type } = await ValidData(req.body, Expense.rules);
-            const expense = await ExpenseModel.update({ qrCodeEquipment, date, totalValue, description, type }, {
+            const expense = await ExpenseModel.update({ qrCodeEquipment, date: new Date(date), totalValue, description, type }, {
                 where: {
-                    id: parseInt(id)
+                    id: id
                 }
             })
             if (expense) {
@@ -102,12 +103,12 @@ class Expense extends Route {
     @withAuth
     @Request("DELETE")
     @Path("/:id")
-    async delete(req: Express.Request, res: Express.Response) {
+    async delete(req: EndPoint.Request<IExpense.del.Request>, res: Express.Response<IExpense.del.Response>) {
         try {
             const id = req.params.id;
             const result = await ExpenseModel.delete({
                 where: {
-                    id: parseInt(id)
+                    id: id
                 }
             })
             if (result) {

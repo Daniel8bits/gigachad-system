@@ -6,6 +6,8 @@ import CustomerModel from '../models/Customer';
 import PlanModel from '../models/Plan';
 import Invoice from '../models/Invoice';
 import { UserType } from 'gigachad-shareds/models'
+import type * as ICustomer from 'gigachad-shareds/endpoint/Customer';
+
 
 class Customer extends Route {
 
@@ -26,7 +28,7 @@ class Customer extends Route {
     };
 
     @Path("/plans")
-    async MyPlans(req: Express.Request, res: Express.Response) {
+    async MyPlans(req: EndPoint.Request, res: Express.Response<ICustomer.myPlans.Response>) {
         try {
             const plans = await Invoice.findAll({
                 attributes: ["value", "payday"],
@@ -49,7 +51,7 @@ class Customer extends Route {
 
     //@withUser(UserType.manager, UserType.attendant)
     @Path("/:id/plans")
-    async plans(req: Express.Request, res: Express.Response) {
+    async plans(req: EndPoint.Request, res: Express.Response) {
         try {
             const plans = await Invoice.findAll({
                 debug: true,
@@ -61,11 +63,11 @@ class Customer extends Route {
                     {
                         model: PlanModel,
                         on: "plan.id=invoice.idPlan",
-                        attributes: ["id","name"]
+                        attributes: ["id", "name"]
                     }
                 ],
                 order: [["payday", "DESC"]],
-               // groupby: ["idPlan","id"]
+                // groupby: ["idPlan","id"]
             })
             res.success(plans);
         } catch (e: any) {
@@ -77,7 +79,7 @@ class Customer extends Route {
     @withAuth
     @Request("POST")
     @Path("/")
-    async create(req: Express.Request, res: Express.Response) {
+    async create(req: EndPoint.Request<ICustomer.create.Request>, res: Express.Response<ICustomer.create.Response>) {
         try {
             const { cpf, name, email, phone, password } = await ValidData(req.body, Customer.rules);
             const user = await User.findOrCreate({
@@ -105,7 +107,7 @@ class Customer extends Route {
     @withUser(UserType.manager, UserType.financer, UserType.trainer, UserType.attendant)
     @withAuth
     @Path("/")
-    async findAll(req: Express.Request, res: Express.Response) {
+    async findAll(req: EndPoint.Request, res: Express.Response<ICustomer.findAll.Response>) {
 
         const { cpf, name } = req.query;
         try {
@@ -146,7 +148,7 @@ class Customer extends Route {
     @withUser(UserType.manager, UserType.financer, UserType.trainer, UserType.attendant)
     @withAuth
     @Path("/:cpf")
-    async findOne(req: Express.Request, res: Express.Response) {
+    async findOne(req: EndPoint.Request<ICustomer.findOne.Request>, res: Express.Response<ICustomer.findOne.Response>) {
         try {
             const cpf = req.params.cpf;
             const customer = await CustomerModel.findOne({
@@ -173,7 +175,7 @@ class Customer extends Route {
     @withAuth
     @Request("PUT")
     @Path("/:cpf")
-    async update(req: Express.Request, res: Express.Response) {
+    async update(req: EndPoint.Request<ICustomer.update.Request>, res: Express.Response<ICustomer.update.Response>) {
         try {
             const { cpf } = req.params;
             const { name, email, phone, password, plan } = await ValidData(req.body, Customer.rules);
@@ -209,7 +211,7 @@ class Customer extends Route {
     @withAuth
     @Request("DELETE")
     @Path("/:cpf")
-    async delete(req: Express.Request, res: Express.Response) {
+    async delete(req: EndPoint.Request<ICustomer.del.Request>, res: Express.Response<ICustomer.del.Response>) {
         try {
             const cpf = req.params.cpf
             const result = await CustomerModel.delete({

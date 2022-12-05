@@ -6,7 +6,7 @@ import CustomerCreditCardModel from '../models/CustomerCreditCard';
 import CustomerModel from '../models/Customer';
 import CustomerCreditCard from '../models/CustomerCreditCard';
 import { UserType } from 'gigachad-shareds/models'
-
+import type * as ICreditCard from 'gigachad-shareds/endpoint/CreditCard';
 class CreditCard extends Route {
 
     static rules: Rules = {
@@ -17,39 +17,8 @@ class CreditCard extends Route {
     @withUser(UserType.customer)
     @withAuth
     @Path("/")
-    async findAll(req: Express.Request, res: Express.Response) {
+    async findAll(req: EndPoint.Request, res: Express.Response<ICreditCard.findAll.Response>) {
         try {
-            /*
-            const customer = await CustomerModel.findOne({
-                where: {
-                    cpf: req.user.cpf
-                }
-            })
-
-            if (!customer) {
-                res.error(500, "cliente não encontrado")
-            }
-
-            if (cpfCustomer) {
-                const numbersCards = await CustomerCreditCard.findAll({
-                    where: {
-                        cpfCustomer
-                    }
-                })
-                if (numbersCards) {
-                    var cards: any[] = [];
-
-                    for (var i = 0; i < numbersCards.length; i++) {
-                        const card = await CreditCardModel.findOne({
-                            where: {
-                                numbers: numbersCards[i].numberscreditcard
-                            }
-                        })
-                        cards.push(card)
-                    }
-                    res.success(cards);
-                }
-            }*/
             const creditCard = (await CustomerCreditCardModel.findAll({
                 where: {
                     cpfCustomer: req.user.cpf
@@ -83,7 +52,7 @@ class CreditCard extends Route {
     @withAuth
     @Request("POST")
     @Path("/")
-    async create(req: Express.Request, res: Express.Response) {
+    async create(req: EndPoint.Request<ICreditCard.create.Request>, res: Express.Response<ICreditCard.create.Response>) {
         try {
             const { numbers, holder, expirationDate, cvv } = await ValidData(req.body, CreditCard.rules);
 
@@ -111,7 +80,7 @@ class CreditCard extends Route {
     @withUser(UserType.customer)
     @withAuth
     @Path("/:numbersCreditCard")
-    async findOne(req: Express.Request, res: Express.Response) {
+    async findOne(req: EndPoint.Request<ICreditCard.findOne.Request>, res: Express.Response<ICreditCard.findOne.Response>) {
         try {
             const numbers = req.params.numbersCreditCard;
             const creditCard = await CreditCardModel.findOne({
@@ -148,7 +117,7 @@ class CreditCard extends Route {
     @withAuth
     @Request("PUT")
     @Path("/:numbersCreditCard")
-    async update(req: Express.Request, res: Express.Response) {
+    async update(req: EndPoint.Request<ICreditCard.update.Request>, res: Express.Response<ICreditCard.update.Response>) {
         try {
             const numPath = req.params.numbersCreditCard;
 
@@ -199,7 +168,7 @@ class CreditCard extends Route {
     @withAuth
     @Request("DELETE")
     @Path("/:numbersCreditCard")
-    async delete(req: Express.Request, res: Express.Response) {
+    async delete(req: EndPoint.Request<ICreditCard.del.Request>, res: Express.Response<ICreditCard.del.Response>) {
         try {
             const numPath = req.params.numbersCreditCard;
             const result = await CustomerCreditCard.delete({
