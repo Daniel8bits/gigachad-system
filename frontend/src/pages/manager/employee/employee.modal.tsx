@@ -20,15 +20,15 @@ export default ModalTemplate<IAdministrative>({
     const [date, setDate] = useState<UIDate>(UIDate.now());
     const [check, setCheck] = useState<boolean>(false);
     const [comboValue, setComboValue] = useState<UIComboItemData | null>({ value: "1", label: 'atendente' });
-    //const [dateRef, setdateRef] = useState<UIDate>(props.data?.Employee.admissiondate);
-    //const [roleRef] = useState<UIDate>();
 
     const nameRef = useRef<HTMLInputElement>(null);
     const cpfRef = useRef<HTMLInputElement>(null);
-    const adressRef = useRef<HTMLInputElement>(null);
+    const addressRef = useRef<HTMLInputElement>(null);
     const emailRef = useRef<HTMLInputElement>(null);
     const phoneRef = useRef<HTMLInputElement>(null);
     const roleRef = useRef<HTMLInputElement>(null);
+    const ctps = props.data?.Employee.ctps
+    const administrative = props.data?.Employee.administrative
 
     const comboItems = {
       administrative: [
@@ -46,21 +46,27 @@ export default ModalTemplate<IAdministrative>({
       if(props.data && new Set([TemplateURLActions.OPEN, TemplateURLActions.EDIT]).has(props.mode)) {
         if(nameRef.current) nameRef.current.value = props.data.Employee.Users.name
         if(cpfRef.current) cpfRef.current.value = props.data.Employee.Users.cpf
-        if(adressRef.current) adressRef.current.value = props.data.Employee.address
+        if(addressRef.current) addressRef.current.value = props.data.Employee.address
         if(emailRef.current) emailRef.current.value = props.data.Employee.Users.email
         if(phoneRef.current) phoneRef.current.value = props.data.Employee.Users.phone
         if(roleRef.current) roleRef.current.value = props.data.role
+        if(date) 
+          setDate(new UIDate(
+            props.data.Employee.admissiondate.getDay(),
+            props.data.Employee.admissiondate.getMonth(),
+            props.data.Employee.admissiondate.getFullYear()
+          ))
         throw new Error("TEm que ver isso \\/")
       }
 
     }, [props.data]);
-/*
+
     useEffect(() => {
       
       props.onNew(() => {
         if(nameRef.current) nameRef.current.value = ''
         if(cpfRef.current) cpfRef.current.value = ''
-        if(adressRef.current) adressRef.current.value = ''
+        if(addressRef.current) addressRef.current.value = ''
       })
 
       props.onSave(() => {
@@ -68,22 +74,23 @@ export default ModalTemplate<IAdministrative>({
         if(
           !nameRef.current || 
           !cpfRef.current || 
-          !adressRef.current || 
-          //!dateRef.current ||
+          !addressRef.current ||
           !emailRef.current ||
           !phoneRef.current ||
-          !roleRef.current
+          !roleRef.current ||
+          !ctps ||
+          !administrative
         ) return 'Alguma coisa deu errado!'
 
         return {
           cpf: cpfRef.current.value,
-          role: roleRef.current.value,
+          role: roleRef.current.value as IAdministrative["role"],
           Employee: {
             cpf: cpfRef.current.value, 
-            adressRef: adressRef.current.value,
-            admissiondate: '',
-            administrative: '',
-            ctps: '',
+            administrative,
+            ctps,
+            admissiondate: new Date(date.getDay(), date.getMonth(), date.getYear()),
+            address: addressRef.current.value,
             Users: {
               cpf: cpfRef.current.value,
               name: nameRef.current.value,
@@ -103,24 +110,45 @@ export default ModalTemplate<IAdministrative>({
 
     }, []);
     
-    */
+    
     return (
       <>
         <Row>
           <Column sm={2} md={2} lg={2} xl={2}>
-            <UITextField id="name" label="Nome" />
+            <UITextField 
+              ref={nameRef} 
+              id="name" 
+              label="Nome" 
+              disabled={!props.allowEdit}
+            />
           </Column>
           <Column sm={2} md={2} lg={2} xl={2}>
-            <UITextField id="cpf" label="CPF" />
+          <UITextField 
+              ref={cpfRef} 
+              id="cpf" 
+              label="CPF" 
+              mask='{ddd.ddd.ddd-dd}'
+              disabled={props.mode !== TemplateURLActions.NEW}  
+            />
           </Column>
         </Row>
 
         <Row>
           <Column sm={2} md={2} lg={2} xl={2}>
-            <UITextField id="adress" label="Endereço" />
+            <UITextField
+              ref = {addressRef}
+              id="adress" 
+              label="Endereço"
+              disabled={!props.allowEdit}
+            />
           </Column>
           <Column sm={2} md={2} lg={2} xl={2}>
-            <UIDatePicker id='admissionDate' label='Data de admissão' value={date} onAction={setDate} />
+            <UIDatePicker 
+              id='admissionDate' 
+              label='Data de admissão' 
+              value={date} 
+              onAction={setDate}
+            />
           </Column>
         </Row>
 
