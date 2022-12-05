@@ -11,22 +11,39 @@ import {
 	FaCaretRight
 } from 'react-icons/fa'
 
+import {
+	MdAdd
+} from 'react-icons/md'
+
 import { UIDate } from '@ui/datepicker/UIDatePicker';
+import { IDateTraining } from 'gigachad-shareds/models';
+
+interface CalendarDayProps {
+	day: number
+	training: IDateTraining
+	otherMonth: boolean
+}
+
+const CalendarDay: React.FC<CalendarDayProps> = (props) => {
+
+
+
+	return (
+		<div className={`calendar-day ${props.training || props.otherMonth ? '' : 'no-training'}`}>
+			<h6> {props.day} </h6>
+			{!props.otherMonth && !props.training && <UIButton> <MdAdd  /> </UIButton>}
+			{props.training && <button type='button'> treino </button>}
+		</div>
+	)
+}
 
 
 interface CalendarProps {
+	trainings: IDateTraining[]
 }
 
 const Calendar: React.FC<CalendarProps> = (props) => {
 	const [date, setDate] = useState<UIDate>(UIDate.now());
-	const [width, setWidth] = useState<number>(0);
-	const containerRef = useRef<HTMLDivElement>(null);
-
-	useEffect(() => {
-		if(containerRef.current) {
-			setWidth((containerRef.current.offsetWidth - containerRef.current.offsetLeft) / 7)
-		}
-	}, []);
 
 	//const [day, setDay] = useState<number>(new Date().getDate())
 	const monthDays = useMemo<number[][]>(() => {
@@ -105,35 +122,21 @@ const Calendar: React.FC<CalendarProps> = (props) => {
 		))
 	}
 
+	const trainings = useMemo(() => {
+		return props.trainings.filter(t => t.date.getMonth() === date.getMonth())
+	}, [date, props.trainings])
+
 	return (
-		<div className='calendar' ref={containerRef}>
+		<div className='calendar'>
 			<div className="month-control">
-				<UIButton
-					className="mb-2 p-2"
-					onAction={decrementMonth}
-				>
-					<FaCaretLeft />
-				</UIButton>
+				<UIButton onAction={decrementMonth}> <FaCaretLeft /> </UIButton>
 				<div>{`${date.getMonthName()}, ${date.getYear()}`}</div>
-				<UIButton
-					className="mb-2 p-2"
-					onAction={incrementMonth}
-				>
-					<FaCaretRight />
-				</UIButton>
+				<UIButton onAction={incrementMonth}> <FaCaretRight /> </UIButton>
 			</div>
 			<div className='container'>
 				<div className="days-of-week">
 					{['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((value, key) => {
-						return (
-							<div
-								key={`${value}${key}`}
-								className="font-bebas grow"
-								style={{ width }}
-							>
-								{value}
-							</div>
-						)
+						return <div key={`${value}${key}`}> {value} </div>
 					})}
 				</div>
 				{monthDays.map((week, weekKey) => {
@@ -147,16 +150,18 @@ const Calendar: React.FC<CalendarProps> = (props) => {
 								else if (day > 100) {
 									value -= 100
 								}
+								const training = trainings.filter(t => t.date.getDate() === day)[0]
 								return (
-									<button
-										type='button'
+									<div
 										key={day}
-										className={`${date.getDay() === day ? 'active' : ''} ${day < 0 || day > 100 ? 'from-other-month' : ''}`}
-										onClick={() => updateDate(weekKey, dayKey)}
-										style={{ width }}
+										className={`${day < 0 || day > 100 ? 'from-other-month' : ''}`}
 									>
-										{value}
-									</button>
+										<CalendarDay 
+											day={value} 
+											training={training}  
+											otherMonth={day < 0 || day > 100}
+										/>
+									</div>
 								)
 							})}
 						</div>

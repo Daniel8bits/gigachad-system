@@ -4,5 +4,9 @@
 
   > .ui-button.right {
     margin-left: auto;
+    
+    &:last-child {
+      margin-right: 0;
+    }
   }
 }

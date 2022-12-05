@@ -8,6 +8,10 @@
   > .month-control {
     @include flex(space-between);
     @include padding();
+    color: white;
+    > .ui-button {
+      margin: 0 .5rem;
+    }
   }
   
   > .container { 
@@ -18,9 +22,12 @@
 
     > .days-of-week {
       @include flex();
-      margin: $measure;
       cursor: default;
+      border-bottom: 1px solid $color-green;
+      padding: 1rem 0;
       > div {
+        width: calc(100% / 7);
+        color: $color-green;
         text-align: center;
       }
     }
@@ -28,41 +35,55 @@
     > .week {
       //width: 100%;
       @include flex();
-      > button {
-        padding: $measure;
-        outline: none;
-        border: none;
-        cursor: pointer;
+      min-height: 5rem;
 
+      > div {
+        width: calc(100% / 7);
+        min-height: inherit;
         @include transition();
 
-        &:hover {
-          background-color: $color-dark-green;
-          color: #000a;
-        }
-
-        &.active {
-          @include theme($color-green);
-        }
         &.from-other-month {
           color: #fffa !important;
+        }
+
+        > .calendar-day {
+          padding: .5rem;
+          
+          > .ui-button {
+            @include transition;
+            margin: 0 auto;
+            font-size: 1.2rem;
+          }
+
+        }
+
+        &:not(.from-other-month) > .calendar-day {
+          &.no-training:hover > .ui-button {
+            opacity: 1;
+            visibility: visible;
+          }
+
+          &.no-training:not(:hover) > .ui-button {
+            opacity: 0;
+            visibility: hidden;
+          } 
         }
       }
 
       &:nth-child(odd) {
-        > button:nth-child(odd):not(.active, :hover) {
+        > div:nth-child(odd) {
           @include theme($color-greenish-black)
         }
-        > button:nth-child(even):not(.active, :hover) {
+        > div:nth-child(even) {
           @include theme($color-greenish-gray)
         }
       }
 
       &:nth-child(even) {
-        > button:nth-child(odd):not(.active, :hover) {
+        > div:nth-child(odd) {
           @include theme($color-greenish-gray)
         }
-        > button:nth-child(even):not(.active, :hover) {
+        > div:nth-child(even) {
           @include theme($color-greenish-black)
         }
       }

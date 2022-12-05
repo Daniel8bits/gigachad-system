@@ -242,7 +242,7 @@ export class UIDate {
     const auxYear = Math.floor(Math.abs(month + 1) / 12)
     if (month < 0) {
       month = 12 - auxMonth - 1
-      year -= auxYear
+      year -= auxYear+1
     }
     else if (month > 11) {
       month = auxMonth - 1

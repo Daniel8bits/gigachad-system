@@ -14,7 +14,7 @@ export default CustomTemplate<IDateTraining>({
       <> 
         <TrainingsActions calendar  />
         <br  />
-        <Calendar  />
+        <Calendar trainings={props.data}  />
       </>
     )
   }
