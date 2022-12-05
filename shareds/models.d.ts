@@ -4,6 +4,7 @@ export = GigachadSystem
 export as namespace GigachadSystem
 
 declare namespace GigachadSystem {
+
   /*  ENUMS  */
 
   export enum UserType {

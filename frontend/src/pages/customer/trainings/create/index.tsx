@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ContentLayout from '@layouts/contentLayout/ContentLayout';
 import Button from "@ui/button/UIButton";
-import TrainingItem from "@ui/trainingItem/UITrainingItem";
+import TrainingItem from "@components/trainingItem/TrainingItem";
 import LoadingScreen from "@components/loadingScreen/LoadingScreen";
 import UIComboBox, { UIComboItemType, UIComboItemData } from '@ui/combobox/UIComboBox';
 import TextField from '@ui/textfield/UITextField';

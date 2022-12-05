@@ -25,11 +25,11 @@ const menuConfig: Record<number, IMenuItem[]> = {
           text: "Calendário de Treinos"
         },
         {
-          to: "/training",
+          to: "/trainings",
           text: "Meus Treinos"
         },
         {
-          to: "/tutorial",
+          to: "/tutorials",
           text: "Tutoriais de exercícios"
         } 
       ]

@@ -5,12 +5,16 @@ import User from '../models/User';
 import Administrative from "../models/Administrative";
 import Customer from "../models/Customer";
 import Trainer from "../models/Trainer";
+//import { IAccount } from 'gigachad-shareds/endpoint';
+
+
+type Request = Omit<Express.Request,''>;// & IAccount['request'];
 
 class Account extends Route {
 
     @Request("POST")
     @Path("/login")
-    async login(req: Express.Request, res: Express.Response) {
+    async login(req: Request, res: Express.Response) {
         try {
             const { login, password } = req.body;
             await ValidData({ login, password }, {
@@ -38,7 +42,7 @@ class Account extends Route {
                 ]
             })
             if (user) {
-                
+
                 //console.log(await user.generatePassword("login123"));
                 if (user && await user.checkPassword(password)) {
                     const userReq = user.toJSON() as any;

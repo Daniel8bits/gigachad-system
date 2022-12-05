@@ -1,0 +1,8 @@
+
+.trainings-actions {
+  @extend .actions;
+
+  > .ui-button.right {
+    margin-left: auto;
+  }
+}

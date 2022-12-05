@@ -42,7 +42,7 @@ export interface IEmployee {
     ctps: string
     admissiondate: Date
     address: string
-    Users: IUser
+    Users: IUser 
 }
 
 export interface IAdministrative {

@@ -1,5 +1,5 @@
 import React from 'react';
-import Box from '../box/UIBox'
+import Box from '../../ui/box/UIBox'
 
 type UITrainingItemProps = {
     name: string
@@ -9,7 +9,7 @@ type UITrainingItemProps = {
 }
 const UITrainingItem = ({ name,date,owner, numExercise }: UITrainingItemProps) => {
     return (
-        <Box className='ui-trainingItem'>
+        <Box to='/trainings/something' className='ui-trainingItem'>
             <div className='info'>
                 <span className='name'>{name}</span>
                 <small>Criado por: {owner ?? "Você"}</small>

@@ -17,6 +17,7 @@ import { useDispatch } from '@store/Root.store';
 import Form from '@utils/Form';
 import axios from '@utils/axios';
 import { IUser } from 'gigachad-shareds/models';
+import {IoMdEye, IoMdEyeOff} from 'react-icons/io'
 
 interface HomeProps {
 
@@ -30,6 +31,7 @@ const Home: React.FC<HomeProps> = () => {
 
   const dispatch = useDispatch();
   const [keepConnected, setKeepConnected] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const handleSignIn = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,7 +50,15 @@ const Home: React.FC<HomeProps> = () => {
       <h1> LOGIN </h1>
       <h4> Preencha os campos para se conectar </h4>
       <UITextField id='login' label='Email ou CPF' defaultValue='76463745049'/>
-      <UITextField id='password' label='Senha' password defaultValue='login123'/>
+      <UITextField 
+        id='password' 
+        label='Senha' 
+        password={!showPassword} 
+        defaultValue='login123'
+        icon={showPassword ? IoMdEyeOff : IoMdEye}
+        iconPosition='right'
+        onClickIcon={() => setShowPassword(v => !v)}
+      />
       <UICheckBox
         label='Mantenha-me conectado'
         value={keepConnected}

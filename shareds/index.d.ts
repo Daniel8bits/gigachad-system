@@ -1,4 +1,4 @@
 
-import GigachadSystem from "./models";
+import GigachadSystem from "./endpoint";
 
 export = GigachadSystem

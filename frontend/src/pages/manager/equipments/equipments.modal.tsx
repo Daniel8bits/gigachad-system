@@ -32,8 +32,6 @@ export default ModalTemplate<IEquipment>({
       if(props.data && new Set([TemplateURLActions.OPEN, TemplateURLActions.EDIT]).has(props.mode)) {
         if(nameRef.current) nameRef.current.value = props.data.name
         if(qrCodeRef.current) qrCodeRef.current.value = props.data.qrCode
-        
-        throw new Error("TEm que ver isso \\/")
       }
 
     }, [props.data]);
@@ -53,10 +51,11 @@ export default ModalTemplate<IEquipment>({
 
         return {
           qrCode: qrCodeRef.current.value, 
-          name: nameRef.current.value
+          name: nameRef.current.value,
+          maintenanceDate: new Date()
         }
 
-      })
+      })  
 
       props.onDelete(() => {
         return qrCodeRef.current ? qrCodeRef.current.value : ''
