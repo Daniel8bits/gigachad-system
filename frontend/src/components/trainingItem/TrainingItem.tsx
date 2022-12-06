@@ -2,14 +2,15 @@ import React from 'react';
 import Box from '../../ui/box/UIBox'
 
 type UITrainingItemProps = {
+    id: number
     name: string
     date: string
     owner?: string
     numExercise: number
 }
-const UITrainingItem = ({ name,date,owner, numExercise }: UITrainingItemProps) => {
+const UITrainingItem = ({ id,name,date,owner, numExercise }: UITrainingItemProps) => {
     return (
-        <Box to='/trainings/something' className='ui-trainingItem'>
+        <Box to={`/trainings/view?id=${id}`} className='ui-trainingItem'>
             <div className='info'>
                 <span className='name'>{name}</span>
                 <small>Criado por: {owner ?? "Você"}</small>
