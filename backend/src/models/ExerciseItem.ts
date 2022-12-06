@@ -7,7 +7,7 @@ class ExerciseItem extends Model<IDateTraining>{
     declare idExercise: number
     @DataType("NUMBER")
     declare idTraining: number
-    @DataType("STRING")
+    @DataType("CPF")
     declare cpfCustomer: string
     @DataType("NUMBER")
     declare weight: number

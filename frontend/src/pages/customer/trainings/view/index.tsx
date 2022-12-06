@@ -17,11 +17,12 @@ type IExercises = {
     weight: string
 }
 
-const Create = () => {
+const View = () => {
     /* Os <br /> São temporários */
 
     const [loading, setLoading] = useState(true);
     const [name, setName] = useState("Novo Treino");
+    const [id,setID] = useState(0);
     const [exercises, setExercises] = useState<UIComboItemData[]>([]);
     const [exerciseItens, setExerciseItens] = useState<IExercises[]>([]);
 
@@ -29,11 +30,30 @@ const Create = () => {
         axios.get("/exercise").then(({ data }) => data).then(({ data }) => {
             setExercises(data.map((item: any) => ({ value: String(item.id), label: item.name })));
         })
-        axios.get("/training/1").then(({ data }) => data).then(({ data }) => {
-            setExerciseItens(data.exercises)
-            setLoading(false);
-        });
     }, []);
+
+    useEffect(() => {
+        if (exercises.length === 0) return;
+        const id = new URL(location.href).searchParams.get("id");
+        if (id) {
+            setID(Number(id));
+            axios.get(`/training/${id}`).then(({ data }) => data).then(({ data }) => {
+                const exerciseItens = data.exercises.map((item: any): IExercises => {
+                    return {
+                        repetition: item.repetition,
+                        id: item.idtraining,
+                        series: item.series,
+                        weight: item.weight,
+                        selected: exercises.find((value) => value.value === String(item.idexercise)) ?? exercises[0]
+
+                    }
+                });
+                setExerciseItens(exerciseItens);
+                setName(data.name)
+                setLoading(false);
+            });
+        }
+    }, [exercises]);
 
     const handleAddExercise = () => {
         setExerciseItens((old) => {
@@ -66,8 +86,7 @@ const Create = () => {
             if (!exercises[name]) exercises[name] = {}
             exercises[name][id] = value;
         })
-        axios.post("/training", { name, exercises })
-        console.log(exercises);
+        axios.put(`/training/${id}`, { name, exercises })
     }
 
     return (
@@ -80,7 +99,7 @@ const Create = () => {
                         <div className="name">
                             <UIComboBox
                                 id={`name[${key}]`}
-                                name={`name[${item.id}]`}
+                                name={`name[${key}]`}
                                 items={exercises}
                                 onAction={(value) => handleChangeExercice(value, key)}
                                 value={item.selected}
@@ -88,15 +107,15 @@ const Create = () => {
                         </div>
                         <div className="repetition">
                             <span className="label">Repetições</span>
-                            <TextField id={`repetition[${item.id}]`} defaultValue={item.repetition} />
+                            <TextField id={`repetition[${key}]`} defaultValue={item.repetition} />
                         </div>
                         <div className="series">
                             <span className="label">Séries</span>
-                            <TextField id={`series[${item.id}]`} defaultValue={item.series} />
+                            <TextField id={`series[${key}]`} defaultValue={item.series} />
                         </div>
                         <div className="weight">
                             <span className="label">Peso</span>
-                            <TextField id={`weight[${item.id}]`} defaultValue={item.weight} />
+                            <TextField id={`weight[${key}]`} defaultValue={item.weight} />
                         </div>
                         <div className="remove">
                             -
@@ -108,4 +127,4 @@ const Create = () => {
         </ContentLayout>
     )
 }
-export default Create;
+export default View;

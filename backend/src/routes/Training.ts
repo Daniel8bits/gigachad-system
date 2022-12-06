@@ -51,8 +51,9 @@ class Training extends Route {
     @Request("POST")
     @Path("/")
     async create(req: Express.Request, res: Express.Response) {
+
         if (req.user.type == UserType.trainer) {
-            const { name, cpfCustomer } = req.body;
+            const { name, cpfCustomer, exercises } = req.body;
             const lastID = await TrainingModel.getLastID(cpfCustomer);
             const result = await TrainingModel.create({
                 id: lastID + 1,
@@ -63,7 +64,16 @@ class Training extends Route {
             })
             res.success(result);
         } else {
-            const { name } = req.body;
+            type IBody = {
+                name: string
+                exercises: {
+                    name: Record<number, string>
+                    repetition: Record<number, string>
+                    series: Record<number, string>
+                    weight: Record<number, string>
+                }
+            }
+            const { name, exercises } = req.body as IBody;
             const lastID = await TrainingModel.getLastID(req.user.cpf);
             const result = await TrainingModel.create({
                 id: lastID + 1,
@@ -72,8 +82,27 @@ class Training extends Route {
                 name: name,
                 creationDate: new Date()
             })
-            res.success(result);
+            if (result) {
+
+                const promises = Object.keys(exercises.name).map(async (key) => {
+                    const idexercise = exercises.name[key];
+                    const repetition = exercises.repetition[key];
+                    const series = exercises.series[key];
+                    const weight = exercises.weight[key];
+                    await ExerciseItem.create({
+                        cpfCustomer: req.user.cpf,
+                        idTraining: result.id,
+                        idexercise,
+                        repetition,
+                        series,
+                        weight
+                    })
+                });
+                Promise.all(promises);
+                res.success(result);
+            }
         }
+
     }
 
     @withAuth
@@ -135,7 +164,7 @@ class Training extends Route {
     @Path("/:id")
     async update(req: Express.Request, res: Express.Response) {
         const id = req.params.id;
-        const { name } = req.body;
+        const { name, exercises } = req.body;
         const training = await TrainingModel.update({ name }, {
             where: {
                 id: parseInt(id),
@@ -143,6 +172,28 @@ class Training extends Route {
             }
         })
         if (training) {
+            await ExerciseItem.delete({
+                where:{
+                    cpfCustomer: req.user.cpf,
+                    idTraining: training.id
+                },
+                limit:999
+            })
+            const promises = Object.keys(exercises.name).map(async (key) => {
+                const idexercise = exercises.name[key];
+                const repetition = exercises.repetition[key];
+                const series = exercises.series[key];
+                const weight = exercises.weight[key];
+                await ExerciseItem.create({
+                    cpfCustomer: req.user.cpf,
+                    idTraining: training.id,
+                    idexercise,
+                    repetition,
+                    series,
+                    weight
+                })
+            });
+            Promise.all(promises);
             res.success(training);
         } else {
             res.error(404, "Treinamento não encontrado");

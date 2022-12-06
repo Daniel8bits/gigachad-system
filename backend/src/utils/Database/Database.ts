@@ -33,7 +33,7 @@ class Database {
     }
 
     end() {
-        this.pool.end();
+        //this.pool.end();
     }
 }
 
