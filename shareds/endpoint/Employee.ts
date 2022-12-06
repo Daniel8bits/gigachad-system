@@ -1,5 +1,38 @@
 
 export type IEmployee = {
+    cpf: string
+    name: string
+    email: string
+    phone: string
+    password: string
+    plan: number
+    ctps: string
+    address: string
+    administrative: string
+    role?: 'financer' | 'attendant' | 'manager' // tmp
+    cref?: string
+}
+
+export type EmployeeResponse = {
+    Trainer:{
+        cpf: string
+        cref: string
+    }
+    Administrative:{
+        cpf: string
+        role: string
+    }
+    Users:{
+        cpf: string
+        email: string
+        name: string
+        phone: string
+    }
+    address: string
+    administrative: string
+    admissiondate: string
+    cpf: string
+    ctps: string
 
 }
 

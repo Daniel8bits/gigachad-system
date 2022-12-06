@@ -328,13 +328,12 @@ const UITextField: React.ForwardRefRenderFunction<HTMLInputElement, UITextFieldP
                 <div 
                     ref={props.iconContainerRef}
                     className={`${props.onClickIcon ? 'icon-as-button' : ''}`} 
-                    onClick={handleIconClick}
                 >
                     {(!props.iconPosition || props.iconPosition === 'left') &&
-                        <props.icon />}
+                        <button type='button' onClick={handleIconClick} aria-label='button'><props.icon /></button>}
                     {inputElement}
                     {props.iconPosition === 'right' &&
-                        <props.icon />}
+                        <button type='button' onClick={handleIconClick} aria-label='button'><props.icon /></button>}
                 </div>
             )
         }

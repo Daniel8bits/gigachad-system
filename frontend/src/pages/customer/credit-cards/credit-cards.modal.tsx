@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import ModalTemplate from "@templates/modalTemplate/ModalTemplate";
 import TemplateActions from "@templates/TemplateActions";
-import { ICreditCard } from "gigachad-shareds/models";
+import { ICreditCard } from "gigachad-shareds/endpoint/CreditCard";
 import Row from '@layouts/grid/Row';
 import Column from '@layouts/grid/Column';
 import UITextField from '@ui/textfield/UITextField';
@@ -14,7 +14,7 @@ export default ModalTemplate<ICreditCard>({
   title: 'Cartão de credito',
   actions: [
     TemplateActions.NEW,
-    TemplateActions.EDIT, 
+    TemplateActions.EDIT,
     TemplateActions.DELETE
   ],
   body: (props) => {
@@ -34,7 +34,7 @@ export default ModalTemplate<ICreditCard>({
       setFocus(e.target.id as Focused)
     }, []);
 
-    function setData(name='', number='', cvv='', expiry='') {
+    function setData(name = '', number = '', cvv = '', expiry = '') {
       setName(name)
       setNumber(number)
       setCvv(cvv)
@@ -42,15 +42,15 @@ export default ModalTemplate<ICreditCard>({
     }
 
     useEffect(() => {
-      if(nameRef.current)   nameRef.current.value   = name
-      if(numberRef.current) numberRef.current.value = number
-      if(cvvRef.current)    cvvRef.current.value    = cvv
-      if(expiryRef.current) expiryRef.current.value = expiry
+      if (nameRef.current) nameRef.current.value = name
+      if (numberRef.current) numberRef.current.value = number
+      if (cvvRef.current) cvvRef.current.value = cvv
+      if (expiryRef.current) expiryRef.current.value = expiry
     }, [name, number, cvv, expiry]);
 
     useEffect(() => {
 
-      if(props.data && new Set([TemplateURLActions.OPEN, TemplateURLActions.EDIT]).has(props.mode)) {
+      if (props.data && new Set([TemplateURLActions.OPEN, TemplateURLActions.EDIT]).has(props.mode)) {
         setData(
           props.data.holder,
           props.data.numbers,
@@ -58,28 +58,27 @@ export default ModalTemplate<ICreditCard>({
           props.data.expirationDate
         )
       } else {
-        setData()
+        //setData()
       }
 
     }, [props.data, props.mode]);
 
     useEffect(() => {
-      
+
       props.onNew(() => setData())
 
       props.onSave(() => {
-
-        if(
-          !nameRef.current || 
-          !numberRef.current || 
-          !cvvRef.current || 
+        if (
+          !nameRef.current ||
+          !numberRef.current ||
+          !cvvRef.current ||
           !expiryRef.current
         ) return 'Alguma coisa deu errado!'
 
-        
+
         return {
           holder: nameRef.current.value,
-          numbers: numberRef.current.value,
+          numbers: numberRef.current.value.replace(/\s/g, ''),
           cvv: cvvRef.current.value,
           expirationDate: expiryRef.current.value
         }
@@ -97,10 +96,10 @@ export default ModalTemplate<ICreditCard>({
         <Column xl={6} xxl={6}>
           <Row>
             <Column>
-              <UITextField 
+              <UITextField
                 ref={nameRef}
                 id='name'
-                label='Nome do cartão'  
+                label='Nome do cartão'
                 onAction={setName}
                 onFocus={handleFocus}
               />
@@ -108,10 +107,10 @@ export default ModalTemplate<ICreditCard>({
           </Row>
           <Row>
             <Column>
-              <UITextField 
+              <UITextField
                 ref={numberRef}
-                id='number' 
-                label='Número'  
+                id='number'
+                label='Número'
                 mask='{dddd} {dddd} {dddd} {dddd}'
                 onAction={setNumber}
                 onFocus={handleFocus}
@@ -120,21 +119,22 @@ export default ModalTemplate<ICreditCard>({
           </Row>
           <Row>
             <Column>
-              <UITextField 
-                id='expiry' 
+              <UITextField
+                ref={expiryRef}
+                id='expiry'
                 label='Data de validade'
                 mask='{dd/dd}'
-                onAction={setExpiry} 
+                onAction={setExpiry}
                 onFocus={handleFocus}
               />
             </Column>
           </Row>
           <Row>
             <Column xl={6} xxl={6}>
-              <UITextField 
+              <UITextField
                 ref={cvvRef}
-                id='cvc' 
-                label='CVV'  
+                id='cvc'
+                label='CVV'
                 mask='{ddd}'
                 onAction={setCvv}
                 onFocus={handleFocus}
@@ -143,7 +143,7 @@ export default ModalTemplate<ICreditCard>({
           </Row>
         </Column>
         <Column xl={6} xxl={6}>
-          <Cards  
+          <Cards
             cvc={cvv}
             expiry={expiry.toString()}
             name={name}

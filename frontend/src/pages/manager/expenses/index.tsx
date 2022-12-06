@@ -25,7 +25,7 @@ const typeExpense = [
 export default FilterPageTemplate<APIType>({
   endpoint: '/expense',
   title: 'Consultar Gasto',
-  actions: [TemplateActions.OPEN, TemplateActions.EDIT],
+  actions: [TemplateActions.OPEN, TemplateActions.NEW, TemplateActions.EDIT],
   filter: {
     layout: [
       [

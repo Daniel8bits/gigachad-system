@@ -9,6 +9,7 @@ import UICheckBox from '@ui/checkbox/UICheckbox'
 import UIDatePicker, { UIDate } from '@ui/datepicker/UIDatePicker';
 import TemplateActions from '@templates/TemplateActions'
 import TemplateURLActions from '@templates/TemplateURLAction';
+import UIComboBox, { UIComboItemData } from '@ui/combobox/UIComboBox';
 
 
 export default ModalTemplate<IInvoice>({
@@ -19,6 +20,19 @@ export default ModalTemplate<IInvoice>({
   body: (props) => {
     const [date, setDate] = useState<UIDate>(UIDate.now());
     const [check, setCheck] = useState<boolean>(false);
+    const [comboValue, setComboValue] = useState<UIComboItemData | null>({ value: "0", label: 'Cartão de crédito' });
+
+    const comboItems = {
+      administrative: [
+        { value: "0", label: 'Cartão de crédito' },
+        { value: "1", label: 'Pix' },
+        { value: "2", label: 'Boleto bancário' },
+        { value: "3", label: 'Dinheiro' }
+      ],
+      other: [
+        { value: "4", label: 'Outros' },
+      ]
+    }
 
     const idPlan = props.data?.idPlan
     const id = props.data?.id
@@ -32,8 +46,6 @@ export default ModalTemplate<IInvoice>({
     const methodRef = useRef<HTMLInputElement>(null);
     const valueRef = useRef<HTMLInputElement>(null);
 
-
-
     useEffect(() => {
 
       if (props.data && new Set([TemplateURLActions.OPEN, TemplateURLActions.EDIT]).has(props.mode)) {
@@ -43,8 +55,6 @@ export default ModalTemplate<IInvoice>({
         if (valueRef.current) valueRef.current.value = props.data.value.toString()
       }
     }, [props.data]);
-
-
 
     useEffect(() => {
       props.onNew(() => {
@@ -85,7 +95,7 @@ export default ModalTemplate<IInvoice>({
 
     }, [])
 
-
+    
     return (
       <>
         <Row>
@@ -114,13 +124,6 @@ export default ModalTemplate<IInvoice>({
         <Row>
           <Column sm={2} md={2} lg={2} xl={2}>
             <UITextField
-              ref={methodRef}
-              id="method"
-              label="Método de pagamento"
-            />
-          </Column>
-          <Column sm={2} md={2} lg={2} xl={2}>
-            <UITextField
               ref={valueRef}
               id="value"
               label="Valor"
@@ -130,14 +133,15 @@ export default ModalTemplate<IInvoice>({
 
         <Row>
           <Column sm={2} md={2} lg={2} xl={2}>
-            <UICheckBox
-              label='Pago pessoalmente'
-              value={check}
-              onAction={setCheck}
+            <UITextField 
+              ref={methodRef}
+              id="method" 
+              label="Método"
             />
-            {/*COMO VAMOS DEIXAR ESSA CARALHA AQUI?*/}
-
           </Column>
+          <Row>
+          <UIComboBox id='type' label='Forma de pagamento' items={comboItems} value={comboValue} onAction={setComboValue} allowSearch />
+        </Row>
         </Row>
 
         <UIButton onAction={() => ({})}> Escolher forma de pagamento </UIButton>

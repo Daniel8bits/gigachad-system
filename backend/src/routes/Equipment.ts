@@ -19,8 +19,9 @@ class Equipment extends Route {
     async create(req: EndPoint.Request<IEquipment.create.Request>, res: Express.Response<IEquipment.create.Response>) {
         try {
             const { qrCode, name, maintenanceDate } = await ValidData(req.body, Equipment.rules);
+            console.log("qrCode",qrCode);
             const equipment = await EquipmentModel.create({
-                qrCode,
+                qrcode: qrCode,
                 name,
                 maintenanceDate
             })

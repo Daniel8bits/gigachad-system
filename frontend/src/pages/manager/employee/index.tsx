@@ -6,7 +6,7 @@ import { IEmployee } from 'gigachad-shareds/models'
 export default FilterPageTemplate<IEmployee>({
   endpoint: '/employee',
   title: 'Consultar Funcionários',
-  actions: [TemplateActions.OPEN, TemplateActions.EDIT],
+  actions: [TemplateActions.OPEN, TemplateActions.EDIT, TemplateActions.NEW],
   filter: {
     layout: [
       [

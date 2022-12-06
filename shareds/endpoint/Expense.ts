@@ -1,6 +1,11 @@
 
 export type IExpense = {
-
+    id?: number
+    qrcodeequipment?: string
+    date: string
+    totalvalue: number
+    description: string
+    type: TypeExpense
 }
 export enum TypeExpense {
     equipamentBuy = 'equipamentBuy',

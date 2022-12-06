@@ -1,6 +1,11 @@
 
 export type ICustomer = {
-
+    cpf: string
+    name: string
+    email: string
+    phone: string
+    password: string
+    plan: number
 }
 
 export namespace myPlans {
@@ -12,14 +17,7 @@ export namespace findAll {
 
 export namespace create {
     export type Request = {
-        body: {
-            cpf: string
-            name: string
-            email: string
-            phone: string
-            password: string
-            plan: number
-        }
+        body: ICustomer
     }
     export type Response = ICustomer | false
 }
@@ -31,7 +29,16 @@ export namespace findOne {
             cpf: string
         }
     }
-    export type Response = ICustomer
+    export type Response = {
+        cpf: string
+        idcurrentplan: number
+        Users:{
+            cpf: string
+            name: string
+            email: string
+            phone: string
+        }
+    }
 }
 
 export namespace update {
@@ -39,14 +46,7 @@ export namespace update {
         params: {
             cpf: string
         }
-        body: {
-            cpf: string
-            name: string
-            email: string
-            phone: string
-            password: string
-            plan: number
-        }
+        body: Omit<ICustomer, 'cpf'>
     }
     export type Response = ICustomer | false
 }

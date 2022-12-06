@@ -171,7 +171,7 @@ class Customer extends Route {
         }
     }
 
-    @withUser(UserType.manager, UserType.customer)
+    @withUser(UserType.manager, UserType.customer, UserType.financer)
     @withAuth
     @Request("PUT")
     @Path("/:cpf")
@@ -186,18 +186,28 @@ class Customer extends Route {
                 }
             })
             if (user) {
-                const user = await User.update({ name, email, phone }, {
+                await User.update({ name, email, phone }, {
                     where: {
                         cpf
                     }
                 })
-                const customer = await CustomerModel.update({ idCurrentPlan: plan }, {
-                    where: {
-                        cpf
-                    }
-                })
+                let customer;
+                if (plan) {
 
-                res.success({ ...user, customer });
+                    customer = await CustomerModel.update({ idCurrentPlan: plan }, {
+                        where: {
+                            cpf
+                        }
+                    })
+                } else {
+                    customer = await CustomerModel.findOne({
+                        where: {
+                            cpf
+                        }
+                    })
+                }
+
+                res.success({ ...user.toJSON(), customer });
             } else {
                 res.error(404, "Cliente não encontrado");
             }

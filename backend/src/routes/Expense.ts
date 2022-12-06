@@ -99,6 +99,7 @@ class Expense extends Route {
         }
     }
 
+
     @withUser(UserType.manager)
     @withAuth
     @Request("DELETE")

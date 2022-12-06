@@ -126,9 +126,9 @@ abstract class Model<A extends {} = any>{
 
         switch (attribute.type) {
             case "CPF":
-                return value.replace(/(\d{3}).(\d{3}).(\d{3})-(\d{2})/, "$1$2$3$4");
+                return String(value).replace(/(\d{3}).(\d{3}).(\d{3})-(\d{2})/, "$1$2$3$4");
             case "PHONE":
-                return value.replace(/\+(\d{2}) \((\d{2})\) (\d{5})-(\d{4})/, "$1$2$3$4");
+                return String(value).replace(/\+(\d{2}) \((\d{2})\) (\d{5})-(\d{4})/, "$1$2$3$4");
             case "DATE":
                 return new Date(value).toJSON();
             case "JSON":

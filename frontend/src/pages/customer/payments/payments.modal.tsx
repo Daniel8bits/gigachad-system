@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ModalTemplate from '@templates/modalTemplate/ModalTemplate'
-import { IInvoice, IPlan, ICustomer } from 'gigachad-shareds/models'
+import { IInvoice } from 'gigachad-shareds/models'
 import Row from '@layouts/grid/Row'
 import Column from '@layouts/grid/Column'
 import UIButton from '@ui/button/UIButton'
 import UITextField from '@ui/textfield/UITextField'
-import UICheckBox from '@ui/checkbox/UICheckbox'
 import UIDatePicker, { UIDate } from '@ui/datepicker/UIDatePicker';
 import TemplateActions from '@templates/TemplateActions'
 import TemplateURLActions from '@templates/TemplateURLAction';

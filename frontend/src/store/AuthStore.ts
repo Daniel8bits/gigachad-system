@@ -58,7 +58,6 @@ const AuthStore = createSlice({
                 localStorage.setItem("Token_Auth", token);
                 axios.defaults.headers.common.Authorization = token;
             }
-                console.log(state.account);
             if (state.account.type) state.role = UserTypeToRole[state.account.type];
         },
         signOut: (state: AuthStoreState) => {

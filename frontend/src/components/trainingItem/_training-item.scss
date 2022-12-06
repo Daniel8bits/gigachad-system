@@ -1,4 +1,13 @@
-.ui-trainingItem{
+.training-item{
+    @include flex(space-between);
+    @include theme($color-greenish-black);
+    @include transition;
+    @include border;
+    @include padding;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 1rem;
+
     &>div{
         &.info>.name{
             color:$color-green;   
@@ -21,5 +30,9 @@
             align-items: center;
             justify-content: flex-end;
         }
+    }
+
+    &:hover {
+        background-color: $color-greenish-light-gray;
     }
 }

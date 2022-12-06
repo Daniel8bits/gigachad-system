@@ -1,5 +1,9 @@
-import React from 'react';
-import Box from '../../ui/box/UIBox'
+import { useDispatch } from '@store/Root.store';
+import React, { useCallback } from 'react';
+import {set} from '@store/PageStore'
+import Box from '@ui/box/UIBox'
+import useNavigateWithParams from '@hooks/useNavigateWithParams';
+import { useNavigate } from 'react-router-dom';
 
 type UITrainingItemProps = {
     name: string
@@ -7,9 +11,19 @@ type UITrainingItemProps = {
     owner?: string
     numExercise: number
 }
-const UITrainingItem = ({ name,date,owner, numExercise }: UITrainingItemProps) => {
+
+const TrainingItem = ({ name, date, owner, numExercise }: UITrainingItemProps) => {
+
+    const navigate = useNavigateWithParams()
+
+    const openTraining = useCallback(() => {
+        const query: SerializableMap<string, string> = []
+        query.push(['numExercise', String(numExercise)])
+        navigate('/trainings', query)
+    }, [numExercise, navigate]);
+
     return (
-        <Box to='/trainings/something' className='ui-trainingItem'>
+        <button type='button' className='training-item' onClick={openTraining}>
             <div className='info'>
                 <span className='name'>{name}</span>
                 <small>Criado por: {owner ?? "Você"}</small>
@@ -19,7 +33,7 @@ const UITrainingItem = ({ name,date,owner, numExercise }: UITrainingItemProps) =
                 <small>Data de Criação</small>
             </div>
             <div className='quantity'>{numExercise} Exercicios</div>
-        </Box>
+        </button>
     )
 }
-export default UITrainingItem;
+export default TrainingItem;

@@ -1,9 +1,27 @@
 
 export type ICreditCard = {
+    numbers: string
+    holder: string
+    expirationDate: string
+    cvv: string
+}
+
+export type CreditCardResponse = {
+
+    CreditCard: {
+        holder: string
+        expirationDate: string
+        numbers: string
+    }
+    Customer: {
+        cpf: string
+        idcurrentplan: number
+    }
+    cpfcustomer: string
 
 }
 export namespace findAll {
-    export type Response = Array<ICreditCard>
+    export type Response = Array<CreditCardResponse>
 }
 
 export namespace create {
@@ -25,7 +43,7 @@ export namespace findOne {
             numbersCreditCard: string
         }
     }
-    export type Response = ICreditCard
+    export type Response = CreditCardResponse | false
 }
 
 export namespace update {

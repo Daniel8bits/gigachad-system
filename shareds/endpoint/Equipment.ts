@@ -1,6 +1,8 @@
 
 export type IEquipment = {
-
+    qrcode: string
+    name: string
+    maintenanceDate: string
 }
 
 export namespace findAll {

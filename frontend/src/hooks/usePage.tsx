@@ -21,17 +21,18 @@ function usePage() {
       return lazy(() => import(`../pages/401`))
     }
 
-    //let pathRegex = `/${auth.role}`
-
     if(path === '' || path === '/') {
       return lazy(() => {
         try {
           return import(`../pages/${auth.role}${path}`)
         } catch(e: unknown) {
-          console.log(e)
           return import(`../pages/404`)
         }
       })
+    }
+
+    if(path.match(/^\/(404|401|403)\/?&/g)) {
+      return lazy(() => import(`../pages/${path}`))
     }
 
     const [modalName, modalMode, pageName] = getModalName(location)
@@ -41,19 +42,17 @@ function usePage() {
         try {
           return import(`../pages/${auth.role}${pageName}`)
         } catch(e: unknown) {
-          console.log(e)
           return import(`../pages/404`)
         }
       })
     }
-
-    if(path.match(/^(\/(([a-zA-Z]|-)*))*$/g)) {
+    
+    if(path.match(/^(\/([a-zA-Z0-9]|-)+)+$/g)) {
 
       return lazy(() => {
         try {
           return import(`../pages/${auth.role}${path}`)
-        } catch(e: unknown) {
-          console.log(e)
+        } catch(e: unknown) {  
           return import(`../pages/404`)
         }
       })

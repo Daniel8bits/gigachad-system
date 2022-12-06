@@ -5,12 +5,14 @@ import UIButton from '@ui/button/UIButton';
 import Row from '@layouts/grid/Row';
 import Column from '@layouts/grid/Column';
 import UITextField from '@ui/textfield/UITextField';
-import { IPlan, FrequencyPlan } from 'gigachad-shareds/models';
+import { FrequencyPlan } from 'gigachad-shareds/models';
 import Endpoint from '@middlewares/Endpoint';
 import TemplateURLActions from '@templates/TemplateURLAction';
 import UICheckbox from '@ui/checkbox/UICheckbox';
 
-export default ModalTemplate<IPlan>({
+import type * as IPlan from 'gigachad-shareds/endpoint/Plan';
+
+export default ModalTemplate<IPlan.IPlan,IPlan.findOne.Response>({
 
   title: 'Planos',
   actions: [TemplateActions.OPEN, TemplateActions.EDIT],
@@ -21,7 +23,7 @@ export default ModalTemplate<IPlan>({
     const nameRef = useRef<HTMLInputElement>(null);
     const valueRef = useRef<HTMLInputElement>(null);
     const descriptionRef = useRef<HTMLInputElement>(null);
-    const checkTestRef = useRef<HTMLInputElement>(null);
+    //const checkTestRef = useRef<HTMLInputElement>(null);
     const frequencyRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -30,8 +32,9 @@ export default ModalTemplate<IPlan>({
         if(nameRef.current) nameRef.current.value = props.data.name
         if(valueRef.current) valueRef.current.value = props.data.value.toString()
         if(descriptionRef.current) descriptionRef.current.value = props.data.description
-        if(checkTestRef.current) checkTestRef.current.value = String(props.data.available)
+        //if(checkTestRef.current) checkTestRef.current.value = String(props.data.available)
         if(frequencyRef.current) frequencyRef.current.value = props.data.frequency
+        setCheck(props.data.available)
       }
 
     }, [props.data]);
@@ -42,36 +45,33 @@ export default ModalTemplate<IPlan>({
         if(nameRef.current) nameRef.current.value = ''
         if(valueRef.current) valueRef.current.value = ''
         if(descriptionRef.current) descriptionRef.current.value = ''
-        if(checkTestRef.current) checkTestRef.current.value = ''
         if(frequencyRef.current) frequencyRef.current.value = ''
+        setCheck(false)
       })
 
       props.onSave(() => {
         if(
           !nameRef.current || 
           !valueRef.current || 
-          !descriptionRef.current || 
-          !checkTestRef.current ||
-          !frequencyRef ||
-          !props.data?.id
+          !descriptionRef.current// || 
+          //!frequencyRef <!-- Não tem
         ) return 'Alguma coisa deu errado!'
 
         
         return {
-          id: props.data.id,
           name: nameRef.current.value,
           description: descriptionRef.current.value,
           value: Number(valueRef.current.value),
           frequency: FrequencyPlan.montly, //frequencyRef.current.value
-          available: Boolean(checkTestRef.current.value)
+          available: check
         }
 
       })
-      /*
+      
       props.onDelete(() => {
-        return id.current ? id.current.value : ''
+        return props.data?.id ? String(props.data.id) : ''
       })
-      */
+      
 
     }, []);
     
@@ -84,6 +84,7 @@ export default ModalTemplate<IPlan>({
               ref={nameRef}
               id="name" 
               label="Nome"
+              disabled={!props.allowEdit}
             />
           </Column>
           <Column sm={2} md={2} lg={2} xl={2}>
@@ -91,25 +92,29 @@ export default ModalTemplate<IPlan>({
               ref={valueRef}
               id="value" 
               label="Valor"
+              disabled={!props.allowEdit}
+            /> 
+          </Column>
+          <Column sm={2} md={2} lg={2} xl={2}>
+            <UICheckbox
+              label='Disponivel' 
+              value={check} 
+              onAction={setCheck}
+              //disabled={!props.allowEdit} 
             />
           </Column>
         </Row>
         
         <Row>
-          <Column sm={2} md={2} lg={2} xl={2}>
+          <Column sm={6} md={6} lg={6} xl={6}>
             <UITextField 
               ref={descriptionRef}
               id="description" 
               label="Descrição"
+              disabled={!props.allowEdit}
             />
           </Column>
-          <Column sm={2} md={2} lg={2} xl={2}>
-            <UICheckbox
-              label='check-test' 
-              value={check} 
-              onAction={setCheck}  
-            />
-          </Column>
+          
         </Row>
 
       </>

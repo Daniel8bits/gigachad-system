@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ModalTemplate from '@templates/modalTemplate/ModalTemplate'
-import { IEquipment } from 'gigachad-shareds/models'
 import Row from '@layouts/grid/Row'
 import Column from '@layouts/grid/Column'
 import UIButton from '@ui/button/UIButton'
@@ -11,7 +10,9 @@ import UIDatePicker, { UIDate } from '@ui/datepicker/UIDatePicker';
 //import UIComboBox, { UIComboItemData } from '@ui/combobox/UIComboBox';
 import TemplateURLActions from '@templates/TemplateURLAction';
 
-export default ModalTemplate<IEquipment>({
+import type * as IEquipment from 'gigachad-shareds/endpoint/Equipment'
+
+export default ModalTemplate<IEquipment.IEquipment, IEquipment.findOne.Response>({
 
   title: 'Equipamentos',
   actions: [TemplateActions.OPEN, TemplateActions.EDIT],
@@ -25,9 +26,18 @@ export default ModalTemplate<IEquipment>({
 
     useEffect(() => {
 
-      if(props.data && new Set([TemplateURLActions.OPEN, TemplateURLActions.EDIT]).has(props.mode)) {
-        if(nameRef.current) nameRef.current.value = props.data.name
-        if(qrCodeRef.current) qrCodeRef.current.value = props.data.qrCode
+      if (props.data && new Set([TemplateURLActions.OPEN, TemplateURLActions.EDIT]).has(props.mode)) {
+        if (nameRef.current) nameRef.current.value = props.data.name
+        if (qrCodeRef.current) qrCodeRef.current.value = props.data.qrcode
+        
+        //Tem q arrumar depois
+        /*
+        if (date)
+          setDate(new UIDate(
+            props.data.maintenanceDate.getDay(),
+            props.data.maintenanceDate.getMonth(),
+            props.data.maintenanceDate.getFullYear()
+          ))*/
       }
 
     }, [props.data]);
@@ -47,12 +57,12 @@ export default ModalTemplate<IEquipment>({
         ) return 'Alguma coisa deu errado!'
 
         return {
-          qrCode: qrCodeRef.current.value, 
+          qrCode: (qrCodeRef.current.value).toString(),
           name: nameRef.current.value,
-          maintenanceDate: new Date()
+          maintenanceDate: new Date(date.getDay(), date.getMonth(), date.getYear()).toString()
         }
 
-      })  
+      })
 
       props.onDelete(() => {
         return qrCodeRef.current ? qrCodeRef.current.value : ''
@@ -63,26 +73,27 @@ export default ModalTemplate<IEquipment>({
     return (
       <>
         <Row>
-          <Column sm={2} md={2} lg={2} xl={2}>
-          <UITextField 
-              ref={nameRef} 
-              id="name" 
-              label="Nome" 
+          <Column sm={4} md={4} lg={4} xl={4}>
+            <UITextField
+              ref={nameRef}
+              id="name"
+              label="Nome"
               disabled={!props.allowEdit}
             />
           </Column>
-          <Column sm={2} md={2} lg={2} xl={2}>
+          <Column sm={2} md={3} lg={3} xl={3}>
             <UITextField
               ref={qrCodeRef}
-              id="qrCode" 
-              label="QRCode" 
+              id="qrCode"
+              label="QRCode"
+              disabled={!props.allowEdit}
             />
           </Column>
         </Row>
 
 
         <Row>
-          <Column sm={2} md={2} lg={2} xl={2}>
+          <Column sm={4} md={4} lg={4} xl={4}>
             <UIDatePicker id='payDate' label='Última manutenção' value={date} onAction={setDate} />
           </Column>
         </Row>

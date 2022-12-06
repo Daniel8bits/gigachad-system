@@ -1,6 +1,11 @@
 
 export type IPlan = {
-
+    id?: number
+    name: string
+    description: string
+    frequency: FrequencyPlan
+    value: number
+    available: boolean
 }
 
 export enum FrequencyPlan {

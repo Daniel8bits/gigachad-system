@@ -4,13 +4,20 @@ import ValidData, { Rules } from '../utils/ValidData';
 import CreditCardModel from '../models/CreditCard';
 import CustomerCreditCardModel from '../models/CustomerCreditCard';
 import CustomerModel from '../models/Customer';
-import CustomerCreditCard from '../models/CustomerCreditCard';
 import { UserType } from 'gigachad-shareds/models'
 import type * as ICreditCard from 'gigachad-shareds/endpoint/CreditCard';
 class CreditCard extends Route {
 
     static rules: Rules = {
-
+        numbers: {
+            maxLength: 16
+        },
+        holder: {
+            maxLength: 20
+        },
+        cvv: {
+            maxLength: 3
+        }
     };
 
     // @withUser(UserType.manager)
@@ -32,13 +39,13 @@ class CreditCard extends Route {
                         model: CreditCardModel,
                         on: "CustomerCreditCard.numbersCreditCard=creditcard.numbers",
                         attributes: {
-                            exclude: ["cvv", "holder"]
+                            exclude: ["cvv"]
                         }
                     }
                 ]
             })).map((item) => {
                 item.numberscreditcard = "";
-                item.CreditCard.numbers = "**** **** **** " + item.CreditCard.numbers.substring(13, 17);
+                //item.CreditCard.numbers = "**** **** **** " + item.CreditCard.numbers.substring(13, 17);
                 return item;
             })
 
@@ -55,7 +62,6 @@ class CreditCard extends Route {
     async create(req: EndPoint.Request<ICreditCard.create.Request>, res: Express.Response<ICreditCard.create.Response>) {
         try {
             const { numbers, holder, expirationDate, cvv } = await ValidData(req.body, CreditCard.rules);
-
             const creditCard = await CreditCardModel.create({
                 numbers,
                 holder,
@@ -68,7 +74,8 @@ class CreditCard extends Route {
                     cpfCustomer: req.user.cpf,
                     numbersCreditCard: numbers
                 })
-                res.success({ ...creditCard, customerCreditCard });
+                res.success({ ...creditCard.toJSON(), customerCreditCard });
+                return;
             }
 
             res.success(creditCard);
@@ -92,7 +99,7 @@ class CreditCard extends Route {
                 },
                 include: [
                     {
-                        model: CustomerCreditCard,
+                        model: CustomerCreditCardModel,
                         on: "CustomerCreditCard.numbersCreditCard=creditcard.numbers",
                         required: true,
                         where: {
@@ -103,7 +110,7 @@ class CreditCard extends Route {
             })
 
             if (creditCard) {
-                creditCard.numbers = "**** **** **** " + creditCard.numbers.substring(13, 17);
+                //creditCard.numbers = "**** **** **** " + creditCard.numbers.substring(13, 17);
                 res.success(creditCard);
             } else {
                 res.error(404, "Cartão de crédito não encontrado");
@@ -123,13 +130,14 @@ class CreditCard extends Route {
 
             const { holder, expirationDate, cvv } = await ValidData(req.body, CreditCard.rules);
             const creditCard = await CreditCardModel.findOne({
+                debug:true,
                 where: {
                     numbers: numPath
                 },
                 include: [
                     {
-                        model: CustomerCreditCard,
-                        on: "CustomerCreditCard.numbersCreditCard=creditcard.numbers",
+                        model: CustomerCreditCardModel,
+                        on: "CustomerCreditCard.numberscreditcard=creditcard.numbers",
                         required: true,
                         where: {
                             cpfCustomer: req.user.cpf
@@ -137,6 +145,7 @@ class CreditCard extends Route {
                     }
                 ]
             })
+
             if (creditCard) {
                 // const customerCreditCard = await CustomerCreditCard.update({ cpfCustomer, numbersCreditCard: numPath }, {
                 //     where: {
@@ -154,6 +163,7 @@ class CreditCard extends Route {
                 // } else {
                 //     res.error(404, "Cartão de crédito não encontrado");
                 // }
+
             } else {
                 res.error(404, "Cartão de crédito não encontrado");
             }
@@ -171,7 +181,7 @@ class CreditCard extends Route {
     async delete(req: EndPoint.Request<ICreditCard.del.Request>, res: Express.Response<ICreditCard.del.Response>) {
         try {
             const numPath = req.params.numbersCreditCard;
-            const result = await CustomerCreditCard.delete({
+            const result = await CustomerCreditCardModel.delete({
                 where: {
                     numbersCreditCard: numPath,
                     cpfCustomer: req.user.cpf

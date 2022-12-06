@@ -33,6 +33,41 @@
         @include theme($color-greenish-gray);
         @include border();
 
+        > button {
+          @include justContent;
+          @include flex;
+          padding: .6rem;
+
+          > svg {
+            color: $color-green;
+          }
+
+        }
+
+        &.icon-as-button {
+          @include transition();
+
+          > button:hover {
+            @include theme($color-greenish-black);
+            cursor: pointer;
+          } 
+        }
+
+        > input {
+          @include padding();
+          @include justContent();
+          @include theme($color-greenish-gray);
+          border-right: 1px solid $color-green;
+          border-radius: 4px 0 0 4px;
+
+          flex-grow: 1;
+        }
+
+/*
+        @include flex(center, center, nowrap);
+        @include theme($color-greenish-gray);
+        @include border();
+
         &.icon-as-button {
           @include transition();
         }
@@ -56,6 +91,7 @@
 
           flex-grow: 1;
         }
+*/
       }
     }
   }

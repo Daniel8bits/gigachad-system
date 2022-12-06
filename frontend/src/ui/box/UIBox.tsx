@@ -3,8 +3,9 @@ import React, { useMemo } from 'react';
 type UIBoxProps = {
     className?: string
     to?: string
+    onClick?: () => void
 }
-const UIBox = ({ children, className, to }: React.PropsWithChildren<UIBoxProps>) => {
+const UIBox = ({ children, className, to, onClick }: React.PropsWithChildren<UIBoxProps>) => {
 
     const Element = useMemo(() => {
         if (to) return "a";
@@ -12,7 +13,7 @@ const UIBox = ({ children, className, to }: React.PropsWithChildren<UIBoxProps>)
     }, [to]);
 
     return (
-        <Element href={to} className={`ui-box ${className ?? ""}`}>
+        <Element href={to} className={`ui-box ${className ?? ""}`} onClick={onClick}>
             {children}
         </Element>
     )

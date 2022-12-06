@@ -15,48 +15,48 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import TemplateActions from '../TemplateActions';
 import TemplateURLActions from '../TemplateURLAction';
 
-type DataGetter<T> = (() => (T|string))
+type DataGetter<T> = (() => (Partial<T> | string))
 
-interface ModalTemplateBodyProps<T> {
+interface ModalTemplateBodyProps<T, D> {
   mode: TemplateURLActions
   allowEdit: boolean
-  data?: T
+  data?: D
   onSave: (data: DataGetter<T>) => void
   onNew: (callback: () => void) => void
   onDelete: (pk: () => string) => void
 }
 
-interface ModalTemplateConfig<T> {
+interface ModalTemplateConfig<T,D> {
   title: string,
   actions: TemplateActions[],
-  body: React.FC<ModalTemplateBodyProps<T>>
+  body: React.FC<ModalTemplateBodyProps<T,D>>
 }
 
 export interface ModalTemplateComponentProps {
   endpoint: string
 }
 
-function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
+function ModalTemplate<T, D = T>(config: ModalTemplateConfig<T, D>) {
 
   const ModalTemplateComponent: React.FC<ModalTemplateComponentProps> = (props) => {
 
     const Template = Middleware<T>(props.endpoint, false, endpoint => {
       return (() => {
-        
-        const refOnSave = useRef<DataGetter<T>>();
+
+        const refOnSave = useRef<DataGetter<D>>();
         const refOnNew = useRef<() => void>();
         const refOnDelete = useRef<() => string>();
 
         const [modal, updateModal] = useModalTemplate<T>()
         const [, updateDialog] = useDialogBox()
         const [, updateMessageBox] = useMessageBox()
-    
+
         const navigate = useNavigate()
         const location = useLocation()
 
         const refDataBackup = useRef<T>(modal.params?.data as T)
 
-        const handleOnSave = useCallback((data: DataGetter<T>) => {
+        const handleOnSave = useCallback((data: DataGetter<D>) => {
           refOnSave.current = data
         }, []);
 
@@ -68,9 +68,9 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
           refOnDelete.current = callback
         }, []);
 
-       /*============================== 
-                    ACTIONS
-        ==============================*/
+        /*============================== 
+                     ACTIONS
+         ==============================*/
 
         const actions = useMemo<ActionsCallbacks>(() => {
 
@@ -79,19 +79,19 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
           const actionsCallbacks: ActionsCallbacks = {}
           const pageName = getPageName(location)
 
-          
-          
+
+
           if (
             modal?.params?.mode === TemplateURLActions.EDIT ||
             modal?.params?.mode === TemplateURLActions.NEW
           ) {
-            
-            actionsCallbacks.onSave = async () => { 
-              
-              if(refOnSave.current) {
-                
+
+            actionsCallbacks.onSave = async () => {
+
+              if (refOnSave.current) {
+
                 const data = refOnSave.current()
-                if(typeof data === 'string') {
+                if (typeof data === 'string') {
                   updateMessageBox({
                     open: true,
                     params: {
@@ -108,11 +108,22 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
                     message: "Deseja salvar as alterações?",
                     type: DialogType.WARNING,
                     onConfirm: () => {
-                      endpoint.post(data)
-                        .then(value => {
-                          navigate(`${pageName}/${TemplateURLActions.OPEN}`)
-                        })
-                }}})
+
+                      if (refOnDelete.current && modal?.params?.mode === "edit") {
+                        const pk = refOnDelete.current();
+                        endpoint.put(pk, data)
+                          .then(value => {
+                            navigate(`${pageName}/${TemplateURLActions.OPEN}`)
+                          })
+                      } else {
+                        endpoint.post(data)
+                          .then(value => {
+                            navigate(`${pageName}/${TemplateURLActions.OPEN}`)
+                          })
+                      }
+                    }
+                  }
+                })
 
               }
             }
@@ -138,19 +149,23 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
 
             if (actionsSet.has(TemplateActions.DELETE)) {
               actionsCallbacks.onDelete = () => {
-                
+
                 updateDialog({
                   open: true,
                   params: {
                     message: "Deseja excluir registro?",
                     type: DialogType.WARNING,
                     onConfirm: async () => {
-                      if(refOnDelete.current) {
+                      if (refOnDelete.current) {
                         await endpoint.delete(refOnDelete.current())
                           .then(value => {
                             navigate(pageName)
                           })
-                }}}})}
+                      }
+                    }
+                  }
+                })
+              }
 
             }
           }
@@ -158,19 +173,19 @@ function ModalTemplate<T>(config: ModalTemplateConfig<T>) {
           return actionsCallbacks
 
         }, [modal?.params?.mode])
-    
+
         const onClose = useCallback(() => {
           const pageName = getPageName(location)
           navigate(pageName)
         }, []);
-    
+
         return (
-          <ModalLayout 
+          <ModalLayout
             title={config.title}
             onClose={onClose}
           >
-            <Actions actionsCallbacks={actions}  />
-            <config.body 
+            <Actions actionsCallbacks={actions} />
+            <config.body
               data={modal?.params?.data}
               mode={modal?.params?.mode ?? TemplateURLActions.CLOSED}
               allowEdit={new Set([TemplateURLActions.NEW, TemplateURLActions.EDIT]).has(modal?.params?.mode ?? TemplateURLActions.CLOSED)}

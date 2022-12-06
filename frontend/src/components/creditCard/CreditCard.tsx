@@ -10,6 +10,7 @@ interface CreditCardProps {
 }
 
 const CreditCard: React.FC<CreditCardProps> = (props) => {
+  console.log(props.data)
   return (
     <div className='credit-card'>
       <div>

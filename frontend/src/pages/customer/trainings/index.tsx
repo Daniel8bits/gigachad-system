@@ -7,15 +7,18 @@ import axios from '@utils/axios';
 import CustomTemplate from "@templates/customTemplate/CustomTemplate";
 import Placeholder from "@components/placeholder/Placeholder";
 import TrainingsActions from "@components/trainingsActions/TrainingsActions";
+import PageMux from "@templates/pageMux/PageMux";
+
+//import type * as ITraining from 'gigachad-shareds/endpoint/Training'
 
 type ITraining = {
   name: string
   creationDate: string
   owner?: string 
   numExercise: number
-}
+}[]
 
-export default CustomTemplate<ITraining>({
+const Index = CustomTemplate<ITraining>({
   endpoint: '/training',
   title: 'Meus treinos',
   body: props => {
@@ -40,29 +43,10 @@ export default CustomTemplate<ITraining>({
     )
   }
 })
-/*
-const Training = () => {
-    /* Os <br /> São temporários 
 
-    const [loading,setLoading] = useState(true);
-    const [trainings,setTrainings] = useState<ITraining[]>();
-
-    useEffect(() => {
-        axios.get("/training").then(({ data }) => data).then(({data}) => {
-            console.log(data)
-            setTrainings(data);
-            setLoading(false);
-        })
-    },[]);
-
-    return (
-        <ContentLayout title="Meus Treinos">
-            <br />
-            <Button>Novo Treino</Button>
-            <br />
-            <br />
-            {loading && <LoadingScreen />  || }
-        </ContentLayout>
-    )
-}
-//export default Training;*/
+export default PageMux({
+  default: () => Index,
+  '[:numExercicio]' : () => props => {
+    return <>something</>
+  }
+})

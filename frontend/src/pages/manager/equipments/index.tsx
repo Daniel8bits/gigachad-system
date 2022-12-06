@@ -14,7 +14,7 @@ const columns = ["Nome", "Identificação", "Data de Manutenção"]
 export default FilterPageTemplate<APIType>({
   endpoint: '/equipment',
   title: 'Consultar Equipamentos',
-  actions: [TemplateActions.OPEN, TemplateActions.EDIT],
+  actions: [TemplateActions.OPEN, TemplateActions.EDIT, TemplateActions.NEW],
   filter: {
     layout: [
       [

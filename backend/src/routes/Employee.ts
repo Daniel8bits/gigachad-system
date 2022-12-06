@@ -182,7 +182,7 @@ class Employee extends Route {
                             cpf: cpf
                         }
                     })
-                    res.success({ ...user, employee });
+                    res.success({ ...user.toJSON(), employee });
                 } else {
                     res.error(404, "Usuario não encontrado");
                 }

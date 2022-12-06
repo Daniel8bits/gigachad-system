@@ -8,12 +8,14 @@ import {
 import ModalReducer from '@store/components/ModalStore'
 import PopOverReducer from '@store/components/PopOverStore'
 import AuthReducer from '@store/AuthStore'
+import PageReducer from '@store/PageStore'
 
 const RootStore = configureStore({
     reducer: {
         modal: ModalReducer,
         popOver: PopOverReducer,
-        auth: AuthReducer
+        auth: AuthReducer,
+        page: PageReducer
     }
 })
 

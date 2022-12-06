@@ -24,7 +24,7 @@ const typeFrequency = [
 export default FilterPageTemplate<APIType>({
     endpoint: '/plan',
     title: 'Consultar Planos',
-    actions: [TemplateActions.OPEN, TemplateActions.EDIT],
+    actions: [TemplateActions.OPEN, TemplateActions.EDIT, TemplateActions.NEW],
     filter: {
         layout: [
             [

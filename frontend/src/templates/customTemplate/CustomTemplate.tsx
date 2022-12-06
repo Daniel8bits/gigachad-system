@@ -30,7 +30,7 @@ export function getCustomTemplateContext<T>() {
 }
 
 interface CustomTemplateBodyProps<T> {
-  data: T[]
+  data: T
 }
 
 interface FilterConfig {
@@ -48,6 +48,16 @@ interface FilterTableTemplateConfig<T> {
   filter?: FilterConfig
   body: React.FC<CustomTemplateBodyProps<T>>
 }
+/// findone, findall, create, update, delete
+
+// create, update, delete
+
+/**
+findone, findall: query
+create, update: body, params
+delete: params
+/plans/:id <- params
+*/
 
 function CustomTemplate<T>(config: FilterTableTemplateConfig<T>) {
 
