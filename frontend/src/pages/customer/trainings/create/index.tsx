@@ -7,6 +7,7 @@ import UIComboBox, { UIComboItemType, UIComboItemData } from '@ui/combobox/UICom
 import TextField from '@ui/textfield/UITextField';
 import Box from '@ui/box/UIBox';
 import axios from '@utils/axios';
+import CustomTemplate from "@templates/customTemplate/CustomTemplate";
 
 type IExercises = {
     id: number
