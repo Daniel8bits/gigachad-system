@@ -8,12 +8,11 @@ import UITextField from '@ui/textfield/UITextField'
 import UITable, { UITableDocument } from '@ui/table/UITable'
 import TemplateActions from '@templates/TemplateActions'
 import TemplateURLActions from '@templates/TemplateURLAction'
-import type * as IPlan from 'gigachad-shareds/endpoint/Plan';
-
-import type * as IPlan from 'gigachad-shareds/endpoint/Plan';
+import { UserType } from '@components/sideMenu/SideMenu'
+import type * as IPlan from 'gigachad-shareds/endpoint/Plan'
 
 export default ModalTemplate<ICustomer>({
-
+  
   title: 'Clientes',
   actions: [
     TemplateActions.OPEN, 
@@ -22,7 +21,7 @@ export default ModalTemplate<ICustomer>({
   ],
   body: (props) => { 
 
-    const [check, setCheck] = useState<boolean>(false);
+    //const [check, setCheck] = useState<boolean>(false);
 
     const nameRef = useRef<HTMLInputElement>(null);
     const cpfRef = useRef<HTMLInputElement>(null);
@@ -30,15 +29,14 @@ export default ModalTemplate<ICustomer>({
     const phoneRef = useRef<HTMLInputElement>(null);
     const idPlanRef = useRef<HTMLInputElement>(null);
 
-    const document = useMemo(() => new UITableDocument<IPlan>({
+    const document = useMemo(() => new UITableDocument<IPlan.IPlan>({
       columns: ['Plano', 'Frquência', 'Valor'],
       description: data => ({
         id: String(data.id),
         display: {
           plan: data.name,
-          date: data.payday,
-          value: data.value,
-          current: data.id === props.data?.idcurrentPlan ? 'SIM' : 'NÃO'
+          frequency: data.frequency,
+          value: data.value
         }
       })
 
