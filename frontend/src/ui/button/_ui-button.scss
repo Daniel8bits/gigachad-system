@@ -1,6 +1,5 @@
 
 .ui-button {
-  @include theme($color-green, true);
   @include flex();
   @include border-rounded();
   @include padding();
@@ -13,4 +12,17 @@
   &.fluid{
     width:100%;
   }
+
+  &:not(.alert, .warning) {
+    @include theme($color-green, true);
+  }
+
+  &.alert {
+    @include theme($color-red, true);
+  }
+
+  &.warning {
+    @include theme($color-yellow, true);
+  }
+
 }

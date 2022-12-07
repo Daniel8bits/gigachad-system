@@ -87,6 +87,7 @@ export default ModalTemplate<IEmployee.IEmployee, IEmployee.EmployeeResponse>({
       })
 
       props.onSave(() => {
+        console.log(comboValue)
 
         if (
           !nameRef.current ||
@@ -100,7 +101,6 @@ export default ModalTemplate<IEmployee.IEmployee, IEmployee.EmployeeResponse>({
           //!administrative
         ) return 'Alguma coisa deu errado!'
 
-        console.log(comboValue?.value)
         return {
           cpf: cpfRef.current.value,
           name: nameRef.current.value,
@@ -119,6 +119,7 @@ export default ModalTemplate<IEmployee.IEmployee, IEmployee.EmployeeResponse>({
 
     }, []);
 
+    
     return (
       <>
         <Row>

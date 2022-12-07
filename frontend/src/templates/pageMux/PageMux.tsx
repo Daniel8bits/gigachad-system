@@ -9,15 +9,19 @@ interface PageMuxConfig {
 function PageMux(config: PageMuxConfig) {
 
   const PageMuxResult: React.FC<JSX.IntrinsicAttributes> = () => {
-
-    const params = useParams()
-
-    const Page = useMemo(() => {
+    
+    function getPage () {
 
       let muxKey = ''
 
-      Object.keys(params).forEach((key, i, allKeys) => {
-        muxKey += allKeys.length === i+1 ? `:${key}` : `:${key}, `
+      const url = new URL(location.href)
+
+      const paramsCount = url.searchParams.toString().split('&').length
+      let i = 0
+      
+      url.searchParams.forEach((value, key, allKeys) => {
+        muxKey += paramsCount === i+1 ? `:${key}` : `:${key}, `
+        i++
       })
 
       muxKey = muxKey === '' ? '' : `[${muxKey}]`
@@ -26,7 +30,9 @@ function PageMux(config: PageMuxConfig) {
 
       return config[muxKey] ? config[muxKey]() : config.default()
 
-    }, [params]);
+    }
+
+    const Page = getPage()
 
     return <Page  />
   }

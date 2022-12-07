@@ -179,6 +179,7 @@ class Customer extends Route {
         try {
             const { cpf } = req.params;
             const { name, email, phone, password, plan } = await ValidData(req.body, Customer.rules);
+            console.log(plan)
 
             const user = await User.findOne({
                 where: {

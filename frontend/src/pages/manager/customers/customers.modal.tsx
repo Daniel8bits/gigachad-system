@@ -6,11 +6,11 @@ import Row from '@layouts/grid/Row';
 import Column from '@layouts/grid/Column';
 import UITextField from '@ui/textfield/UITextField';
 import UITable, { UITableDocument } from '@ui/table/UITable';
-import { IInvoice } from 'gigachad-shareds/models';
 import { UserType } from '@components/sideMenu/SideMenu';
 import Endpoint from '@middlewares/Endpoint';
 import TemplateURLActions from '@templates/TemplateURLAction';
 import type * as ICustomer from 'gigachad-shareds/endpoint/Customer';
+import type * as IPlan from 'gigachad-shareds/endpoint/Plan';
 
 export default ModalTemplate<ICustomer.ICustomer, ICustomer.findOne.Response>({
 
@@ -27,7 +27,7 @@ export default ModalTemplate<ICustomer.ICustomer, ICustomer.findOne.Response>({
     const cpfRef = useRef<HTMLInputElement>(null);
     const emailRef = useRef<HTMLInputElement>(null);
     const phoneRef = useRef<HTMLInputElement>(null);
-    const [idCurrentPlan, setIdCurrentPlan] = useState<number>(-1)
+    const [idCurrentPlan, setIdCurrentPlan] = useState<number>(props.data.idcurrentplan) //n ta funcionando
 
     useEffect(() => {
 
@@ -36,7 +36,8 @@ export default ModalTemplate<ICustomer.ICustomer, ICustomer.findOne.Response>({
         if (cpfRef.current) cpfRef.current.value = props.data.Users.cpf
         if (emailRef.current) emailRef.current.value = props.data.Users.email
         if (phoneRef.current) phoneRef.current.value = props.data.Users.phone
-        if (idCurrentPlan) setIdCurrentPlan(props.data.idcurrentplan)
+        setIdCurrentPlan(props.data.idcurrentplan)
+          
       }
 
     }, [props.data]);
@@ -51,14 +52,12 @@ export default ModalTemplate<ICustomer.ICustomer, ICustomer.findOne.Response>({
       })
 
       props.onSave(() => {
-
         if (
           !nameRef.current ||
           !cpfRef.current ||
           !emailRef.current ||
-          !phoneRef.current
+          !phoneRef.current ||
         ) return 'Alguma coisa deu errado!'
-
 
         return {
           cpf: cpfRef.current.value,
@@ -67,7 +66,7 @@ export default ModalTemplate<ICustomer.ICustomer, ICustomer.findOne.Response>({
           email: emailRef.current.value,
           phone: phoneRef.current.value,
           type: UserType.customer,
-          password: 'auto generated'
+          password: 'auto generated',
 
         }
 
@@ -78,26 +77,41 @@ export default ModalTemplate<ICustomer.ICustomer, ICustomer.findOne.Response>({
       })
 
     }, []);
-
-    const document = useMemo(() => new UITableDocument<IInvoice>({
-      columns: ['Plano', 'Valor', 'Data de pagamento', 'Corrente'],
-      description: data => ({
-        id: String(data.Plan.id),
-        display: {
-          plan: data.Plan.name,
-          value: data.value,
-          date: data.payday,
-          current: data.Plan.id === props.data?.idcurrentplan ? 'SIM' : 'NÃO'
-        }
-      })
-      //onRowSelected?: (selectedRow: RawDataType) => void,
-      //onRowDoubleClicked?: (selectedRow: RawDataType) => void
-    }), []);
-
+    /*
+        useEffect(() => {
+          if (cpfRef.current) {
+    
+            const endpoint = new Endpoint<IInvoice.IInvoice>(`/customer/${cpfRef.current.value}/plans`, true);
+            (async () => {
+              document.setData(await endpoint.get())
+              document.on("page", async (page) => {
+                console.log("Event page", page);
+                document.setData(await endpoint.get({ page, ...document.getParams() }))
+              });
+            })();
+          }
+        }, []);
+    
+        const document = useMemo(() => new UITableDocument<IPlan.IPlan>({
+          columns: ['Plano', 'Valor', 'Data de pagamento', 'Corrente'],
+          description: data => ({
+            id: String(data.id),
+            display: {
+              plan: data.name,
+              value: data.value,
+              date: data.payday,
+              current: data.id === props.data?.idcurrentplan ? 'SIM' : 'NÃO'
+            }
+          })
+    
+          //onRowSelected?: (selectedRow: RawDataType) => void,
+          //onRowDoubleClicked?: (selectedRow: RawDataType) => void
+        }), []);
+    */
     useEffect(() => {
       if (cpfRef.current) {
 
-        const endpoint = new Endpoint<IInvoice>(`/customer/${cpfRef.current.value}/plans`, true);
+        const endpoint = new Endpoint<IPlan.IPlan>(`/plan`, true);
         (async () => {
           document.setData(await endpoint.get())
           document.on("page", async (page) => {
@@ -107,6 +121,24 @@ export default ModalTemplate<ICustomer.ICustomer, ICustomer.findOne.Response>({
         })();
       }
     }, []);
+    
+    
+    const document = useMemo(() => new UITableDocument<IPlan.IPlan>({
+      columns: ['Plano', 'Descrição', 'Frquência', 'Valor', 'Ativo'],
+      description: data => ({
+        id: String(data.id),
+        display: {
+          plan: data.name,
+          description: data.description,
+          frequency: data.frequency,
+          value: data.value,
+          active: idCurrentPlan === data.id ? 'SIM' : ''
+        }
+      }),
+      //setCurrentRowSelected()
+      onRowSelected: (selectedRow) => {setIdCurrentPlan(selectedRow.id)},
+      //onRowDoubleClicked?: (selectedRow: RawDataType) => void
+    }), []);
 
     return (
       <>
@@ -139,7 +171,21 @@ export default ModalTemplate<ICustomer.ICustomer, ICustomer.findOne.Response>({
           </Column>
         </Row>
         <br />
-        <UIButton onAction={() => ({})} > Contratar novo plano </UIButton>
+        <UIButton onAction={() => {
+          props.onSave(() => {
+            console.log('salvandoo')
+            if (
+              !cpfRef.current
+            ) return 'Alguma coisa deu errado!'
+            return {
+              //name: nameRef.current.value,
+              cpf: cpfRef.current.value,
+              plan: idCurrentPlan,
+            }
+          })
+          
+        }}> Contratar novo plano </UIButton>
+    
         <br />
         <UITable document={document} />
         <br />

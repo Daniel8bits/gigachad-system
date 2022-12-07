@@ -8,6 +8,9 @@ import CustomTemplate from "@templates/customTemplate/CustomTemplate";
 import Placeholder from "@components/placeholder/Placeholder";
 import TrainingsActions from "@components/trainingsActions/TrainingsActions";
 import PageMux from "@templates/pageMux/PageMux";
+import ViewTraining from './view'
+import CreateTraining from './create'
+import EditTraining from './edit'
 
 //import type * as ITraining from 'gigachad-shareds/endpoint/Training'
 
@@ -48,7 +51,7 @@ const Index = CustomTemplate<ITraining>({
 
 export default PageMux({
   default: () => Index,
-  '[:numExercicio]' : () => props => {
-    return <>something</>
-  }
+  '[:id]' : () => ViewTraining,
+  '[:create]' : () => CreateTraining,
+  '[:edit, :id]': () => EditTraining
 })

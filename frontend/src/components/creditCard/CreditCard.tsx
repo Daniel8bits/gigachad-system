@@ -7,20 +7,21 @@ interface CreditCardProps {
   data: ICreditCard
   onEdit: () => void
   onDelete: () => void
+  onOpen: () => void
 }
 
 const CreditCard: React.FC<CreditCardProps> = (props) => {
   console.log(props.data)
   return (
     <div className='credit-card'>
-      <div>
+      <button type='button' onClick={props.onOpen}>
         <Cards
           cvc={props.data.cvv}
           expiry={props.data.expirationDate}
           name={props.data.holder}
           number={props.data.numbers}
         />
-      </div>
+      </button>
       <div>
         <button type='button' onClick={props.onEdit} aria-label='edit'><MdEdit  /></button>
         <button type='button' onClick={props.onDelete} aria-label='delete'><MdDelete  /></button>

@@ -57,15 +57,25 @@ const menuConfig: Record<number, IMenuItem[]> = {
       text: "Gerenciar Cartões"
     }
   ],
-  [UserType.financer]: [
+  [UserType.attendant]: [
     {
       to: "/customers",
       text: "Clientes"
     },
     {
+      to: "/payments",
+      text: "Pagamentos"
+    }
+  ],
+  [UserType.trainer]: [
+    {
+      to: "/customers",
+      text: "Clientes"
+    },/*
+    {
       to: "/trainings",
       text: "Treinos"
-    }
+    }*/
   ],
   [UserType.financer]: [
     {

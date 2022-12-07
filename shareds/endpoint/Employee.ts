@@ -79,6 +79,9 @@ export namespace update {
             email: string
             phone: string
             address: string
+            Administrative:{
+                role: string
+            }
         }
     }
     export type Response = IEmployee | false

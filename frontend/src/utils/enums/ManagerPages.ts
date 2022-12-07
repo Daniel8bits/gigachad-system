@@ -9,4 +9,5 @@ enum ManagerPages {
   EXPENSES = '/expenses'
 } 
 
+
 export default ManagerPages

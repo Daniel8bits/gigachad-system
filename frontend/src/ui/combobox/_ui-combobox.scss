@@ -24,6 +24,7 @@
     @include transition();
     @include border();
     @include flex-left(center, nowrap);
+    width: 100%;
 
     > input {
       @include theme($color-greenish-gray);
@@ -31,6 +32,7 @@
       @include padding();
       border-right: 1px solid $color-green;
       flex-grow: 1;
+      width: inherit;
     }
 
     > div {

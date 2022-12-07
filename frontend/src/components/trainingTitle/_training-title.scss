@@ -1,0 +1,15 @@
+
+.training-title {
+  margin-top: 1rem;
+  
+  > h2 {
+    display: block;
+    color: $color-green;
+  }
+
+  > small {
+    display: block;
+    margin-top: .5rem;
+    color: white;
+  }
+}

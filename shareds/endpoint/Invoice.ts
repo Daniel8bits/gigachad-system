@@ -1,6 +1,11 @@
 
 export type IInvoice = {
-
+    idPlan: number
+    cardNumbers: string
+    value: number
+    status: string
+    payday: string
+    payMethod: string
 }
 
 export namespace findAll {

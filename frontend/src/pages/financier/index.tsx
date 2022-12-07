@@ -1,9 +1,10 @@
 import EmployeesHomeTemplate from "@templates/employeesHomeTemplate/EmployeesHomeTemplate";
+import FinancierPages from "@utils/enums/FinancierPages";
 
-export default EmployeesHomeTemplate({
+export default EmployeesHomeTemplate<FinancierPages>({
   buttons: [
-    {to: '/customers',  label: 'Clientes'},
-    {to: '/expenses',  label: 'Despezas'},
-    {to: '/payments', label: 'Pagamentos'}
+    {to: FinancierPages.CUSTOMERS,  label: 'Clientes'},
+    {to: FinancierPages.EXPENSES,  label: 'Despezas'},
+    {to: FinancierPages.PAYMENTS, label: 'Pagamentos'}
   ]
 })

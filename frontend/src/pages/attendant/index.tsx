@@ -1,13 +1,9 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import EmployeesHomeTemplate from "@templates/employeesHomeTemplate/EmployeesHomeTemplate";
+import AttendantPages from "@utils/enums/AttendantPages";
 
-const Attendant= () => {
-  return (
-    <div>
-      <Link to='/customer'> Clientes </Link>;
-      <Link to='/payments'> Pagamentos </Link>;
-    </div>
-  );
-};
-
-export default Attendant;
+export default EmployeesHomeTemplate<AttendantPages>({
+  buttons: [
+    {to: AttendantPages.CUSTOMERS,  label: 'Clientes'},
+    {to: AttendantPages.PAYMENTS,  label: 'Pagamentos'},
+  ]
+})

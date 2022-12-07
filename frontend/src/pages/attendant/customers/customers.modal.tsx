@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import ModalTemplate from '@templates/modalTemplate/ModalTemplate'
 import { ICustomer } from 'gigachad-shareds/models'
 import Row from '@layouts/grid/Row'
@@ -8,13 +8,19 @@ import UITextField from '@ui/textfield/UITextField'
 import UITable, { UITableDocument } from '@ui/table/UITable'
 import TemplateActions from '@templates/TemplateActions'
 import TemplateURLActions from '@templates/TemplateURLAction'
-import { UserType } from '@components/sideMenu/SideMenu';
+import type * as IPlan from 'gigachad-shareds/endpoint/Plan';
+
+import type * as IPlan from 'gigachad-shareds/endpoint/Plan';
 
 export default ModalTemplate<ICustomer>({
 
   title: 'Clientes',
-  actions: [TemplateActions.OPEN, TemplateActions.NEW],
-  body: (props) => {
+  actions: [
+    TemplateActions.OPEN, 
+    TemplateActions.EDIT,
+    TemplateActions.NEW,
+  ],
+  body: (props) => { 
 
     const [check, setCheck] = useState<boolean>(false);
 
@@ -24,20 +30,22 @@ export default ModalTemplate<ICustomer>({
     const phoneRef = useRef<HTMLInputElement>(null);
     const idPlanRef = useRef<HTMLInputElement>(null);
 
-    const document = new UITableDocument({
-      columns: ['Plano', 'Valor', 'Data de pagamento'],
+    const document = useMemo(() => new UITableDocument<IPlan>({
+      columns: ['Plano', 'Frquência', 'Valor'],
       description: data => ({
-        id: 'id',
+        id: String(data.id),
         display: {
-          plan: 'ashdf',
-          value: 'asfadsg',
-          date: 'asfggsd',
+          plan: data.name,
+          date: data.payday,
+          value: data.value,
+          current: data.id === props.data?.idcurrentPlan ? 'SIM' : 'NÃO'
         }
       })
+
       //onRowSelected?: (selectedRow: RawDataType) => void,
       //onRowDoubleClicked?: (selectedRow: RawDataType) => void
-    });
-
+    }), []);
+    
     useEffect(() => {
 
       if (props.data && new Set([TemplateURLActions.OPEN, TemplateURLActions.EDIT]).has(props.mode)) {
@@ -93,9 +101,8 @@ export default ModalTemplate<ICustomer>({
 
     return (
       <>
-        <UIButton onAction={() => { }}> Salvar </UIButton>
         <Row>
-          <Column sm={2} md={2} lg={2} xl={2}>
+          <Column sm={5} md={5} lg={5} xl={5}>
             <UITextField
               ref={nameRef}
               id="name"
@@ -103,22 +110,24 @@ export default ModalTemplate<ICustomer>({
               disabled={!props.allowEdit}
             />
           </Column>
-          <Column sm={2} md={2} lg={2} xl={2}>
+          <Column sm={5} md={5} lg={5} xl={5}>
             <UITextField
               ref={idPlanRef}
               id="plan"
               label="Plano"
+              disabled={!props.allowEdit}
             />
           </Column>
         </Row>
 
         <Row>
-          <Column sm={2} md={2} lg={2} xl={2}>
+          <Column sm={5} md={5} lg={5} xl={5}>
 
             <UITextField
               ref={emailRef}
               id="email"
               label="Email"
+              disabled={!props.allowEdit}
             />
           </Column>
         </Row>

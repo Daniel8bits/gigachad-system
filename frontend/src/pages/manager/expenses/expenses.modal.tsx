@@ -28,17 +28,14 @@ export default ModalTemplate<IExpense.IExpense, IExpense.findOne.Response>({
     const descriptionRef = useRef<HTMLInputElement>(null);
 
 
-    const comboItems = {
-      administrative: [
+    const comboItems = [
         { value: "equipamentBuy", label: 'Compra de equipamento' },
         { value: "equipamentMaintenance", label: 'Manutenção de equipamento' },
         { value: "billPayment", label: 'Pagamento de contas' },
-        { value: "employeePayment", label: 'Pagamento de funcionários' }
-      ],
-      other: [
+        { value: "employeePayment", label: 'Pagamento de funcionários' },
         { value: "others", label: 'Outros' },
       ]
-    }
+    
 
     useEffect(() => {
       if (props.data && new Set([TemplateURLActions.OPEN, TemplateURLActions.EDIT]).has(props.mode)) {
@@ -54,6 +51,7 @@ export default ModalTemplate<IExpense.IExpense, IExpense.findOne.Response>({
           others: { value: "others", label: 'Outros' }
         }
         setComboValue(valueToMap[props.data.type] as UIComboItemData)
+        //setComboValue(comboItems.find(el => el.value === props.data?.type) as UIComboItemData)
         /*
         Arrumar isso
         if(date)
@@ -81,13 +79,13 @@ export default ModalTemplate<IExpense.IExpense, IExpense.findOne.Response>({
           !qrCodeRef.current ||
           !totalValueRef.current
         ) return 'Alguma coisa deu errado!'
-
+        console.log(comboValue)
         return {
           ...(qrCodeRef.current.value === "" ? {} : {qrCodeequipment:qrCodeRef.current.value === ""}),
           date: new Date(date.getDay(), date.getMonth(), date.getYear()).toString(),
           totalValue: Number(totalValueRef.current.value),
           description: (descriptionRef.current.value).toString(),
-          type: (comboValue?.value ?? "others") as TypeExpense,
+          type: (comboValue?.value ?? "others") as TypeExpense, 
         }
 
       })

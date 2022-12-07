@@ -1,38 +1,29 @@
 .training-item{
     @include flex(space-between);
-    @include theme($color-greenish-black);
     @include transition;
-    @include border;
     @include padding;
-    cursor: pointer;
-    width: 100%;
     margin-bottom: 1rem;
 
-    &>div{
-        &.info>.name{
-            color:$color-green;   
-            font-size: 18px;         
+    > .info {
+        @include flex-left;
+        > * {
+            width: 100%;
         }
-        &>small{
-            display: block;
-        }
-        &.date{
-            &>.day{
-                font-size: 18px;
-            }
-            &>small{
-                color:#dedede;
-            }  
-        }
-        &.quantity{
-            color:$color-green;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
+        > .name {
+            color: $color-green;
         }
     }
 
-    &:hover {
-        background-color: $color-greenish-light-gray;
+    > .date {
+        @include flex;
+        > * {
+            width: 100%;
+        }
     }
+
+    > .quantity {
+        @include flex-right;
+        color: $color-green;
+    }
+
 }

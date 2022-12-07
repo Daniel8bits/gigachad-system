@@ -109,7 +109,7 @@ function ModalTemplate<T, D = T>(config: ModalTemplateConfig<T, D>) {
                     type: DialogType.WARNING,
                     onConfirm: () => {
 
-                      if (refOnDelete.current && modal?.params?.mode === "edit") {
+                      if (refOnDelete.current && modal?.params?.mode === TemplateURLActions.EDIT) {
                         const pk = refOnDelete.current();
                         endpoint.put(pk, data)
                           .then(value => {

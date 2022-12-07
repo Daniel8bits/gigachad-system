@@ -10,12 +10,7 @@ import type * as ICreditCard from 'gigachad-shareds/endpoint/CreditCard';
 export default CustomTemplate<ICreditCard.findAll.Response>({
   endpoint: '/creditcard',
   title: 'Cartões de credito',
-  actions: [
-    TemplateActions.NEW,
-    TemplateActions.OPEN,
-    TemplateActions.EDIT,
-    TemplateActions.DELETE
-  ],
+  actions: [TemplateActions.NEW],
   body: props => {
     const { actions } = useContext(getCustomTemplateContext<ICreditCard.ICreditCard>())
     return (
@@ -27,6 +22,7 @@ export default CustomTemplate<ICreditCard.findAll.Response>({
               data={{...data.CreditCard,...{cvv:"***"}}}
               onEdit={() => actions.edit({...data.CreditCard,...{cvv:"***"}})}
               onDelete={() => actions.delete(String(data.CreditCard.numbers))}
+              onOpen={() => actions.open({...data.CreditCard,...{cvv:"***"}})}
             />
           )
         })}

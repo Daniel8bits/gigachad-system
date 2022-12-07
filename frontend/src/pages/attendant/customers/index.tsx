@@ -21,7 +21,7 @@ const columns = ["Nome", "CPF", "Email", "Telefone", "Data da Fatura", "Situa√ß√
 export default FilterPageTemplate<APIType>({
   endpoint: '/customer',
   title: 'Clientes',
-  actions: [TemplateActions.OPEN, TemplateActions.EDIT],
+  actions: [TemplateActions.OPEN, TemplateActions.EDIT, TemplateActions.NEW],
   filter: {
     layout: [
       [

@@ -18,6 +18,7 @@
 @import '@ui/box/ui-box';
 
 @import '@components/trainingItem/training-item';
+@import '@components/exerciseItem/exercise-item';
 @import '@components/trainingsActions/trainings-actions';
 @import '@components/sideMenu/side-menu';
 @import '@components/topBar/top-bar';
@@ -29,6 +30,8 @@
 @import '@components/placeholder/placeholder';
 @import '@components/creditCard/credit-card';
 @import '@components/calendar/calendar';
+@import '@components/editableField/editable-field';
+@import '@components/trainingTitle/training-title';
 
 @import '@layouts/mainLayout/main-layout';
 @import '@layouts/contentLayout/content-layout';
@@ -38,4 +41,3 @@
 @import '@layouts/loginLayout/login-layout';
 
 @import '@pages/customer/plans/ui-plans';
-@import '@pages/customer/trainings/create/ui-training-create';

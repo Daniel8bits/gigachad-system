@@ -10,7 +10,7 @@ type TrainingItemProps = {
 }
 const TrainingItem = ({ id,name,date,owner, numExercise }: TrainingItemProps) => {
     return (
-        <Box to={`/trainings/view?id=${id}`} className='ui-trainingItem'>
+        <Box to={`/trainings?id=${id}`} className='training-item'>
             <div className='info'>
                 <span className='name'>{name}</span>
                 <small>Criado por: {owner ?? "Você"}</small>
