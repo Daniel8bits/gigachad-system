@@ -17,6 +17,7 @@ const MainLayout: React.FC<MainLayoutProps> = (props) => {
         <main>
           <UIScroll maxHeight={window.innerHeight-40}>
             {props.children}
+            {[...Array(10)].map(() => <br />)}
           </UIScroll>
         </main>
       </div>

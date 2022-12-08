@@ -205,6 +205,7 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
         width="anchor"
         height={popOverHeight}
         position="bottom"
+        scroll
       >
         {props.allowNull &&
           <UIComboBoxItem
