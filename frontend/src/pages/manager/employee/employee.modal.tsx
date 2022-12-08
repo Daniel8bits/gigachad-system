@@ -16,12 +16,16 @@ import type * as IEmployee from 'gigachad-shareds/endpoint/Employee'
 export default ModalTemplate<IEmployee.IEmployee, IEmployee.EmployeeResponse>({
 
   title: 'Funcionários',
-  actions: [TemplateActions.OPEN, TemplateActions.EDIT],
+  actions: [TemplateActions.OPEN, TemplateActions.EDIT, TemplateActions.DELETE] ,
   body: (props) => {
 
     const [date, setDate] = useState<UIDate>(UIDate.now());
     //const [check, setCheck] = useState<boolean>(false);
-    const [comboValue, setComboValue] = useState<UIComboItemData | null>({ value: "attendant", label: 'atendente' });
+    
+    const [comboValue, setComboValue] = useState<UIComboItemData | null>(
+      { value: "attendant", label: 'atendente' }
+    );
+    //b ta funcionando
     //const [administrative, setAdministrative] = useState<boolean>(false)
 
     const nameRef = useRef<HTMLInputElement>(null);
@@ -29,21 +33,18 @@ export default ModalTemplate<IEmployee.IEmployee, IEmployee.EmployeeResponse>({
     const addressRef = useRef<HTMLInputElement>(null);
     const emailRef = useRef<HTMLInputElement>(null);
     const phoneRef = useRef<HTMLInputElement>(null);
-    const roleRef = useRef<HTMLInputElement>(null);
+    //const roleRef = useRef<HTMLInputElement>(null);
+    const roleRef = useRef<string>('');
     const ctps = "";//props.data?.Employee.ctps
-    //const administrative = false;//props.data?.Employee.administrative
-    /*
-        const comboItems = {
-          administrative: [
-            { value: "manager", label: 'gerente' },
-            { value: "attendant", label: 'atendente' },
-            { value: "financer", label: 'financeiro' }
-          ],
-          other: [
-            { value: "trainer", label: 'treinador' },
-          ]
-        }
-    */
+
+
+    function changeRole(value: UIComboItemData) {
+      console.log(value)
+      setComboValue(value)
+      roleRef.current = value.value
+      console.log(roleRef.current)
+    }
+
     const comboItems = [
       { value: "manager", label: 'gerente' },
       { value: "attendant", label: 'atendente' },
@@ -58,8 +59,10 @@ export default ModalTemplate<IEmployee.IEmployee, IEmployee.EmployeeResponse>({
         if (addressRef.current) addressRef.current.value = props.data.address
         if (emailRef.current) emailRef.current.value = props.data.Users.email
         if (phoneRef.current) phoneRef.current.value = props.data.Users.phone
-        if (roleRef.current) roleRef.current.value = props.data?.Administrative?.role
+        //if (roleRef.current) roleRef.current.value = props.data?.Administrative?.role
+        roleRef.current = props.data?.Administrative?.role
 
+        
         if (!props.data.administrative) {
           setComboValue({ value: "trainer", label: 'treinador' })
         }
@@ -67,10 +70,11 @@ export default ModalTemplate<IEmployee.IEmployee, IEmployee.EmployeeResponse>({
           setComboValue(comboItems.find(el => el.value === props.data?.Administrative?.role) as UIComboItemData)
         }
         
+        
         //gambiarra, calma aii
         if(date) 
           setDate(new UIDate(
-            new Date(props.data.admissiondate).getDay(),
+            new Date(props.data.admissiondate).getDate(),
             new Date(props.data.admissiondate).getMonth(),
             new Date(props.data.admissiondate).getFullYear()
           ))
@@ -87,29 +91,28 @@ export default ModalTemplate<IEmployee.IEmployee, IEmployee.EmployeeResponse>({
       })
 
       props.onSave(() => {
-        console.log(comboValue)
+        //console.log(comboValue)
 
         if (
           !nameRef.current ||
           !cpfRef.current ||
           !addressRef.current ||
           !emailRef.current ||
-          !phoneRef.current ||
-          !comboValue
+          !phoneRef.current 
+          //!comboValue
           //!roleRef.current
           //!ctps ||
           //!administrative
         ) return 'Alguma coisa deu errado!'
-
+        
         return {
           cpf: cpfRef.current.value,
           name: nameRef.current.value,
           email: emailRef.current.value,
           phone: phoneRef.current.value,
           address: addressRef.current.value,
-          Administrative: {
-            role: comboValue?.value
-          }
+          role: roleRef.current as IEmployee.IEmployee["role"]
+
         }
       })
 
@@ -167,7 +170,14 @@ export default ModalTemplate<IEmployee.IEmployee, IEmployee.EmployeeResponse>({
             />
           </Column>
           <Column sm={2} md={2} lg={2} xl={2}>
-            <UIComboBox id='cargo' label='Cargo' items={comboItems} value={comboValue} onAction={setComboValue} allowSearch />
+            <UIComboBox 
+              id='cargo'
+              label='Cargo' 
+              items={comboItems} 
+              value={comboValue as UIComboItemData} 
+              onAction={(value)=>{changeRole(value as UIComboItemData)}} 
+              allowSearch 
+            />
           </Column>
 
         </Row>

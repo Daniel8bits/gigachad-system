@@ -30,7 +30,7 @@ export function getCustomTemplateContext<T>() {
 }
 
 interface CustomTemplateBodyProps<T> {
-  data: T
+  data: T[]
 }
 
 interface FilterConfig {

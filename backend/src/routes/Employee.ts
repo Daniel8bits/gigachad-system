@@ -11,6 +11,7 @@ import type * as IEmployee from 'gigachad-shareds/endpoint/Employee';
 class Employee extends Route {
 
     static rules: Rules = {
+
     };
 
     @withUser(UserType.manager)
@@ -163,8 +164,8 @@ class Employee extends Route {
     async update(req: EndPoint.Request<IEmployee.update.Request>, res: Express.Response<IEmployee.update.Response>) {
         try {
             const cpf = req.params.cpf;
-            const { name, email, phone, address, /*Administrative */ } = await ValidData(req.body, Employee.rules);
-            
+            const { name, email, phone, address, role/*Administrative */ } = await ValidData(req.body, Employee.rules);
+            console.log(role)
             const emp = await EmployeeModel.findOne({
                 where: {
                     cpf: cpf
@@ -183,19 +184,20 @@ class Employee extends Route {
                             cpf: cpf
                         }
                     })
+                    if(role) {
+                        await Administrative.update({role}, {
+                            where: {
+                                cpf
+                            }
+                        })
+                    }
                     res.success({ ...user.toJSON(), employee });
                 } else {
                     res.error(404, "Usuario não encontrado");
                 }
-                /*
-                if(Administrative.role) {
-                    const adm = await Administrative.update({role: Administrative.role}, {
-                        where: {
-                            cpf
-                        }
-                    })
-                }
-                */
+                
+                
+                
             } else {
                 res.error(404, "Funcionario não encontrado");
             }

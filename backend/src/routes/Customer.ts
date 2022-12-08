@@ -49,6 +49,30 @@ class Customer extends Route {
         }
     }
 
+    @Path("/plan")
+    async MyPlan(req: EndPoint.Request, res: Express.Response<ICustomer.myPlans.Response>) {
+        try {
+            //n ta funcionando
+            const customer = await CustomerModel.findOne({
+                where: {
+                    cpf: req.user.cpf
+                },
+                include: [
+                    {
+                        model: User,
+                        on: "customer.cpf=users.cpf",
+                        attributes: {
+                            exclude: ["password"]
+                        }
+                    }
+                ]
+            })
+            res.success(customer);
+        } catch (e: any) {
+            res.error(500, e.message);
+        }
+    }
+
     //@withUser(UserType.manager, UserType.attendant)
     @Path("/:id/plans")
     async plans(req: EndPoint.Request, res: Express.Response) {
@@ -171,7 +195,7 @@ class Customer extends Route {
         }
     }
 
-    @withUser(UserType.manager, UserType.customer, UserType.financer)
+    @withUser(UserType.manager, UserType.customer, UserType.attendant)
     @withAuth
     @Request("PUT")
     @Path("/:cpf")

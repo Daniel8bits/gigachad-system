@@ -86,7 +86,7 @@ export interface IDateDoneItem {
 
 export interface IDateTraining {
     idTraining: number
-    cpfCustomer: number
+    cpfcustomer: number
     date: Date
 }
 
@@ -114,7 +114,7 @@ export interface IExpense {
     id: number
     qrCodeEquipment: string
     date: Date
-    totalValue: number
+    totalvalue: number
     description: string
     type: TypeExpense
 }
@@ -122,12 +122,12 @@ export interface IExpense {
 export interface IInvoice {
     id: number
     cpfCustomer: string
-    idPlan: number
+    idplan: number
     cardNumbers: string | null
     value: number
     status: string
     payday: string
-    payMethod: string
+    paymethod: string
     Plan: IPlan 
 }
 
@@ -151,6 +151,8 @@ export interface ITraining {
 export interface ITutorial {
     idExercise: number
     video_url: string
-    image: JSON
+    image: {
+        url: string
+    }
     explanation: string
 }

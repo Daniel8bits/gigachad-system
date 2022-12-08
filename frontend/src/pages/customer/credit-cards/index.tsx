@@ -7,7 +7,7 @@ import Placeholder from '@components/placeholder/Placeholder';
 import CreditCard from '@components/creditCard/CreditCard';
 import type * as ICreditCard from 'gigachad-shareds/endpoint/CreditCard';
 
-export default CustomTemplate<ICreditCard.findAll.Response>({
+export default CustomTemplate<ICreditCard.findOne.Response>({
   endpoint: '/creditcard',
   title: 'Cartões de credito',
   actions: [TemplateActions.NEW],
@@ -16,6 +16,7 @@ export default CustomTemplate<ICreditCard.findAll.Response>({
     return (
       <>
         {props.data.map((data,key) => {
+          
           return (
             <CreditCard
               key={key}

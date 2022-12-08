@@ -14,7 +14,6 @@ dotenv.config({
 const app: Express = express();
 
 
-
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cors({

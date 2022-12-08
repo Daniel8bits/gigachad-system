@@ -6,6 +6,7 @@ import Administrative from "../models/Administrative";
 import Customer from "../models/Customer";
 import Trainer from "../models/Trainer";
 import type { ILogin, IisAuth } from 'gigachad-shareds/endpoint/Account';
+import CustomerModel from '../models/Customer';
 
 class Account extends Route {
 
@@ -61,8 +62,35 @@ class Account extends Route {
     @Path("/isAuth")
     @withAuth
     async isAuth(req: Express.Request, res: Express.Response<IisAuth.Response>) {
-        console.log(req.user);
         res.success({ user: req.user });
+    }
+
+    @Path("/plan/:id")
+    @Request("POST")
+    @withAuth
+    async plan(req: EndPoint.Request, res: Express.Response) {
+        const { id } = req.params;
+        if (!req.user.Customer) {
+            res.error(400, "Você não pode contratar planos")
+        } else
+            if (req.user.Customer.idcurrentplan === Number(id)) {
+                res.error(400, "Você já está nesse plano")
+            } else {
+                try {
+                    await CustomerModel.update({
+                        idCurrentPlan: Number(id)
+                    }, {
+                        where: {
+                            cpf: req.user.cpf
+                        }
+                    })
+                    await res.success({ id });
+                } catch (e: any) {
+                    console.log(e);
+                    res.error(500, e.message);
+                }
+
+            }
     }
 }
 export default new Account;

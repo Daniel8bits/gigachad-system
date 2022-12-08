@@ -2,12 +2,15 @@ import Express from 'express';
 import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import ValidData, { Rules } from '../utils/ValidData';
 import InvoiceModel from '../models/Invoice';
+import PlanModel from '../models/Plan';
+import CustomerModel from '../models/Customer';
 import { UserType } from 'gigachad-shareds/models'
 import * as IInvoice from 'gigachad-shareds/endpoint/Invoice'
 
 class Invoice extends Route {
 
     static rules: Rules = {
+
 
     };
 
@@ -20,7 +23,43 @@ class Invoice extends Route {
             const { idPlan, cardNumbers, value, status, payday, payMethod } = req.body
 
             const id = (await InvoiceModel.getLastID(req.user.cpf)) + 1;
-
+            /*
+            const plan = await PlanModel.findOne({
+                where: {
+                    id: req.user.Customer.idcurrentPlan
+                }
+            })
+            if (plan) {
+                if (payMethod === 'creditCard') {
+                    const invoice = await InvoiceModel.create({
+                        id,
+                        cpfCustomer: req.user.cpf,
+                        idPlan: plan.id,
+                        cardNumbers,
+                        value: plan.value,
+                        status: 'paid',
+                        payday,
+                        payMethod
+                    })
+                    res.success(invoice);
+                } else {
+                    const invoice = await InvoiceModel.create({
+                        id,
+                        cpfCustomer: req.user.cpf,
+                        idPlan,
+                        cardNumbers: null,
+                        value,
+                        status: 'open',
+                        payday,
+                        payMethod
+                    })
+                    res.success(invoice);
+                }
+            } else {
+                res.error(404, "Plano não encontrado")
+            }
+            */
+            
             if (payMethod === 'creditCard') {
                 const invoice = await InvoiceModel.create({
                     id,
@@ -60,8 +99,14 @@ class Invoice extends Route {
         try {
 
             const invoices = await InvoiceModel.findAll({
+                include: [
+                    {
+                        model: PlanModel,
+                        on: "Plan.id=Invoice.idPlan"
+                    }
+                ],
                 where: {
-                    cpfCustomer: req.user.cpf
+                    cpfCustomer: req.user.cpf,
                 }
             })
 
@@ -83,7 +128,7 @@ class Invoice extends Route {
             await InvoiceModel.update({ value, status, payday, payMethod }, {
                 where: {
                     cpfCustomer,
-                    idPlan,
+                    idPlan: Number(idPlan),
                     id: id
                 }
             })
@@ -91,6 +136,7 @@ class Invoice extends Route {
             res.error(500, e.message);
         }
     }
+
 
 }
 

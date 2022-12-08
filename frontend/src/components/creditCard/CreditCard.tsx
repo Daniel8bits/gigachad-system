@@ -19,7 +19,7 @@ const CreditCard: React.FC<CreditCardProps> = (props) => {
           cvc={props.data.cvv}
           expiry={props.data.expirationDate}
           name={props.data.holder}
-          number={props.data.numbers}
+          number={`${props.data.numbers.substring(0,4)}********${props.data.numbers.substring(12, 17)}`}
         />
       </button>
       <div>

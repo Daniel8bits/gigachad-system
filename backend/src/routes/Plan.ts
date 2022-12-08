@@ -32,7 +32,7 @@ class Plan extends Route {
         }
     }
 
-    @withUser(UserType.manager)
+    @withUser(UserType.manager, UserType.attendant)
     @withAuth
     @Path("/")
     async findAll(req: EndPoint.Request<IPlan.findAll.Request>, res: Express.Response<IPlan.findAll.Response>) {
@@ -90,7 +90,7 @@ class Plan extends Route {
     }
 
 
-    @withUser(UserType.manager)
+    @withUser(UserType.manager, UserType.customer)
     @withAuth
     @Path("/:id")
     async findOne(req: EndPoint.Request<IPlan.findOne.Request>, res: Express.Response<IPlan.findOne.Response>) {

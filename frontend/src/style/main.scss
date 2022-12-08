@@ -20,6 +20,7 @@
 @import '@components/trainingItem/training-item';
 @import '@components/exerciseItem/exercise-item';
 @import '@components/trainingsActions/trainings-actions';
+@import '@components/calendarActions/calendar-actions';
 @import '@components/sideMenu/side-menu';
 @import '@components/topBar/top-bar';
 @import '@components/filter/filter';
@@ -31,7 +32,9 @@
 @import '@components/creditCard/credit-card';
 @import '@components/calendar/calendar';
 @import '@components/editableField/editable-field';
-@import '@components/trainingTitle/training-title';
+@import '@components/trainingTitle/training-title'; 
+@import '@components/tutorialExplaining/tutorial-explaining'; 
+@import '@components/dateTrainingTable/date-training-table'; 
 
 @import '@layouts/mainLayout/main-layout';
 @import '@layouts/contentLayout/content-layout';

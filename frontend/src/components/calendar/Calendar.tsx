@@ -2,7 +2,8 @@ import React, {
 	useState,
 	useMemo,
 	useRef,
-	useEffect
+	useEffect,
+	useCallback
 } from 'react';
 import UIButton from '@ui/button/UIButton'
 
@@ -16,34 +17,59 @@ import {
 } from 'react-icons/md'
 
 import { UIDate } from '@ui/datepicker/UIDatePicker';
-import { IDateTraining } from 'gigachad-shareds/models';
+import Endpoint from '@middlewares/Endpoint';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface CalendarDayProps {
 	day: number
 	training: IDateTraining
 	otherMonth: boolean
+	date: {
+		day: number,
+		month: number,
+		year: number
+	}
 }
 
 const CalendarDay: React.FC<CalendarDayProps> = (props) => {
 
+	const navigate = useNavigate()
 
+	const addTraining = useCallback(() => {
+		navigate(`/calendar?day=${props.date.day}&month=${props.date.month}&year=${props.date.year}`)
+	}, [props.date.day, props.date.month, props.date.year]);
+
+	const query = useMemo(() => {
+		if(!props.training) return '/calendar'
+		const id = props.training.idtraining
+		const date = new Date(props.training.date)
+		return `/calendar?id=${id}&day=${date.getDate()}&month=${date.getMonth()+1}&year=${date.getFullYear()}`
+	}, [props.training])
 
 	return (
 		<div className={`calendar-day ${props.training || props.otherMonth ? '' : 'no-training'}`}>
 			<h6> {props.day} </h6>
-			{!props.otherMonth && !props.training && <UIButton> <MdAdd  /> </UIButton>}
-			{props.training && <button type='button'> treino </button>}
+			{!props.otherMonth && !props.training && <UIButton onAction={addTraining}> <MdAdd  /> </UIButton>}
+			{props.training && <Link className='day-training' to={query}> {props.training.Training.name} </Link>}
 		</div>
 	)
 }
 
 
 interface CalendarProps {
-	trainings: IDateTraining[]
+}
+
+type IDateTraining = {
+	Training: {
+		name: string
+	}
+	date: string
+	idtraining: number
 }
 
 const Calendar: React.FC<CalendarProps> = (props) => {
 	const [date, setDate] = useState<UIDate>(UIDate.now());
+	const [trainings, setTrainings] = useState<IDateTraining[]>([]);
 
 	//const [day, setDay] = useState<number>(new Date().getDate())
 	const monthDays = useMemo<number[][]>(() => {
@@ -79,31 +105,6 @@ const Calendar: React.FC<CalendarProps> = (props) => {
 		return weekMatrix
 	}, [date])
 
-	const updateDate = (week: number, weekDay: number) => {
-		let day = monthDays[week][weekDay]
-		let month = date.getMonth()
-		let year = date.getYear()
-
-		if (day < 0) {
-			const auxDate = UIDate.getLastDateOf(month - 1, year)
-			day = Math.abs(day)
-			month = auxDate.getMonth()
-			year = auxDate.getYear()
-		}
-		else if (day > 100) {
-			const auxDate = UIDate.getLastDateOf(month + 1, year)
-			day -= 100
-			month = auxDate.getMonth()
-			year = auxDate.getYear()
-		}
-
-		setDate(new UIDate(
-			day,
-			month,
-			year
-		))
-	}
-
 	const decrementMonth = () => {
 		const newDate = UIDate.getLastDateOf(date.getMonth() - 1, date.getYear())
 		setDate(new UIDate(
@@ -122,9 +123,12 @@ const Calendar: React.FC<CalendarProps> = (props) => {
 		))
 	}
 
-	const trainings = useMemo(() => {
-		return props.trainings.filter(t => t.date.getMonth() === date.getMonth())
-	}, [date, props.trainings])
+	useEffect(() => {
+		new Endpoint<IDateTraining>('/calendar', false)
+			.get({month: date.getMonth()+1, year: date.getYear()})
+			.then(setTrainings)
+			.catch(console.log)
+	}, [date]);
 
 	return (
 		<div className='calendar'>
@@ -150,7 +154,7 @@ const Calendar: React.FC<CalendarProps> = (props) => {
 								else if (day > 100) {
 									value -= 100
 								}
-								const training = trainings.filter(t => t.date.getDate() === day)[0]
+								const training = trainings.filter(t => new Date(t.date).getDate() === day)[0]
 								return (
 									<div
 										key={day}
@@ -160,6 +164,11 @@ const Calendar: React.FC<CalendarProps> = (props) => {
 											day={value} 
 											training={training}  
 											otherMonth={day < 0 || day > 100}
+											date={{
+												day: value,
+												month: date.getMonth()+1,
+												year: date.getYear()
+											}}
 										/>
 									</div>
 								)

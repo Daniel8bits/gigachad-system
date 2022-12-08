@@ -19,11 +19,16 @@ interface APIType {
   value: number
   status: 'canceled' | 'paid' | 'open'
   payday: string
-  payMethod: 'creditCard' | 'pix' | 'bankSlip' | 'money'
+  paymethod: 'creditCard' | 'pix' | 'bankSlip' | 'money'
 }
 
 const columns = ["Número", "Data pagamento", "Valor", "Forma pagamento", "Status"]
 
+const status = {
+  canceled: "Cancelado",
+  pai: "Pago",
+  open: "Aberto"
+}
 
 const plans = [
   { value: '0', label: 'plano 1' }, //value : idPlan
@@ -32,10 +37,17 @@ const plans = [
   { value: '3', label: 'plano 4' }
 ]
 
+const PayMethodName = {
+  creditCard: "Cartão de Crédito",
+  pix: "PIX",
+  money: "Dinheiro",
+  bankSlip: "Boleto Bancário"
+}
+
 export default FilterPageTemplate<APIType>({
-  endpoint: '/payment',
+  endpoint: '/invoice',
   title: 'Histórico de pagamentos',
-  actions: [TemplateActions.OPEN],
+  actions: [TemplateActions.OPEN, TemplateActions.NEW],
   filter: {
     layout: [
       [
@@ -71,7 +83,7 @@ export default FilterPageTemplate<APIType>({
             { value: 'open', label: 'Em aberto' }
           ],
           size: { sm: 3, md: 3, lg: 3, xl: 3, xxl: 3 }
-        }
+        },
       ],
     ],
     validate: data => {
@@ -82,10 +94,10 @@ export default FilterPageTemplate<APIType>({
       const plan = data.comboValues.get('3')
       const status = data.comboValues.get('4')
 
-      if(!value && !date && !plan && !status) return false;
+      if (!value && !date && !plan && !status) return false;
 
       return true
-    }, 
+    },
     format: data => {
       const value = data.textfieldValues.get('1')
       const date = data.dateValues.get('2')
@@ -95,10 +107,7 @@ export default FilterPageTemplate<APIType>({
       const formatedStatus = status?.value
       const idPlan = plan?.value
 
-      const cpfCustomer = ''  //tem que dar um jeito de descobrir o cpf do cara
-
       return {
-        cpfCustomer,
         payday: date?.getFormattedDate().replaceAll('/', '-'),
         idPlan,
         value,
@@ -112,11 +121,29 @@ export default FilterPageTemplate<APIType>({
       id: String(data.id),
       display: {
         id: data.id,
-        payday: data.payday,
+        payday: new Date(data.payday).toLocaleDateString("PT-BR", { day: 'numeric', month: 'numeric', year: 'numeric' }),
         value: data.value,
-        payMethod: data.payMethod,
-        status: data.status
+        payMethod: PayMethodName[data.paymethod],
+        status: stringStatus(data.status)
       }
     })
   }
 })
+
+//taquei o fds ja
+function stringStatus(str: string) {
+  switch(str) {
+    case 'open':
+      return 'Em aberto'
+      break
+    case 'paid':
+      return 'Pago'
+      break
+    case 'canceled':
+      return 'Cancelado'
+      break
+    
+    default:
+      return ''
+  }
+}

@@ -43,7 +43,7 @@ const menuConfig: Record<number, IMenuItem[]> = {
           text: "Pagar Fatura"
         },
         {
-          to: "/invoice/history",
+          to: "/payments",
           text: "Histórico de Pagamentos"
         },
         {

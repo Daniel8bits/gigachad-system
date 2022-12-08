@@ -5,16 +5,17 @@ type UICardProps = {
     className?: string
     image?: string
     title?: string
+    onClick?: () => void
 }
-const UICard = ({ children, className, image, title }: React.PropsWithChildren<UICardProps>) => {
+const UICard = ({ children, className, image, title, onClick }: React.PropsWithChildren<UICardProps>) => {
     return (
-        <a href='/' className={`ui-card ${className ?? ""}`}>
+        <button type='button' className={`ui-card ${className ?? ""}`} onClick={onClick}>
             {image && <img src={image} alt={title} />}
             <div className='card-content'>
-                {title && <div className='title'>{title}</div>}
+                {title && <h3>{title}</h3>}
                 {children}
             </div>
-        </a>
+        </button>
     )
 }
 export default UICard;

@@ -1,8 +1,8 @@
 import Model, { DataType } from "../utils/Database/Model";
-import {IDateTraining} from 'gigachad-shareds/models'
+import {IExerciseItem} from 'gigachad-shareds/models'
+import DateDoneItem  from './DateDoneItem';
 
-
-class ExerciseItem extends Model<IDateTraining>{
+class ExerciseItem extends Model<IExerciseItem>{
     @DataType("NUMBER")
     declare idExercise: number
     @DataType("NUMBER")
@@ -15,6 +15,8 @@ class ExerciseItem extends Model<IDateTraining>{
     declare series: number
     @DataType("NUMBER")
     declare repetition: number
+    @DataType("CLASS",{virtual: true})
+    declare DateDoneItem: DateDoneItem;
 
     validate<T extends any>(field: string, value: T): T {
         return value;

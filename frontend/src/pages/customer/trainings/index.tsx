@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ContentLayout from '@layouts/contentLayout/ContentLayout';
 import Button from "@ui/button/UIButton";
-import TrainingItem from "@components/trainingItem/TrainingItem";
+import TrainingItem, { ITraining } from "@components/trainingItem/TrainingItem";
 import LoadingScreen from "@components/loadingScreen/LoadingScreen";
 import axios from '@utils/axios';
 import CustomTemplate from "@templates/customTemplate/CustomTemplate";
@@ -13,14 +13,6 @@ import CreateTraining from './create'
 import EditTraining from './edit'
 
 //import type * as ITraining from 'gigachad-shareds/endpoint/Training'
-
-type ITraining = {
-  id: number
-  name: string
-  creationDate: string
-  owner?: string
-  numExercise: number
-}[]
 
 const Index = CustomTemplate<ITraining>({
   endpoint: '/training',

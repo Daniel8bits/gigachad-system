@@ -36,6 +36,12 @@ const Plans = () => {
         })
     }, []);
 
+    const handlePlan = (id: number) => () => {
+        axios.post(`/account/plan/${id}`).then(({data}) => {
+            console.log(data);
+        });
+    }
+
     const num = Math.floor(12 / plans.length);
     return (
         <ContentLayout title="Escolha um Plano">
@@ -54,7 +60,7 @@ const Plans = () => {
 
                                     {item.description}
                                 </div>
-                                <Button className="fluid" disabled={item.id === auth.account?.Customer.idcurrentplan}>{item.id === auth.account?.Customer.idcurrentplan ? "Atualmente Contratado" :"Contratar"}</Button>
+                                <Button onAction={handlePlan(item.id)} className="fluid" disabled={item.id === auth.account?.Customer.idcurrentplan}>{item.id === auth.account?.Customer.idcurrentplan ? "Atualmente Contratado" : "Contratar"}</Button>
                             </Card>
                         </Column>
                     ))}

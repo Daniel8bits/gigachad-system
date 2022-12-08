@@ -1,6 +1,7 @@
 import UIButton from '@ui/button/UIButton';
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from '@utils/axios';
 
 export enum TrainingActionsMode {
   DEFAULT,
@@ -45,6 +46,9 @@ const TrainingsActions: React.FC<TrainingsActionsProps> = (props) => {
 
   const deleteTraining = useCallback(() => {
     if(props.trainingId !== undefined) {
+      axios.delete(`/training/${props.trainingId}`).then(() => {
+        navigate("/trainings")
+      })
       // TODO: deletar o exercicio e retornar ao /trainings caso tenha removido com sucesso
     }
   }, []);
@@ -53,7 +57,6 @@ const TrainingsActions: React.FC<TrainingsActionsProps> = (props) => {
   if(mode === TrainingActionsMode.CREATE_EXERCISE) {
     return (
       <div className='trainings-actions'>
-        <UIButton onAction={addNewTraining}> Adicionar novo treino </UIButton>
         <UIButton className='right' onAction={goToTrainings}> Voltar </UIButton>
         <UIButton template='warning' submit> Salvar </UIButton>
       </div>

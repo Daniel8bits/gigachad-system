@@ -107,7 +107,7 @@ export class UIDate {
       value += `0${this._month + 1}`
     }
     else {
-      value += this._month
+      value += this._month+1
     }
     value += `/${this._year}`
     return value

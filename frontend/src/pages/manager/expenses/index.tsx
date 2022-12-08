@@ -88,7 +88,7 @@ export default FilterPageTemplate<APIType>({
       id: String(data.id),
       display: {
         description: data.description,
-        date: new Date(data.date).toLocaleDateString(),
+        date: new Date(data.date).toLocaleString("pt-BR", { day: 'numeric', month: 'numeric', year: 'numeric' }),
         type: stringType(data.type), 
         totalValue: data.totalvalue
       }

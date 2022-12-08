@@ -3,13 +3,13 @@ import {IDateDoneItem} from 'gigachad-shareds/models'
 
 class DateDoneItem extends Model<IDateDoneItem>{
     @DataType("NUMBER")
-    declare idTraining: number
-    @DataType("NUMBER")
-    declare cpfCustomer: number
+    declare idtraining: number
+    @DataType("CPF")
+    declare cpfCustomer: string
     @DataType("DATE")
     declare date: Date
     @DataType("NUMBER")
-    declare idExercise: number
+    declare idexercise: number
 
     validate<T extends any>(field: string, value: T): T {
         return value;

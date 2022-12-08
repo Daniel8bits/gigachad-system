@@ -19,6 +19,7 @@ interface ExerciseItemProps {
   item: IExercises
   handleChangeExercise: (value: UIComboItemData, index: number) => void
   editMode?: boolean
+  onRemove?: () => void
 }
 
 const ExerciseItem: React.FC<ExerciseItemProps> = (props) => {
@@ -61,7 +62,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = (props) => {
           />
         </Column>
         <Column lg={1} xl={1} xxl={1}>
-          {props.editMode && <button type='button'> <MdOutlineRemoveCircle  /> </button>}
+          {props.editMode && <button type='button' onClick={props.onRemove}> <MdOutlineRemoveCircle  /> </button>}
         </Column>
       </Row>
     </UIBox>

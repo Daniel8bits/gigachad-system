@@ -43,7 +43,7 @@ export namespace findOne {
             numbersCreditCard: string
         }
     }
-    export type Response = CreditCardResponse | false
+    export type Response = CreditCardResponse
 }
 
 export namespace update {

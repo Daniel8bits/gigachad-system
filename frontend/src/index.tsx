@@ -6,6 +6,7 @@ import RootStore from '@store/Root.store'
 import App from './App';
 import 'simplebar-react/dist/simplebar.min.css';
 import 'react-credit-cards/es/styles-compiled.css';
+import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css'
 import '@style/main.scss';
 
 const root = ReactDOM.createRoot(

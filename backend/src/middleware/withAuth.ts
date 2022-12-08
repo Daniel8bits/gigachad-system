@@ -9,6 +9,7 @@ import { UserType } from 'gigachad-shareds/models'
 const withAuth: Express.Handler = async (req, res, next) => {
     try {
         const token = (req.headers['authorization']?.replace("Bearer ", "") || req.query.token) as string;
+        console.log(token);
         if (token) {
             const payload = jwt.decode(token/*, process.env.SECRET_AUTH as string*/) as JwtPayload
             const user = await User.findOne({

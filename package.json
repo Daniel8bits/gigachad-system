@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/Daniel8bits/gigachad-system/issues"
   },
-  "homepage": "https://github.com/Daniel8bits/gigachad-system#readme"
+  "homepage": "https://github.com/Daniel8bits/gigachad-system#readme",
+  "dependencies": {
+    "react-lite-youtube-embed": "^2.3.52"
+  }
 }

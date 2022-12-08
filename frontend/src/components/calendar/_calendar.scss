@@ -55,6 +55,17 @@
             font-size: 1.2rem;
           }
 
+          > .day-training {
+            @include flex;
+            @include theme($color-green, true);
+            @include border;
+            @include transition;
+            width: 100%;
+            cursor: pointer;
+            margin-top: .5rem;
+            text-decoration: none;
+          }
+
         }
 
         &:not(.from-other-month) > .calendar-day {

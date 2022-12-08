@@ -8,8 +8,9 @@
   &>div{
     flex:1;
   }
+
 }
-a.ui-box:hover{
+.ui-box.clickable:hover, a.ui-box:hover{
   background-color: $color-greenish-light-gray;
   cursor: pointer;
 }

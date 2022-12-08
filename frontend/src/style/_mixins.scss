@@ -3,6 +3,7 @@
   background-color: $color;
   @if 
     $color == $color-green or
+    $color == $color-yellow or
     $color == $color-red {
       color: $color-greenish-black;
       @if $hover {
@@ -13,6 +14,9 @@
           }
           @else if $color == $color-red {
             background-color: $color-dark-red;
+          }
+          @else if $color == $color-yellow {
+            background-color: $color-dark-yellow;
           }
         }
       }

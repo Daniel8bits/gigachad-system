@@ -11,6 +11,7 @@ import Tutorial from './routes/Tutorial';
 import Customer from './routes/Customer';
 import Invoice from './routes/Invoice';
 import CreditCard from './routes/CreditCard';
+import Calendar from './routes/Calendar';
 
 const app = new Express();
 
@@ -25,5 +26,6 @@ app.use("/tutorial",Tutorial)
 app.use("/customer",Customer)
 app.use("/invoice",Invoice)
 app.use("/creditcard",CreditCard)
+app.use("/calendar",Calendar)
 
 export default app;

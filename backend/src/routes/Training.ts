@@ -8,6 +8,7 @@ import ExerciseItem from '../models/ExerciseItem';
 
 class Training extends Route {
 
+
     @withAuth
     @Path("/")
     async findAll(req: Express.Request, res: Express.Response) {
@@ -179,6 +180,7 @@ class Training extends Route {
                 },
                 limit:999
             })
+
             const promises = Object.keys(exercises.name).map(async (key) => {
                 const idexercise = exercises.name[key];
                 const repetition = exercises.repetition[key];
@@ -205,12 +207,14 @@ class Training extends Route {
     @Path("/:id")
     async delete(req: Express.Request, res: Express.Response) {
         const id = req.params.id;
+
         const result = await TrainingModel.delete({
             where: {
                 id: parseInt(id),
                 cpfCustomer: req.user.cpf
             }
         })
+        
         if (result) {
             res.success(result);
         } else {

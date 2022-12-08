@@ -37,12 +37,13 @@ export default FilterPageTemplate<IEmployee>({
           type: InputType.TEXTFIELD,
           size: { sm: 3, md: 3, lg: 3, xl: 3, xxl: 3 }
         },
+        /*
         {
           id: '5',
           title: 'Data de admissão',
           type: InputType.DATEPICKER,
           size: { sm: 3, md: 3, lg: 3, xl: 3, xxl: 3 }
-        }
+        }*/
       ]
     ],
     validate: data => {
@@ -53,7 +54,7 @@ export default FilterPageTemplate<IEmployee>({
       const admissionDate = data.dateValues.get('5')
       //const administrative = data.checkValues.get('6')
 
-      if (!cpfEmployee && !name && !address && !ctps && !admissionDate) return false;
+      //if (!cpfEmployee && !name && !address && !ctps && !admissionDate) return false;
 
       return true
     },
@@ -71,7 +72,7 @@ export default FilterPageTemplate<IEmployee>({
         name,
         address,
         ctps,
-        admissionDate: admissionDate?.toString()//getFormattedDate().replaceAll('/', '-'),
+        admissionDate: admissionDate?.getFormattedDate().replaceAll('/', '-'),
         //administrative: String(administrative)
       }
     }

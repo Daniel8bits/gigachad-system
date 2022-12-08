@@ -79,9 +79,7 @@ export namespace update {
             email: string
             phone: string
             address: string
-            Administrative:{
-                role: string
-            }
+            role: 'financer' | 'attendant' | 'manager'
         }
     }
     export type Response = IEmployee | false

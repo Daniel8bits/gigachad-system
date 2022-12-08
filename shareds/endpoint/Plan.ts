@@ -5,7 +5,7 @@ export type IPlan = {
     description: string
     frequency: FrequencyPlan
     value: number
-    available: boolean
+    available: boolean 
 }
 
 export enum FrequencyPlan {

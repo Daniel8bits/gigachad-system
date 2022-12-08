@@ -84,7 +84,7 @@ class Expense extends Route {
         try {
             const id = req.params.id;
             const { qrCodeEquipment, date, totalValue, description, type } = await ValidData(req.body, Expense.rules);
-            console.log(type) 
+            console.log(date) 
             const expense = await ExpenseModel.update({ qrCodeEquipment, date: new Date(date), totalValue, description, type }, {
                 where: {
                     id: id
