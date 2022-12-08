@@ -14,7 +14,7 @@ const columns = ["Nome", "Identificação", "Data de Manutenção"]
 export default FilterPageTemplate<APIType>({
   endpoint: '/equipment',
   title: 'Consultar Equipamentos',
-  actions: [TemplateActions.OPEN, TemplateActions.EDIT],
+  actions: [TemplateActions.OPEN, TemplateActions.EDIT, TemplateActions.NEW],
   filter: {
     layout: [
       [
@@ -70,6 +70,6 @@ export default FilterPageTemplate<APIType>({
         maintenancedate: new Date(data.maintenancedate).toLocaleDateString() 
       }
     }),
-    paging: true,
+    paging: true, 
   }
 })

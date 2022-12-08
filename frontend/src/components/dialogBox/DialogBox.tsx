@@ -18,7 +18,7 @@ export function useDialogBox() {
 }
 
 interface DialogBoxProps {
-  
+
 }
 
 const DialogBox: React.FC<DialogBoxProps> = () => {
@@ -26,14 +26,14 @@ const DialogBox: React.FC<DialogBoxProps> = () => {
 
   const handleOnConfirm = useCallback(() => {
     dialogBox?.params?.onConfirm()
-    updateDialogBox({open: false})
-  }, []);
+    updateDialogBox({ open: false })
+  }, [dialogBox]);
 
   const handleOnCancel = useCallback(() => {
     dialogBox?.params?.onCancel?.()
-    updateDialogBox({open: false})
-  }, []);
-  
+    updateDialogBox({ open: false })
+  }, [dialogBox]);
+
   return (
     <UIModal id={DIALOG_BOX}>
       <DialogLayout

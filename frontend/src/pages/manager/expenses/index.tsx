@@ -15,17 +15,17 @@ interface APIType {
 const columns = ["Descrição", "Data", "Tipo de gasto", "Valor"]
 
 const typeExpense = [
-    {value: '1', label: 'Compra de equipamento'},
-    {value: '2', label: 'Manutenção de equipamento'},
-    {value: '3', label: 'Pagamento de conta'},
-    {value: '4', label: 'Pagamento de salário'},
-    {value: '5', label: 'Outros'}
+    {value: 'equipamentBuy', label: 'Compra de equipamento'},
+    {value: 'equipamentMaintenance', label: 'Manutenção de equipamento'},
+    {value: 'billPayment', label: 'Pagamento de conta'},
+    {value: 'employeePayment', label: 'Pagamento de salário'},
+    {value: 'others', label: 'Outros'}
 ]
 
 export default FilterPageTemplate<APIType>({
   endpoint: '/expense',
   title: 'Consultar Gasto',
-  actions: [TemplateActions.OPEN, TemplateActions.EDIT],
+  actions: [TemplateActions.OPEN, TemplateActions.NEW, TemplateActions.EDIT],
   filter: {
     layout: [
       [
@@ -59,36 +59,36 @@ export default FilterPageTemplate<APIType>({
       ]
     ],
     validate: data => {
-      const name = data.textfieldValues.get('1')
-      const qrCode = data.textfieldValues.get('2')
+      const description = data.textfieldValues.get('1')
+      const totalValue = data.textfieldValues.get('2')
       const type = data.comboValues.get('3')
-      const maintenanceDate = data.dateValues.get('4')
+      const date = data.dateValues.get('4')
 
-      if(!name && !qrCode && !type && !maintenanceDate) return false;
+      if(!description && !totalValue && !type && !date) return false;
 
       return true
     }, 
     format: data => {
-      const name = data.textfieldValues.get('1')
-      const qrCode = data.textfieldValues.get('2')
+      const description = data.textfieldValues.get('1')
+      const totalValue = data.textfieldValues.get('2')
       const type = data.comboValues.get('3')
-      const maintenanceDate = data.dateValues.get('4')
+      const date = data.dateValues.get('4')
 
       return {
-        name,
-        qrCode,
-        type: String(type),
-        maintenanceDate: maintenanceDate?.getFormattedDate().replaceAll('/', '-')
+        description,
+        totalValue,
+        type: type?.value,
+        date: date?.getFormattedDate().replaceAll('/', '-')
       }
     }
-  },
+  }, 
   table: {
     columns,
     description: data => ({
       id: String(data.id),
       display: {
         description: data.description,
-        date: new Date(data.date).toLocaleDateString(),
+        date: new Date(data.date).toLocaleString("pt-BR", { day: 'numeric', month: 'numeric', year: 'numeric' }),
         type: stringType(data.type), 
         totalValue: data.totalvalue
       }

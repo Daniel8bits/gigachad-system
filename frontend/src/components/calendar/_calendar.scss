@@ -1,0 +1,104 @@
+
+.calendar {
+
+  @include flex;
+
+  $measure: .6rem 0;
+
+  > .month-control {
+    @include flex(space-between);
+    @include padding();
+    color: white;
+    > .ui-button {
+      margin: 0 .5rem;
+    }
+  }
+  
+  > .container { 
+    
+    width: 100%;
+    @include theme($color-greenish-black);
+    @include border;
+
+    > .days-of-week {
+      @include flex();
+      cursor: default;
+      border-bottom: 1px solid $color-green;
+      padding: 1rem 0;
+      > div {
+        width: calc(100% / 7);
+        color: $color-green;
+        text-align: center;
+      }
+    }
+
+    > .week {
+      //width: 100%;
+      @include flex();
+      min-height: 5rem;
+
+      > div {
+        width: calc(100% / 7);
+        min-height: inherit;
+        @include transition();
+
+        &.from-other-month {
+          color: #fffa !important;
+        }
+
+        > .calendar-day {
+          padding: .5rem;
+          
+          > .ui-button {
+            @include transition;
+            margin: 0 auto;
+            font-size: 1.2rem;
+          }
+
+          > .day-training {
+            @include flex;
+            @include theme($color-green, true);
+            @include border;
+            @include transition;
+            width: 100%;
+            cursor: pointer;
+            margin-top: .5rem;
+            text-decoration: none;
+          }
+
+        }
+
+        &:not(.from-other-month) > .calendar-day {
+          &.no-training:hover > .ui-button {
+            opacity: 1;
+            visibility: visible;
+          }
+
+          &.no-training:not(:hover) > .ui-button {
+            opacity: 0;
+            visibility: hidden;
+          } 
+        }
+      }
+
+      &:nth-child(odd) {
+        > div:nth-child(odd) {
+          @include theme($color-greenish-black)
+        }
+        > div:nth-child(even) {
+          @include theme($color-greenish-gray)
+        }
+      }
+
+      &:nth-child(even) {
+        > div:nth-child(odd) {
+          @include theme($color-greenish-gray)
+        }
+        > div:nth-child(even) {
+          @include theme($color-greenish-black)
+        }
+      }
+
+    }}
+
+}

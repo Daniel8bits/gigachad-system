@@ -5,26 +5,40 @@ import User from '../models/User';
 import EmployeeModel from '../models/Employee';
 import Administrative from '../models/Administrative';
 import Trainer from '../models/Trainer';
-import { UserType } from 'gigachad-shareds/models'
-
+import { UserType, IAdministrative } from 'gigachad-shareds/models'
+import type * as IEmployee from 'gigachad-shareds/endpoint/Employee';
 
 class Employee extends Route {
 
     static rules: Rules = {
+
     };
 
     @withUser(UserType.manager)
     @withAuth
     @Path("/")
-    async findAll(req: Express.Request, res: Express.Response) {
+    async findAll(req: EndPoint.Request, res: Express.Response<IEmployee.findAll.Response>) {
+        const { cpfEmployee, name, address, ctps } = req.query;
+        const query = req.query;
+        const admissionDate = query.admissionDate as string
         try {
             const employee = await EmployeeModel.findAll({
+                debug: true,
                 include: [
                     {
                         model: User,
                         on: "employee.cpf=users.cpf",
                         attributes: {
                             exclude: ["password"]
+                        },
+                        where: {
+                            and: {
+                                name: {
+                                    value: name ? `%${name}%` : undefined,
+                                    op: "LIKE"
+                                },
+                                cpf: cpfEmployee
+                            }
                         }
                     },
                     {
@@ -35,7 +49,15 @@ class Employee extends Route {
                         model: Trainer,
                         on: "trainer.cpf=users.cpf"
                     }
-                ]
+                ],
+                where: {
+                    address: {
+                        value: address ? `%${address}%` : undefined,
+                        op: "LIKE"
+                    },
+                    ctps,
+                    //admissionDate
+                }
             })
             res.success(employee);
         } catch (e: any) {
@@ -48,7 +70,7 @@ class Employee extends Route {
     @withAuth
     @Request("POST")
     @Path("/")
-    async create(req: Express.Request, res: Express.Response) {
+    async create(req: EndPoint.Request<IEmployee.create.Request>, res: Express.Response<IEmployee.create.Response>) {
         try {
             const { cpf, name, email, phone, ctps, address, administrative } = await ValidData(req.body, Employee.rules);
             console.log(req.body)
@@ -98,7 +120,7 @@ class Employee extends Route {
     @withUser(UserType.manager)
     @withAuth
     @Path("/:cpf")
-    async findOne(req: Express.Request, res: Express.Response) {
+    async findOne(req: Express.Request, res: Express.Response<IEmployee.findOne.Response>) {
         try {
             const cpf = req.params.cpf;
             const employee = await EmployeeModel.findOne({
@@ -121,7 +143,7 @@ class Employee extends Route {
                     {
                         model: Trainer,
                         on: "trainer.cpf=users.cpf",
-                       // optional: true,
+                        // optional: true,
                     }
                 ]
             })
@@ -139,10 +161,11 @@ class Employee extends Route {
     @withAuth
     @Request("PUT")
     @Path("/:cpf")
-    async update(req: Express.Request, res: Express.Response) {
+    async update(req: EndPoint.Request<IEmployee.update.Request>, res: Express.Response<IEmployee.update.Response>) {
         try {
             const cpf = req.params.cpf;
-            const { name, email, phone, address } = await ValidData(req.body, Employee.rules);
+            const { name, email, phone, address, role/*Administrative */ } = await ValidData(req.body, Employee.rules);
+            console.log(role)
             const emp = await EmployeeModel.findOne({
                 where: {
                     cpf: cpf
@@ -153,6 +176,7 @@ class Employee extends Route {
                     where: {
                         cpf: cpf
                     }
+
                 })
                 if (user) {
                     const employee = await EmployeeModel.update({ address }, {
@@ -160,10 +184,20 @@ class Employee extends Route {
                             cpf: cpf
                         }
                     })
-                    res.success({ ...user, employee });
+                    if(role) {
+                        await Administrative.update({role}, {
+                            where: {
+                                cpf
+                            }
+                        })
+                    }
+                    res.success({ ...user.toJSON(), employee });
                 } else {
                     res.error(404, "Usuario não encontrado");
                 }
+                
+                
+                
             } else {
                 res.error(404, "Funcionario não encontrado");
             }
@@ -178,7 +212,7 @@ class Employee extends Route {
     @withAuth
     @Request("DELETE")
     @Path("/:cpf")
-    async delete(req: Express.Request, res: Express.Response) {
+    async delete(req: EndPoint.Request<IEmployee.del.Request>, res: Express.Response<IEmployee.del.Response>) {
         try {
             const cpf = req.params.cpf;
             const result = await EmployeeModel.delete({

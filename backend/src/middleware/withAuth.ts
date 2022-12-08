@@ -4,12 +4,12 @@ import User from "../models/User";
 import Administrative from "../models/Administrative";
 import Customer from "../models/Customer";
 import Trainer from "../models/Trainer";
-import { UserType } from '../modelstype'
+import { UserType } from 'gigachad-shareds/models'
 
 const withAuth: Express.Handler = async (req, res, next) => {
-    console.log("withAuth")
     try {
         const token = (req.headers['authorization']?.replace("Bearer ", "") || req.query.token) as string;
+        console.log(token);
         if (token) {
             const payload = jwt.decode(token/*, process.env.SECRET_AUTH as string*/) as JwtPayload
             const user = await User.findOne({
@@ -35,26 +35,6 @@ const withAuth: Express.Handler = async (req, res, next) => {
                 ]
             })
             if (user) {
-                user.type = UserType.user;
-                if (user.Trainer) {
-                    user.type = UserType.trainer;
-                } else
-                    if (user.Administrative) {
-                        switch (user.Administrative.role) {
-                            case "financer":
-                                user.type = UserType.financer;
-                                break;
-                            case "attendant":
-                                user.type = UserType.attendant;
-                                break;
-                            case "manager":
-                                user.type = UserType.manager;
-                                break;
-                        }
-                    } else
-                        if (user.Customer) {
-                            user.type = UserType.customer;
-                        }
                 req.user = user;
                 next()
                 return;

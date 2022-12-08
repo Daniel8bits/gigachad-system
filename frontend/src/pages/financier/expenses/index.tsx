@@ -1,12 +1,31 @@
 import { InputType } from '@components/filter/Filter'
 import FilterPageTemplate from '@templates/filterTableTemplate/FilterTableTemplate'
+//import {columns, APIType} from '@middlewares/Endpoint'
 import TemplateActions from '@templates/TemplateActions'
-import { IExpense } from 'gigachad-shareds/models'
 
-export default FilterPageTemplate<IExpense>({
+interface APIType {
+  id: number
+  qrCodeEquipment: string
+  date: string
+  totalvalue: number
+  description: string
+  type: 'equipamentBuy' | 'equipamentMaintenance' | 'billPayment' | 'employeePayment' | 'others'
+}
+
+const columns = ["Descrição", "Data", "Tipo de gasto", "Valor"]
+
+const typeExpense = [
+    {value: 'equipamentBuy', label: 'Compra de equipamento'},
+    {value: 'equipamentMaintenance', label: 'Manutenção de equipamento'},
+    {value: 'billPayment', label: 'Pagamento de conta'},
+    {value: 'employeePayment', label: 'Pagamento de salário'},
+    {value: 'others', label: 'Outros'}
+]
+
+export default FilterPageTemplate<APIType>({
   endpoint: '/expense',
   title: 'Consultar Gasto',
-  actions: [TemplateActions.OPEN, TemplateActions.EDIT],
+  actions: [TemplateActions.OPEN, TemplateActions.NEW, TemplateActions.EDIT],
   filter: {
     layout: [
       [
@@ -28,13 +47,7 @@ export default FilterPageTemplate<IExpense>({
           id: '3',
           title: 'Tipo de gasto', 
           type: InputType.COMBOBOX,
-          items: [
-            {value: '1', label: 'Compra de equipamento'},
-            {value: '2', label: 'Manutenção de equipamento'},
-            {value: '3', label: 'Pagamento de conta'},
-            {value: '4', label: 'Pagamento de salário'},
-            {value: '5', label: 'Outros'}
-          ],
+          items: typeExpense,
           size: { sm: 3, md: 3, lg: 3, xl: 3, xxl: 3 }
         },
         {
@@ -46,39 +59,38 @@ export default FilterPageTemplate<IExpense>({
       ]
     ],
     validate: data => {
-      const name = data.textfieldValues.get('1')
-      const qrCode = data.textfieldValues.get('2')
-      const typeExpense = data.comboValues.get('3')
+      const description = data.textfieldValues.get('1')
+      const totalValue = data.textfieldValues.get('2')
+      const type = data.comboValues.get('3')
       const date = data.dateValues.get('4')
 
-      if(!name && !qrCode && !typeExpense && !date) return false;
+      if(!description && !totalValue && !type && !date) return false;
 
       return true
     }, 
     format: data => {
-      const name = data.textfieldValues.get('1')
-      const qrCode = data.textfieldValues.get('2')
+      const description = data.textfieldValues.get('1')
+      const totalValue = data.textfieldValues.get('2')
       const type = data.comboValues.get('3')
       const date = data.dateValues.get('4')
 
-      
       return {
-        name,
-        qrCode,
-        type: String(type),
-        date: date?.getFormattedDate().replaceAll('/', '-'),
+        description,
+        totalValue,
+        type: type?.value,
+        date: date?.getFormattedDate().replaceAll('/', '-')
       }
     }
-  },
+  }, 
   table: {
-    columns: ["Descrição", "Data", "Tipo de gasto", "Valor"],
+    columns,
     description: data => ({
       id: String(data.id),
       display: {
         description: data.description,
-        date: new Date(data.date).toLocaleDateString(),
-        typeExpense: stringType(data.typeExpense),   
-        totalValue: data.totalValue
+        date: new Date(data.date).toLocaleString("pt-BR", { day: 'numeric', month: 'numeric', year: 'numeric' }),
+        type: stringType(data.type), 
+        totalValue: data.totalvalue
       }
     }),
     paging: true,

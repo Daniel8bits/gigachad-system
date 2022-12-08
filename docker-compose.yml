@@ -2,9 +2,59 @@ version: "3"
 
 services:
   frontend:
-    build: docker/
+    build: 
+      context: .
+      dockerfile: ./frontend/Dockerfile
     command: npm start
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/usr/app
+      - ./frontend:/usr/app/frontend
+
+  backend:
+    build: 
+      context: .
+      dockerfile: ./backend/Dockerfile
+    command: npm run dev
+    environment:
+        PSQL_HOST: postgres
+    ports:
+        - "5000:5000"
+    volumes:
+        - ./backend:/usr/app/backend
+    networks:
+        - postgres-compose-network
+
+
+  postgres:
+    image: postgres
+    logging:
+      driver: none
+    environment:
+        POSTGRES_PASSWORD: "Postgres2019!"
+    volumes:
+        - ./docker/postgres:/var/lib/postgresql/data
+    ports:
+        - "15432:5432"
+    expose:
+      - "5432"
+    networks:
+        - postgres-compose-network
+        
+  pgadmin:
+    image: dpage/pgadmin4
+    logging:
+      driver: none
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "master@gigachad.system"
+      PGADMIN_DEFAULT_PASSWORD: "PgAdmin2019!"
+    ports:
+        - "16543:80"
+    depends_on:
+        - postgres
+    networks:
+        - postgres-compose-network
+
+networks: 
+  postgres-compose-network:
+    driver: bridge

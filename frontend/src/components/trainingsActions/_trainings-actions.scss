@@ -1,0 +1,12 @@
+
+.trainings-actions {
+  @extend .actions;
+
+  > .ui-button.right {
+    margin-left: auto;
+    
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}

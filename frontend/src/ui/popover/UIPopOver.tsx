@@ -97,7 +97,9 @@ const UIPopOver: React.FC<UIPopOverProps> = (props) => {
             switch(props.position) {
                 case 'top':
                 case 'bottom':
-                    return anchorX1
+                    return anchorX1+popWidth > window.innerWidth ?
+                        anchorX2 - popWidth :
+                        anchorX1
                 case 'left':
                     return anchorX1 - popWidth - gap/2
                 case 'right':

@@ -1,0 +1,23 @@
+
+
+.date-training-table {
+
+  > table {
+    width: 100%;
+
+    > thead > tr > th {
+      color: $color-green;
+      text-align: center;
+    }
+
+    > thead > tr > th, > tbody > tr > td {
+      padding: .5rem;
+    }
+
+    > tbody > tr > td:last-child {
+      @include flex;
+    }
+
+  }
+
+}

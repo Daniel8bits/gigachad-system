@@ -1,36 +1,25 @@
 import { InputType } from '@components/filter/Filter'
 import FilterPageTemplate from '@templates/filterTableTemplate/FilterTableTemplate'
-//import {columns, APIType} from '@middlewares/Endpoint'
 import TemplateActions from '@templates/TemplateActions'
+import {ICustomer} from 'gigachad-shareds/models'
 
-interface APIType {
-  cpf: string
-  Users: {
-    name: string
-    email: number
-    phone: string
-  }
-}
-
-const columns = ["Nome", "CPF", "Email", "Telefone"]
-
-export default FilterPageTemplate<APIType>({
+export default FilterPageTemplate<ICustomer>({
   endpoint: '/customer',
   title: 'Clientes',
-  actions: [TemplateActions.OPEN, TemplateActions.EDIT],
+  actions: [TemplateActions.NEW, TemplateActions.OPEN, TemplateActions.EDIT],
   filter: {
     layout: [
       [
         {
           id: '1',
-          title: 'CPF', 
+          title: 'Cpf',
           type: InputType.TEXTFIELD,
           mask: "{ddd.ddd.ddd-dd}",
           size: { sm: 3, md: 3, lg: 3, xl: 3, xxl: 3 }
         },
         {
           id: '2',
-          title: 'Nome do cliente', 
+          title: 'Nome do cliente',
           type: InputType.TEXTFIELD,
           size: { sm: 3, md: 3, lg: 3, xl: 3, xxl: 3 }
         }
@@ -40,7 +29,7 @@ export default FilterPageTemplate<APIType>({
       const cpf = data.textfieldValues.get('1')
       const name = data.textfieldValues.get('2')
       
-      if(!cpf && !name) return false;
+      //if(!cpf && !name) return false;
 
       return true
     },
@@ -55,7 +44,7 @@ export default FilterPageTemplate<APIType>({
     }
   },
   table: {
-    columns,
+    columns: ["Nome", "CPF", "Email", "Telefone"],
     description: data => ({
       id: data.cpf,
       display: {

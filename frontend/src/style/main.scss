@@ -5,6 +5,7 @@
 
 @import 'global';
 
+
 @import '@ui/button/ui-button';
 @import '@ui/textfield/ui-textfield';
 @import '@ui/checkbox/ui-checkbox';
@@ -13,13 +14,27 @@
 @import '@ui/combobox/ui-combobox';
 @import '@ui/table/ui-table';
 @import '@ui/modal/ui-modal';
+@import '@ui/card/ui-card';
+@import '@ui/box/ui-box';
 
+@import '@components/trainingItem/training-item';
+@import '@components/exerciseItem/exercise-item';
+@import '@components/trainingsActions/trainings-actions';
+@import '@components/calendarActions/calendar-actions';
 @import '@components/sideMenu/side-menu';
 @import '@components/topBar/top-bar';
 @import '@components/filter/filter';
 @import '@components/actions/actions';
 @import '@components/loadingScreen/loading-screen';
 @import '@components/squareButton/square-button';
+@import '@components/dropDown/drop-down';
+@import '@components/placeholder/placeholder';
+@import '@components/creditCard/credit-card';
+@import '@components/calendar/calendar';
+@import '@components/editableField/editable-field';
+@import '@components/trainingTitle/training-title'; 
+@import '@components/tutorialExplaining/tutorial-explaining'; 
+@import '@components/dateTrainingTable/date-training-table'; 
 
 @import '@layouts/mainLayout/main-layout';
 @import '@layouts/contentLayout/content-layout';
@@ -27,3 +42,5 @@
 @import '@layouts/modalLayout/modal-layout';
 @import '@layouts/dialogLayout/dialog-layout';
 @import '@layouts/loginLayout/login-layout';
+
+@import '@pages/customer/plans/ui-plans';

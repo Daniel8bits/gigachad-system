@@ -28,16 +28,16 @@ const globalRules: Record<string, RuleCustom> = {
         message: "Campo Obrigatório"
     },
     minLength: {
-        callback: (value, minLength) => {
+        callback: (value, { minLength }) => {
             return value.length >= minLength;
         },
-        message: (minLength) => "Tamanho Mínimo " + minLength
+        message: ({ minLength }) => "Tamanho Mínimo " + minLength
     },
     maxLength: {
-        callback: (value, maxLength) => {
+        callback: (value, { maxLength }) => {
             return value.length <= maxLength;
         },
-        message: (maxLength) => "Tamanho Máximo " + maxLength
+        message: ({ maxLength }) => "Tamanho Máximo " + maxLength
     },
     regex: {
         callback: (value) => {
@@ -49,25 +49,35 @@ const globalRules: Record<string, RuleCustom> = {
 
 class RuleError extends Error {
 
+    private item: string;
     private rule: string;
     private params!: RuleCustom;
     private value!: string;
     private options!: any;
 
-    constructor(message: string);
-    constructor(rule: string, params: RuleCustom, value: string, options?: any);
+    constructor(item: string, message: string);
+    constructor(item: string, rule: string, params: RuleCustom, value: string, options?: any);
     constructor(...args: any[]) {
         super()
-        if (arguments.length == 1) {
-            this.message = args[0];
+        this.item = args[0];
+        if (arguments.length == 2) {
+            this.message = args[1];
             this.rule = "custom";
         } else {
-            this.rule = args[0];
-            this.params = args[1];
-            this.value = args[2];
-            this.options = args[3];
+            this.rule = args[1];
+            this.params = args[2];
+            this.value = args[3];
+            this.options = args[4];
             this.message = this.getMessage();
         }
+    }
+
+    public getRule() {
+        return this.rule;
+    }
+
+    public getItem() {
+        return this.item;
     }
 
     public getMessage(): string {
@@ -78,9 +88,9 @@ class RuleError extends Error {
     }
 }
 
-const runRule = async (rule: RuleCustom, name: string, value: string, options: any): Promise<void> => {
+const runRule = async (item: string, rule: RuleCustom, name: string, value: string, options: any): Promise<void> => {
     if (await rule.callback.apply(null, [value, options])) return;
-    throw new RuleError(name, rule, value, options);
+    throw new RuleError(item, name, rule, value, options);
 }
 
 const ValidData = async<T extends Record<string, any>>(data: T, options: Rules): Promise<T> => {
@@ -88,15 +98,15 @@ const ValidData = async<T extends Record<string, any>>(data: T, options: Rules):
         const rules = options[option];
         const value = data[option] ?? "";
         if (typeof (rules) == "string") {
-            await runRule(globalRules[rules], rules, value, {})
+            await runRule(option, globalRules[rules], rules, value, {})
             continue;
         }
 
         if (rules.callback) {
-            await runRule(rules, "callback", value, {})
+            await runRule(option, rules, "callback", value, {})
         } else {
             for (let name in rules) {
-                await runRule(globalRules[name], name, value, rules);
+                await runRule(option, globalRules[name], name, value, rules);
             }
         }
     }

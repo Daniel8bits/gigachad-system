@@ -1,0 +1,29 @@
+.training-item{
+    @include flex(space-between);
+    @include transition;
+    @include padding;
+    margin-bottom: 1rem;
+
+    > .info {
+        @include flex-left;
+        > * {
+            width: 100%;
+        }
+        > .name {
+            color: $color-green;
+        }
+    }
+
+    > .date {
+        @include flex;
+        > * {
+            width: 100%;
+        }
+    }
+
+    > .quantity {
+        @include flex-right;
+        color: $color-green;
+    }
+
+}

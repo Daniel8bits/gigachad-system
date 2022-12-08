@@ -6,8 +6,8 @@ export as namespace GigachadSystem
 declare namespace GigachadSystem {
 
   /*  ENUMS  */
-  
-  enum UserType {
+
+  export enum UserType {
     user = 0,
     customer = 2,
     employee = 4,
@@ -16,25 +16,25 @@ declare namespace GigachadSystem {
     financer = 32,
     trainer = 64
   }
-  
-  enum TypeExpense {
+
+  export enum TypeExpense {
     equipamentBuy = 'equipamentBuy',
     equipamentMaintenance = 'equipamentMaintenance',
     billPayment = 'billPayment',
     employeePayment = 'employeePayment',
     others = 'others'
   }
-  
-  enum FrequencyPlan {
+
+  export enum FrequencyPlan {
     montly = 'montly',
     semmiannual = 'semmiannual',
     quarterly = 'quarterly',
     annual = 'annual'
   }
-  
-  
+
+
   /*  INTERFACES  */
-  
+
   interface IUser {
     cpf: string
     name: string
@@ -42,7 +42,7 @@ declare namespace GigachadSystem {
     email: string
     phone: string
   }
-  
+
   interface IEmployee {
     cpf: string
     administrative: string
@@ -51,63 +51,63 @@ declare namespace GigachadSystem {
     address: string
     Users: IUser
   }
-  
+
   interface IAdministrative {
     cpf: string
     role: 'financer' | 'attendant' | 'manager'
     Employee: IEmployee
   }
-  
+
   interface ITrainer {
     cpf: string
     cref: string
     Employee: IEmployee
   }
-  
+
   interface ICustomer {
     cpf: string
     idCurrentPlan: number
     Users: IUser
   }
-  
+
   interface ICreditCard {
     numbers: string
     holder: string
     expirationDate: string
     cvv: string
   }
-  
+
   interface ICustomerCreditCard {
     cpfCustomer: string
     numbersCreditCard: string
     Customer: ICustomer
     CreditCard: ICreditCard
   }
-  
+
   interface IDateDoneItem {
     idTraining: number
     cpfCustomer: number
     date: Date
     idExercise: number
   }
-  
+
   interface IDateTraining {
     idTraining: number
     cpfCustomer: number
     date: Date
   }
-  
+
   interface IEquipment {
     qrCode: string
     name: string
     maintenanceDate: Date
   }
-  
+
   interface IExercise {
     id: number
     name: string
   }
-  
+
   interface IExerciseItem {
     idExercise: number
     idTraining: number
@@ -116,7 +116,7 @@ declare namespace GigachadSystem {
     series: number
     repetition: number
   }
-  
+
   interface IExpense {
     id: number
     qrCodeEquipmen: string
@@ -125,7 +125,7 @@ declare namespace GigachadSystem {
     description: string
     typeExpense: TypeExpense
   }
-  
+
   interface IInvoice {
     id: number
     cpfCustomer: string
@@ -136,7 +136,7 @@ declare namespace GigachadSystem {
     payday: string
     payMethod: string
   }
-  
+
   interface IPlan {
     id: number
     name: string
@@ -145,7 +145,7 @@ declare namespace GigachadSystem {
     frequency: FrequencyPlan
     available: boolean
   }
-  
+
   interface ITraining {
     id: number
     cpfCustomer: string
@@ -153,7 +153,7 @@ declare namespace GigachadSystem {
     name: string
     creationDate: Date
   }
-  
+
   interface ITutorial {
     idExercise: number
     video_url: string

@@ -88,6 +88,7 @@ export interface UITextFieldProps {
     defaultValue?: string
     template?: string;
     password?: boolean;
+    disabled?: boolean
     icon?: IconType
     iconPosition?: 'left' | 'right'
     onFocus?: (ev: React.FocusEvent) => void;
@@ -96,7 +97,7 @@ export interface UITextFieldProps {
     onKeyUp?: (ev: React.KeyboardEvent) => void;
     onKeyDown?: (ev: React.KeyboardEvent) => void;
     onMouseUp?: (ev: React.MouseEvent) => void;
-    onAction?: (value: string | ((oldValue: string) => string)) => void
+    onAction?: (value: string) => void
     onClickIcon?: () => void
     onLoad?: (ref: React.RefObject<HTMLInputElement>) => void
     iconContainerRef?: React.RefObject<HTMLDivElement>
@@ -289,6 +290,7 @@ const UITextField: React.ForwardRefRenderFunction<HTMLInputElement, UITextFieldP
      * @param event 
      */
      function actionPerformed(event: React.KeyboardEvent<HTMLInputElement>): void {
+        if(props.disabled) return
         if(props.onKeyUp) {
             props.onKeyUp(event)
         }
@@ -302,6 +304,7 @@ const UITextField: React.ForwardRefRenderFunction<HTMLInputElement, UITextFieldP
         const inputElement = <input 
             ref={inputTextRef}
             id={props.id}
+            name={props.id}
             type={props.password ? 'password' : 'text'}
             placeholder={props.placeholder ?? ''}
             aria-label={props.ariaLabel ?? props.label ?? undefined}
@@ -312,9 +315,11 @@ const UITextField: React.ForwardRefRenderFunction<HTMLInputElement, UITextFieldP
             onChange={props.onChange}
             onMouseUp={props.onMouseUp}
             onClick={e => e.stopPropagation()}
+            disabled={props.disabled}
         />
 
         const handleIconClick = (e: React.MouseEvent) => {
+            if(props.disabled) return
             props.onClickIcon?.()
         }
 
@@ -323,13 +328,12 @@ const UITextField: React.ForwardRefRenderFunction<HTMLInputElement, UITextFieldP
                 <div 
                     ref={props.iconContainerRef}
                     className={`${props.onClickIcon ? 'icon-as-button' : ''}`} 
-                    onClick={handleIconClick}
                 >
                     {(!props.iconPosition || props.iconPosition === 'left') &&
-                        <props.icon />}
+                        <button type='button' onClick={handleIconClick} aria-label='button'><props.icon /></button>}
                     {inputElement}
                     {props.iconPosition === 'right' &&
-                        <props.icon />}
+                        <button type='button' onClick={handleIconClick} aria-label='button'><props.icon /></button>}
                 </div>
             )
         }
@@ -339,7 +343,7 @@ const UITextField: React.ForwardRefRenderFunction<HTMLInputElement, UITextFieldP
     }
 
     return (
-        <div className={`ui-textfield ${props.className ?? ''} ${props.template ?? 'default'} ${props.icon && props.iconPosition ? 'hasIcon' : ''}`}>
+        <div className={`ui-textfield ${props.className ?? ''} ${props.template ?? 'default'} ${props.disabled ? 'disabled' : ''} ${props.icon && props.iconPosition ? 'hasIcon' : ''}`}>
           {props.label && 
             <label 
                 htmlFor={props.id} 

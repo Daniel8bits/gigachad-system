@@ -3,6 +3,7 @@ import Route, { Path, Request, withAuth, withUser } from "../utils/Route";
 import ValidData, { Rules } from '../utils/ValidData';
 import ExerciseModel from '../models/Exercise';
 import { UserType } from 'gigachad-shareds/models'
+import type * as IExercise from 'gigachad-shareds/endpoint/Exercise';
 
 class Exercise extends Route {
 
@@ -14,7 +15,7 @@ class Exercise extends Route {
     @withAuth
     @Request("POST")
     @Path("/")
-    async create(req: Express.Request, res: Express.Response) {
+    async create(req: EndPoint.Request<IExercise.create.Request>, res: Express.Response<IExercise.create.Response>) {
         try {
             const { name } = await ValidData(req.body, Exercise.rules);
             const exercise = await ExerciseModel.create({
@@ -27,10 +28,10 @@ class Exercise extends Route {
         }
     }
 
-    @withUser(UserType.manager)
+    //@withUser(UserType.manager)
     @withAuth
     @Path("/")
-    async findAll(req: Express.Request, res: Express.Response) {
+    async findAll(req: EndPoint.Request, res: Express.Response<IExercise.findAll.Response>) {
         try {
             const exercise = await ExerciseModel.findAll({
                 order: [["id", "ASC"]]
@@ -44,11 +45,11 @@ class Exercise extends Route {
     @withUser(UserType.manager)
     @withAuth
     @Path("/:id")
-    async findOne(req: Express.Request, res: Express.Response) {
+    async findOne(req: EndPoint.Request<IExercise.findOne.Request>, res: Express.Response<IExercise.findOne.Response>) {
         try {
             const exercise = await ExerciseModel.findOne({
-                where:{
-                    id: parseInt(req.params.id)
+                where: {
+                    id: req.params.id
                 },
                 order: [["id", "ASC"]]
             })
@@ -62,13 +63,12 @@ class Exercise extends Route {
     @withAuth
     @Request("PUT")
     @Path("/:id")
-    async update(req: Express.Request, res: Express.Response) {
+    async update(req: EndPoint.Request<IExercise.update.Request>, res: Express.Response<IExercise.update.Response>) {
         try {
-            const qrCode = req.params.qrCode;
             const { name } = await ValidData(req.body, Exercise.rules);
             const exercise = await ExerciseModel.update({ name }, {
                 where: {
-                    id: parseInt(req.params.id)
+                    id: req.params.id
                 }
             })
             if (exercise) {
@@ -85,11 +85,11 @@ class Exercise extends Route {
     @withAuth
     @Request("DELETE")
     @Path("/:id")
-    async delete(req: Express.Request, res: Express.Response) {
+    async delete(req: EndPoint.Request<IExercise.del.Request>, res: Express.Response<IExercise.del.Response>) {
         try {
             const result = await ExerciseModel.delete({
                 where: {
-                    id: parseInt(req.params.id)
+                    id: req.params.id
                 }
             })
             if (result) {

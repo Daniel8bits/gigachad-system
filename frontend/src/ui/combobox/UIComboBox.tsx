@@ -6,10 +6,10 @@ import { FaCaretDown, FaTimes } from 'react-icons/fa'
 
 
 interface UIComboBoxItemProps {
-    value: string
-    active: boolean
-    onClick: (e: React.MouseEvent) => void
-    className?: string
+  value: string
+  active: boolean
+  onClick: (e: React.MouseEvent) => void
+  className?: string
 }
 
 const UIComboBoxItem: React.FC<UIComboBoxItemProps> = (props) => {
@@ -24,18 +24,19 @@ const UIComboBoxItem: React.FC<UIComboBoxItemProps> = (props) => {
   );
 };
 
-export type UIComboItemData = {value: string, label: string}
+export type UIComboItemData = { value: string, label: string }
 export type UIComboItemType = UIComboItemData[] | { [key: string]: UIComboItemData[] }
 
 interface UIComboBoxProps {
-    id: string
-    template?: string
-    items: UIComboItemType
-    value: UIComboItemData|null
-    onAction: (value: UIComboItemData|null | ((oldValue: UIComboItemData|null) => UIComboItemData)) => void
-    label?: string
-    allowNull?: boolean
-    allowSearch?: boolean
+  id: string
+  name?: string
+  template?: string
+  items: UIComboItemType
+  value: UIComboItemData | null
+  onAction: (value: UIComboItemData | null | ((oldValue: UIComboItemData | null) => UIComboItemData)) => void
+  label?: string
+  allowNull?: boolean
+  allowSearch?: boolean
 }
 
 const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
@@ -45,17 +46,17 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
   const anchorRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const popOverHeight = useMemo<number|'auto'>(() => {
+  const popOverHeight = useMemo<number | 'auto'>(() => {
     const MAX_ITEMS_TO_BE_AUTO = 5
-    if(props.items instanceof Array && props.items.length <= MAX_ITEMS_TO_BE_AUTO) {
+    if (props.items instanceof Array && props.items.length <= MAX_ITEMS_TO_BE_AUTO) {
       return 'auto'
     }
-    const propsItems = props.items as {[key: string]: UIComboItemData[]}
+    const propsItems = props.items as { [key: string]: UIComboItemData[] }
     let numItems = 0
     Object.keys(propsItems).forEach(key => {
       numItems += propsItems[key].length
     })
-    if(numItems <= MAX_ITEMS_TO_BE_AUTO) {
+    if (numItems <= MAX_ITEMS_TO_BE_AUTO) {
       return 'auto'
     }
     return 200
@@ -70,7 +71,7 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
     }
   }, [popOver?.open])
 
-  function handleChange(value: UIComboItemData|null) {
+  function handleChange(value: UIComboItemData | null) {
     props.onAction(value)
     updatePopOver({ open: false })
   }
@@ -89,10 +90,10 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
       updatePopOver({ open: true })
     } else if (props.allowSearch && input && !(propsItems instanceof Array)) {
       setItems(oldItems => {
-        const newItems = {} as {[key: string]: UIComboItemData[]}
+        const newItems = {} as { [key: string]: UIComboItemData[] }
         Object.keys(props.items).forEach((key) => {
           const newItemsValue = (propsItems[key] as UIComboItemData[]).filter((item: UIComboItemData) => item.label.search(input.value) > -1)
-          if(newItemsValue.length > 0) {
+          if (newItemsValue.length > 0) {
             newItems[key] = newItemsValue
           }
         })
@@ -102,12 +103,11 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
   }
 
   function getOptions(): JSX.Element {
-    
     if (props.items instanceof Array) {
       const propsItems = props.items
       return (
         <div className='combobox-items'>
-          {(items as UIComboItemData[]).map((item, key) => {
+          {(propsItems as UIComboItemData[]).map((item, key) => {
             return (
               <UIComboBoxItem
                 key={key}
@@ -121,8 +121,8 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
       )
     }
 
-    const itemsAsObject = items as {[key: string]: UIComboItemData[]}
-    const propsItemsAsObject = props.items as {[key: string]: UIComboItemData[]}
+    const itemsAsObject = items as { [key: string]: UIComboItemData[] }
+    const propsItemsAsObject = props.items as { [key: string]: UIComboItemData[] }
 
     return (
       <div className='combobox-items'>
@@ -159,7 +159,7 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
 
 
   useEffect(() => {
-    if(inputRef.current) {
+    if (inputRef.current) {
       inputRef.current.value = props.value?.label ?? ''
     }
   }, []);
@@ -167,9 +167,9 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
   return (
     <div className={`ui-combobox ${props.allowSearch ? 'allow-search' : ''} ${props.template ?? ''}`}>
       {props.label &&
-          <label htmlFor={props.id} className="font-bebas ">
-              {props.label}
-          </label>}
+        <label htmlFor={props.id} className="font-bebas ">
+          {props.label}
+        </label>}
       <div
         ref={anchorRef}
         onClick={openCombo}
@@ -182,13 +182,18 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
           type="text"
           onKeyUp={search}
         />
-          {!!props.allowNull && props.value &&
-              <button
-                type='button'
-                onClick={clearInput}
-              >
-                <FaTimes />
-              </button>}
+        <input
+          name={props.name ?? props.id}
+          type="hidden"
+          value={props.value?.value}
+        />
+        {!!props.allowNull && props.value &&
+          <button
+            type='button'
+            onClick={clearInput}
+          >
+            <FaTimes />
+          </button>}
         <div>
           <FaCaretDown />
         </div>
@@ -200,8 +205,9 @@ const UIComboBox: React.FC<UIComboBoxProps> = (props) => {
         width="anchor"
         height={popOverHeight}
         position="bottom"
+        scroll
       >
-        {props.allowNull && 
+        {props.allowNull &&
           <UIComboBoxItem
             value=''
             active={props.value === null}

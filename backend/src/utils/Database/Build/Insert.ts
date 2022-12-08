@@ -37,6 +37,7 @@ class Insert<M extends Model> extends Build<M>{
         sql.push("VALUES")
         sql.push(this.values)
         sql.push("RETURNING *")
+
         return sql.join(" ");
     }
 

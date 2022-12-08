@@ -28,7 +28,7 @@ CREATE TABLE Employee(
     admissionDate DATE NOT NULL,
     address CHARACTER VARYING(100) NOT NULL,
     FOREIGN KEY (cpf) REFERENCES Users(cpf) ON DELETE CASCADE ON UPDATE CASCADE
-);
+); 
 CREATE TABLE Administrative(
     cpf CHARACTER(11) PRIMARY KEY NOT NULL,
     role roleAdministrative NOT NULL,
@@ -129,8 +129,8 @@ CREATE TABLE Equipment(
     maintenanceDate timestamptz
 );
 CREATE TYPE typeExpense AS ENUM (
-    'equipamentBuy',
-    'equipamentMaintenance',
+    'equipmentBuy',
+    'equipmentMaintenance',
     'billPayment',
     'employeePayment',
     'others'

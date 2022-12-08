@@ -1,0 +1,28 @@
+.ui-plans {
+    text-align: center;
+    border: 2px solid #7BFF65;// Não ta funcionando o $color-green
+    border-radius: 10px;
+    padding:1rem 0;
+    &>.card-content {
+        &>.name {
+            font-size: 22px;
+        }
+
+        &>.price {
+            &>.value {
+                font-size: 52px;
+                &>.cent{
+                    font-size: 22px;
+                    vertical-align: super;
+                }
+                &>.frequency{
+                    font-size: 28px;
+                    vertical-align: super;
+                }
+            }
+        }
+        &>.description{
+            margin: 1rem 0;
+        }
+    }
+}

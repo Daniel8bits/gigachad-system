@@ -37,14 +37,15 @@ export type Include<M extends Model = Model> = OptionsWhere<M> & {
 
 export type AttributesWhere<A> = { include: A, exclude?: undefined } | { exclude: A, include?: undefined } | A & { include?: undefined, exclude?: undefined };
 
-export type Where<A> = { or: Where<A> } | { and: Where<A> } | A /*| {
+export type Where<A> = { or: Where<A> } | { and: Where<A> } | A | {
     [key in keyof A]: {
-        or?: A[],
-        and?: A[]
-    }
-}*/
+        value: any
+        op: any
+    } | any
+}
 
 export type OptionsWhere<M extends Model, A = Attributes<M>> = {
+    debug?: boolean
     where?: Where<A>
     limit?: number
     offset?: number
@@ -83,7 +84,13 @@ abstract class Model<A extends {} = any>{
                 this._values[table].setValue(field, value);
             }
         }
+        this.init();
         //this._values = values;
+    }
+
+
+    init() {
+
     }
 
     // Database -> Application
@@ -119,11 +126,11 @@ abstract class Model<A extends {} = any>{
 
         switch (attribute.type) {
             case "CPF":
-                return value.replace(/(\d{3}).(\d{3}).(\d{3})-(\d{2})/, "$1$2$3$4");
+                return String(value).replace(/(\d{3}).(\d{3}).(\d{3})-(\d{2})/, "$1$2$3$4");
             case "PHONE":
-                return value.replace(/\+(\d{2}) \((\d{2})\) (\d{5})-(\d{4})/, "$1$2$3$4");
+                return String(value).replace(/\+(\d{2}) \((\d{2})\) (\d{5})-(\d{4})/, "$1$2$3$4");
             case "DATE":
-                return new Date(value).toDateString();
+                return new Date(value).toJSON();
             case "JSON":
                 return JSON.stringify(value);
         }

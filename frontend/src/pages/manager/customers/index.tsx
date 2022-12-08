@@ -6,7 +6,7 @@ import {ICustomer} from 'gigachad-shareds/models'
 export default FilterPageTemplate<ICustomer>({
   endpoint: '/customer',
   title: 'Clientes',
-  actions: [TemplateActions.OPEN, TemplateActions.EDIT],
+  actions: [TemplateActions.NEW, TemplateActions.OPEN, TemplateActions.EDIT],
   filter: {
     layout: [
       [
@@ -29,7 +29,7 @@ export default FilterPageTemplate<ICustomer>({
       const cpf = data.textfieldValues.get('1')
       const name = data.textfieldValues.get('2')
       
-      if(!cpf && !name) return false;
+      //if(!cpf && !name) return false;
 
       return true
     },

@@ -3,16 +3,20 @@
   background-color: $color;
   @if 
     $color == $color-green or
+    $color == $color-yellow or
     $color == $color-red {
       color: $color-greenish-black;
       @if $hover {
         @include transition();
-        &:hover {
+        &:not(:disabled):hover {
           @if $color == $color-green {
             background-color: $color-dark-green;
           }
           @else if $color == $color-red {
             background-color: $color-dark-red;
+          }
+          @else if $color == $color-yellow {
+            background-color: $color-dark-yellow;
           }
         }
       }
@@ -23,7 +27,7 @@
       color: white;
       @if $hover {
         @include transition();
-        &:hover {
+        &:not(:disabled):hover {
           @if $color == $color-greenish-black {
             background-color: $color-greenish-gray;
           }

@@ -16,7 +16,7 @@ class Database {
         })
         if (isSave) Database.instance = this;
     
-        this.pool.on("connect", () => console.log("⚡️[Database]: Connected"))
+        this.pool.on("connect", () => console.log("⚡️[Database]: Connected",(new Date().toString())))
     }
 
     public static async query(query: string, params?: any[]) {
@@ -33,7 +33,7 @@ class Database {
     }
 
     end() {
-        this.pool.end();
+        //this.pool.end();
     }
 }
 

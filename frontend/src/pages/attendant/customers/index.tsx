@@ -21,7 +21,7 @@ const columns = ["Nome", "CPF", "Email", "Telefone", "Data da Fatura", "Situa√ß√
 export default FilterPageTemplate<APIType>({
   endpoint: '/customer',
   title: 'Clientes',
-  actions: [TemplateActions.OPEN, TemplateActions.EDIT],
+  actions: [TemplateActions.OPEN, TemplateActions.EDIT, TemplateActions.NEW],
   filter: {
     layout: [
       [
@@ -44,7 +44,7 @@ export default FilterPageTemplate<APIType>({
       const cpf = data.textfieldValues.get('1')
       const name = data.textfieldValues.get('2')
       
-      if(!cpf && !name) return false;
+      //if(!cpf && !name) return false;
 
       return true
     },

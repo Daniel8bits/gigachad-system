@@ -107,9 +107,29 @@ export class UIDate {
       value += `0${this._month + 1}`
     }
     else {
-      value += this._month
+      value += this._month+1
     }
     value += `/${this._year}`
+    return value
+  }
+
+  public toString(){
+    let value = ''
+    value += `${this._year}`
+    value += '-'
+    if (this._month + 1 < 10) {
+      value += `0${this._month + 1}`
+    }
+    else {
+      value += this._month
+    }
+    value += '-';
+    if (this._day < 10) {
+      value += `0${this._day}`
+    }
+    else {
+      value += this._day
+    }
     return value
   }
       
@@ -222,7 +242,7 @@ export class UIDate {
     const auxYear = Math.floor(Math.abs(month + 1) / 12)
     if (month < 0) {
       month = 12 - auxMonth - 1
-      year -= auxYear
+      year -= auxYear+1
     }
     else if (month > 11) {
       month = auxMonth - 1

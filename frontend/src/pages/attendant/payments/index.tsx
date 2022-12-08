@@ -4,6 +4,15 @@ import FilterPageTemplate from '@templates/filterTableTemplate/FilterTableTempla
 import TemplateActions from '@templates/TemplateActions'
 import { IInvoice } from 'gigachad-shareds/models'
 
+/*
+const plans = [
+  { value: '0', label: 'plano 1' },
+  { value: '1', label: 'plano 2' },
+  { value: '2', label: 'plano 3' },
+  { value: '3', label: 'plano 4' }
+]
+*/
+
 export default FilterPageTemplate<IInvoice>({
   endpoint: '/invoice',
   title: 'Consultar pagamentos',
@@ -32,20 +41,18 @@ export default FilterPageTemplate<IInvoice>({
         }
       ],
       [
+        //acho desnecessario buscar um pagamento pelo plano
+        /*
         {
           id: '4',
-          title: 'Tipo de plano',
+          title: 'Plano',
           type: InputType.COMBOBOX,
-          items: [
-            { value: '0', label: 'plano 1' },
-            { value: '1', label: 'plano 2' },
-            { value: '2', label: 'plano 3' },
-            { value: '3', label: 'plano 4' }
-          ],
+          items: plans,
           size: { sm: 3, md: 3, lg: 3, xl: 3, xxl: 3 }
         },
+        */
         {
-          id: '5',
+          id: '4',
           title: 'Forma de pagamento',
           type: InputType.COMBOBOX,
           items: [
@@ -57,7 +64,7 @@ export default FilterPageTemplate<IInvoice>({
           size: { sm: 3, md: 3, lg: 3, xl: 3, xxl: 3 }
         },
         {
-          id: '6',
+          id: '5',
           title: 'Status',
           type: InputType.COMBOBOX,
           items: [
@@ -73,32 +80,32 @@ export default FilterPageTemplate<IInvoice>({
       const name = data.textfieldValues.get('1')
       const cpf = data.textfieldValues.get('2')
       const date = data.dateValues.get('3')
-      const plan = data.comboValues.get('4')
-      const payMethod = data.comboValues.get('5')
-      const status = data.comboValues.get('6')
+      //const plan = data.comboValues.get('4')
+      const payMethod = data.comboValues.get('4')
+      const status = data.comboValues.get('5')
 
-      if(!cpf && !name && !date && !plan && !payMethod && !status) return false;
+      if (!cpf && !name && !date && !payMethod && !status) return false;
 
       return true
-    }, 
+    },
     format: data => {
       const name = data.textfieldValues.get('1')
       const cpf = data.textfieldValues.get('2')
       const payday = data.dateValues.get('3')
-      const plan = data.comboValues.get('4')
-      const payMethod = data.comboValues.get('5')
-      const status = data.comboValues.get('6')
+      //const plan = data.comboValues.get('4')
+      const payMethod = data.comboValues.get('4')
+      const status = data.comboValues.get('5')
 
-      
+
       const formatedPayMethod = payMethod?.value
       const formatedStatus = status?.value
-      const idPlan = plan?.value
+      //const idPlan = plan?.value
 
       return {
         name,
         cpfCustomer: cpf,
         payday: payday?.getFormattedDate().replaceAll('/', '-'),
-        idPlan,
+        //idPlan,
         payMethod: formatedPayMethod,
         status: formatedStatus
       }
